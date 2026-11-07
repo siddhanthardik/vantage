@@ -1,0 +1,565 @@
+{
+  "services": [
+    {
+      "id": "srv_risk_management_insurance",
+      "slug": "risk-management-insurance",
+      "title": "Risk Management & Insurance Solutions",
+      "shortDesc": "Protect your family, assets and financial commitments through appropriate insurance needs assessment and suitable protection solutions.",
+      "fullDesc": "A disciplined and rigorous approach to safeguarding family lifestyle, financial dependants, and enterprise continuity. We help assess quantifiable vulnerabilities across life, health, liabilities, and business assets without proprietary quotas or high-pressure product sales.",
+      "heroHeading": "Risk Management & Insurance Solutions",
+      "heroSubtext": "Identify financial risks, assess protection requirements and explore suitable insurance solutions to safeguard your family and financial commitments.",
+      "heroImage": "/images/services/wealth-protection.png",
+      "thumbnailImage": "/images/services/wealth-protection.png",
+      "iconName": "ShieldCheck",
+      "benefits": [
+        {
+          "icon": "ShieldCheck",
+          "title": "Comprehensive Needs Assessment",
+          "description": "Quantify true replacement income needs, mortgage obligations, and health coverage gaps."
+        },
+        {
+          "icon": "Compass",
+          "title": "Objective Evaluation",
+          "description": "Unbiased market guidance across premier institutional insurers free of sales quotas."
+        },
+        {
+          "icon": "Lock",
+          "title": "Asset & Income Security",
+          "description": "Shield wealth from unforeseen medical inflation, personal liabilities, and loss of earning capacity."
+        },
+        {
+          "icon": "RotateCcw",
+          "title": "Periodic Policy Reviews",
+          "description": "Regularly realign coverage limits as career milestones, liabilities, and family dynamics evolve."
+        }
+      ],
+      "features": [
+        {
+          "icon": "ShieldCheck",
+          "image": "/images/services/wealth-protection.png",
+          "title": "Term Life Protection",
+          "description": "Substantial pure risk cover structured to secure your family's future and clear outstanding liabilities."
+        },
+        {
+          "icon": "Sprout",
+          "image": "/images/services/investment-advisory.png",
+          "title": "Comprehensive Health & Critical Care",
+          "description": "High-sum-insured health protection designed to absorb major medical events without eroding investments."
+        },
+        {
+          "icon": "Briefcase",
+          "image": "/images/services/loans.png",
+          "title": "Key Person & Corporate Continuity",
+          "description": "Shield business continuity, partnership equity, and key executives from unexpected loss."
+        },
+        {
+          "icon": "Lock",
+          "image": "/images/services/chess-king.png",
+          "title": "Liability & Asset Shielding",
+          "description": "Protect accumulated personal and commercial wealth against statutory claims and professional liabilities."
+        }
+      ],
+      "processSteps": [
+        {
+          "step": 1,
+          "title": "Risk & Liability Audit",
+          "description": "Catalog outstanding obligations, earning dependence, and existing policy terms."
+        },
+        {
+          "step": 2,
+          "title": "Shortfall Quantification",
+          "description": "Calculate exact capital required to insulate family living standards and milestones."
+        },
+        {
+          "step": 3,
+          "title": "Bespoke Solution Design",
+          "description": "Structure cost-effective, high-claim-settlement policies across reputable providers."
+        },
+        {
+          "step": 4,
+          "title": "Dedicated Servicing & Claims",
+          "description": "Provide enduring administrative support, annual coverage realignments, and claims advocacy."
+        }
+      ],
+      "ctaHeading": "Protect What Matters Most Today",
+      "ctaButtonText": "Schedule a Protection Review",
+      "ctaButtonUrl": "/consultation?service=risk-management-insurance",
+      "seoTitle": "Risk Management & Insurance Solutions | Vantage Wealth",
+      "seoDescription": "Protect your family, assets and financial commitments through institutional insurance needs assessment and suitable protection solutions.",
+      "ogImage": "/images/services/wealth-protection.png",
+      "status": "PUBLISHED",
+      "displayOrder": 1,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z"
+    },
+    {
+      "id": "srv_investment_solutions",
+      "slug": "investment-solutions",
+      "title": "Investment Solutions & Portfolio Advisory",
+      "shortDesc": "Understand your complete investment portfolio and explore suitable investment opportunities across mutual funds, SIFs, PMS and AIFs, subject to suitability and eligibility.",
+      "fullDesc": "A disciplined and research-driven approach to help you grow your wealth with clarity, confidence and a long-term perspective. We construct institutional-grade multi-asset portfolios tailored to your unique financial milestones and risk parameters.",
+      "heroHeading": "Investment Solutions & Portfolio Advisory",
+      "heroSubtext": "Gain a consolidated view of your investment portfolio and explore suitable investment options aligned with your financial objectives and risk profile.",
+      "heroImage": "/images/services/investment-advisory-hero.png",
+      "thumbnailImage": "/images/services/investment-advisory.png",
+      "iconName": "TrendingUp",
+      "benefits": [
+        {
+          "icon": "Target",
+          "title": "Consolidated Portfolio View",
+          "description": "Aggregate scattered holdings into a transparent, unified wealth architecture."
+        },
+        {
+          "icon": "Layers",
+          "title": "Institutional Due Diligence",
+          "description": "Rigorous macroeconomic and quantitative analysis across managers and strategies."
+        },
+        {
+          "icon": "TrendingUp",
+          "title": "Risk-Adjusted Allocation",
+          "description": "Balance capital appreciation, stability, and liquidity to optimize net post-tax returns."
+        },
+        {
+          "icon": "Users",
+          "title": "Fiduciary Alignment",
+          "description": "Conflict-free advice driven solely by your wealth objectives and time horizon."
+        }
+      ],
+      "features": [
+        {
+          "icon": "TrendingUp",
+          "image": "/images/services/investment-advisory.png",
+          "title": "Mutual Funds & Systematic Frameworks",
+          "description": "Diversified equity and fixed-income portfolios for transparent wealth accumulation."
+        },
+        {
+          "icon": "Briefcase",
+          "image": "/images/services/loans.png",
+          "title": "Portfolio Management Services (PMS)",
+          "description": "Direct equity and specialized high-conviction mandates managed by seasoned professionals."
+        },
+        {
+          "icon": "Layers",
+          "image": "/images/services/family-wealth-legacy.png",
+          "title": "Alternative Investment Funds (AIF)",
+          "description": "Institutional access to private equity, structured credit, and venture strategies for eligible investors."
+        },
+        {
+          "icon": "Sprout",
+          "image": "/images/services/retirement-bench.png",
+          "title": "Strategic Investment Frameworks (SIF)",
+          "description": "Disciplined multi-asset strategies designed to compound wealth across multiple economic cycles."
+        }
+      ],
+      "processSteps": [
+        {
+          "step": 1,
+          "title": "Diagnostics & Consolidation",
+          "description": "Extract statements, identify asset allocation drift, and quantify expense drag."
+        },
+        {
+          "step": 2,
+          "title": "Mandate & Horizon Setting",
+          "description": "Define targeted milestones, liquidity buffers, and return expectations."
+        },
+        {
+          "step": 3,
+          "title": "Strategy Implementation",
+          "description": "Deploy capital methodically across vetted investment vehicles."
+        },
+        {
+          "step": 4,
+          "title": "Rebalancing & Review",
+          "description": "Continuous monitoring and periodic rebalancing to maintain optimal risk-return posture."
+        }
+      ],
+      "ctaHeading": "Build a Resilient Investment Portfolio",
+      "ctaButtonText": "Request Portfolio Consultation",
+      "ctaButtonUrl": "/consultation?service=investment-solutions",
+      "seoTitle": "Investment Solutions & Portfolio Advisory | Vantage Wealth",
+      "seoDescription": "Institutional portfolio advisory, asset allocation, and wealth solutions across mutual funds, PMS, and AIFs.",
+      "ogImage": "/images/services/investment-advisory-hero.png",
+      "status": "PUBLISHED",
+      "displayOrder": 2,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z"
+    },
+    {
+      "id": "srv_tax_advisory",
+      "slug": "tax-advisory",
+      "title": "Tax Advisory & Tax Compliance",
+      "shortDesc": "Make informed tax decisions through legitimate tax planning, tax optimisation, income tax return preparation and filing assistance.",
+      "fullDesc": "Navigate complex direct and indirect tax landscapes with clarity. We integrate tax planning into your broader wealth roadmap, ensuring legitimate optimization, capital gains harmonization, and meticulous statutory filing compliance.",
+      "heroHeading": "Tax Advisory & Tax Compliance",
+      "heroSubtext": "Navigate income tax regulations with confidence through legitimate tax planning strategies, compliance support and filing assistance.",
+      "heroImage": "/images/services/tax-planning.png",
+      "thumbnailImage": "/images/services/tax-planning.png",
+      "iconName": "FileText",
+      "benefits": [
+        {
+          "icon": "FileText",
+          "title": "Legitimate Optimization",
+          "description": "Identify lawful deductions, exemptions, and structuring benefits across asset classes."
+        },
+        {
+          "icon": "TrendingUp",
+          "title": "Capital Gains Efficiency",
+          "description": "Coordinate realization timing and harvesting strategies to minimize tax drag."
+        },
+        {
+          "icon": "CheckCircle2",
+          "title": "Meticulous Compliance",
+          "description": "Error-free documentation, return preparation, and timely filing support."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Regulatory Certainty",
+          "description": "Proactive alignment with direct tax updates, finance acts, and CBDT guidelines."
+        }
+      ],
+      "features": [
+        {
+          "icon": "User",
+          "image": "/images/services/tax-planning.png",
+          "title": "Personal & HNI Tax Advisory",
+          "description": "Comprehensive tax structuring for business founders, corporate executives, and family offices."
+        },
+        {
+          "icon": "TrendingUp",
+          "image": "/images/services/investment-advisory.png",
+          "title": "Capital Gains Optimization",
+          "description": "Strategic planning for equity divestments, property transactions, and portfolio restructuring."
+        },
+        {
+          "icon": "Briefcase",
+          "image": "/images/services/loans.png",
+          "title": "Entity & Holding Structuring",
+          "description": "Advisory on corporate structures, trusts, and LLPs to optimize effective tax rates."
+        },
+        {
+          "icon": "ClipboardList",
+          "image": "/images/services/wealth-protection.png",
+          "title": "Return Preparation & Filing Support",
+          "description": "Seamless income tax return preparation and verified electronic submission."
+        }
+      ],
+      "processSteps": [
+        {
+          "step": 1,
+          "title": "Tax Exposure Review",
+          "description": "Examine income streams, existing deductions, capital gains, and historical filings."
+        },
+        {
+          "step": 2,
+          "title": "Strategy Architecture",
+          "description": "Formulate tax-efficient pathways aligned with direct tax provisions."
+        },
+        {
+          "step": 3,
+          "title": "Implementation Guidance",
+          "description": "Coordinate portfolio moves and documentation to execute approved strategies."
+        },
+        {
+          "step": 4,
+          "title": "Filing & Annual Maintenance",
+          "description": "Prepare tax returns, verify AIS/TIS data, and manage annual reporting requirements."
+        }
+      ],
+      "ctaHeading": "Optimize Your After-Tax Financial Health",
+      "ctaButtonText": "Consult a Tax Specialist",
+      "ctaButtonUrl": "/consultation?service=tax-advisory",
+      "seoTitle": "Tax Advisory & Tax Compliance | Vantage Wealth",
+      "seoDescription": "Legitimate tax optimization, capital gains planning, and income tax return preparation for families and business owners.",
+      "ogImage": "/images/services/tax-planning.png",
+      "status": "PUBLISHED",
+      "displayOrder": 3,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z"
+    },
+    {
+      "id": "srv_strategic_financing",
+      "slug": "strategic-financing",
+      "title": "Strategic Financing & Liability Solutions",
+      "shortDesc": "Evaluate suitable borrowing, refinancing and liquidity options to support personal financial requirements and optimise capital utilisation.",
+      "fullDesc": "Unlock liquidity and optimize your liability balance sheet without disrupting long-term compounding. We evaluate borrowing structures, refinance high-cost debt, and negotiate institutional terms aligned with your cash flow profile.",
+      "heroHeading": "Strategic Financing & Liability Solutions",
+      "heroSubtext": "Explore tailored financing structures, liquidity facilities and debt consolidation options to support your capital requirements.",
+      "heroImage": "/images/services/loans.png",
+      "thumbnailImage": "/images/services/loans.png",
+      "iconName": "Briefcase",
+      "benefits": [
+        {
+          "icon": "Briefcase",
+          "title": "Liquidity Without Divestment",
+          "description": "Access immediate funds while keeping long-term investment assets invested."
+        },
+        {
+          "icon": "TrendingUp",
+          "title": "Cost of Capital Optimization",
+          "description": "Structure loans to lower borrowing costs and eliminate unnecessary interest burdens."
+        },
+        {
+          "icon": "Layers",
+          "title": "Cash Flow Relief",
+          "description": "Consolidate scattered liabilities into predictable, structured repayment schedules."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Institutional Negotiation",
+          "description": "Leverage our market relationships for institutional rates and favorable loan covenants."
+        }
+      ],
+      "features": [
+        {
+          "icon": "TrendingUp",
+          "image": "/images/services/loans.png",
+          "title": "Loan Against Securities (LAS)",
+          "description": "Borrow against equity, mutual funds, or bonds without triggering taxable capital gains."
+        },
+        {
+          "icon": "Home",
+          "image": "/images/services/wealth-protection.png",
+          "title": "Loan Against Property (LAP)",
+          "description": "Long-tenure, competitive financing secured against residential or commercial real estate."
+        },
+        {
+          "icon": "Layers",
+          "image": "/images/services/tax-planning.png",
+          "title": "Liability Refinancing & Consolidation",
+          "description": "Restructure expensive, fragmented debts into clean, lower-interest credit lines."
+        },
+        {
+          "icon": "Briefcase",
+          "image": "/images/services/chess-king.png",
+          "title": "Custom Liquidity Facilities",
+          "description": "Bespoke working capital solutions tailored for business expansions and liquidity bridges."
+        }
+      ],
+      "processSteps": [
+        {
+          "step": 1,
+          "title": "Liability Evaluation",
+          "description": "Assess current borrowing terms, cost of debt, and available collateral."
+        },
+        {
+          "step": 2,
+          "title": "Financing Architecture",
+          "description": "Model borrowing alternatives comparing interest rates, tenure, and covenants."
+        },
+        {
+          "step": 3,
+          "title": "Lender Negotiation",
+          "description": "Facilitate competitive proposals from premier banking and NBFC partners."
+        },
+        {
+          "step": 4,
+          "title": "Disbursement & Oversight",
+          "description": "Coordinate loan documentation, smooth disbursement, and ongoing debt servicing."
+        }
+      ],
+      "ctaHeading": "Optimize Your Capital & Liquidity Structure",
+      "ctaButtonText": "Discuss Financing Options",
+      "ctaButtonUrl": "/consultation?service=strategic-financing",
+      "seoTitle": "Strategic Financing & Liability Solutions | Vantage Wealth",
+      "seoDescription": "Evaluate strategic borrowing, loan against securities, LAP, and debt refinancing solutions with Vantage Wealth.",
+      "ogImage": "/images/services/loans.png",
+      "status": "PUBLISHED",
+      "displayOrder": 4,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z"
+    },
+    {
+      "id": "srv_retirement_planning",
+      "slug": "retirement-planning",
+      "title": "Retirement Planning",
+      "shortDesc": "Estimate retirement requirements, assess potential shortfalls and explore sustainable retirement income strategies.",
+      "fullDesc": "Plan for complete financial independence in your golden years. We calculate realistic post-retirement living expenses adjusted for inflation, evaluate potential corpus gaps, and architect multi-layered distribution strategies that endure across decades.",
+      "heroHeading": "Retirement Planning & Readiness",
+      "heroSubtext": "Evaluate retirement readiness, calculate future income needs and build a structured plan for long-term financial independence.",
+      "heroImage": "/images/services/retirement-bench.png",
+      "thumbnailImage": "/images/services/retirement-planning.png",
+      "iconName": "Sprout",
+      "benefits": [
+        {
+          "icon": "Sprout",
+          "title": "Inflation-Adjusted Modeling",
+          "description": "Accurately account for living cost increases and rising healthcare expenditure over decades."
+        },
+        {
+          "icon": "Target",
+          "title": "Corpus Gap Analysis",
+          "description": "Quantify exact accumulation targets and determine necessary monthly savings rates."
+        },
+        {
+          "icon": "Layers",
+          "title": "Sustainable Cash Flows",
+          "description": "Engineer multi-tier cash distribution architectures to ensure lifetime financial dignity."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Longevity Protection",
+          "description": "Insulate your wealth from sequence-of-returns risk and outliving your capital reserves."
+        }
+      ],
+      "features": [
+        {
+          "icon": "Armchair",
+          "image": "/images/services/retirement-bench.png",
+          "title": "Retirement Corpus Calculation",
+          "description": "Bespoke mathematical projections calibrated to your targeted lifestyle and retirement age."
+        },
+        {
+          "icon": "TrendingUp",
+          "image": "/images/services/retirement-planning.png",
+          "title": "Systematic Withdrawal Strategies (SWP)",
+          "description": "Tax-efficient monthly cash flow mechanisms structured from liquid asset portfolios."
+        },
+        {
+          "icon": "ShieldCheck",
+          "image": "/images/services/wealth-protection.png",
+          "title": "Guaranteed Annuities & Fixed Income",
+          "description": "Institutional guaranteed pension mechanisms to establish an unshakeable income floor."
+        },
+        {
+          "icon": "Compass",
+          "image": "/images/services/family-wealth-legacy.png",
+          "title": "Post-Retirement Healthcare Reserves",
+          "description": "Dedicated medical contingency planning to preserve primary income-producing assets."
+        }
+      ],
+      "processSteps": [
+        {
+          "step": 1,
+          "title": "Lifestyle & Needs Definition",
+          "description": "Map anticipated retirement age, geographic living preferences, and recurring cash needs."
+        },
+        {
+          "step": 2,
+          "title": "Readiness Stress Test",
+          "description": "Simulate inflation, market downturns, and longevity scenarios against existing assets."
+        },
+        {
+          "step": 3,
+          "title": "Portfolio Stratification",
+          "description": "Segment assets into growth, capital preservation, and immediate liquidity buckets."
+        },
+        {
+          "step": 4,
+          "title": "Ongoing Retirement Tracking",
+          "description": "Conduct annual reviews to track accumulation and adjust for life milestones."
+        }
+      ],
+      "ctaHeading": "Secure Your Financial Independence in Retirement",
+      "ctaButtonText": "Start Retirement Planning",
+      "ctaButtonUrl": "/consultation?service=retirement-planning",
+      "seoTitle": "Retirement Planning & Readiness | Vantage Wealth",
+      "seoDescription": "Estimate retirement corpus needs, assess shortfalls, and build sustainable income strategies for life.",
+      "ogImage": "/images/services/retirement-bench.png",
+      "status": "PUBLISHED",
+      "displayOrder": 5,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z"
+    },
+    {
+      "id": "srv_portfolio_reviews",
+      "slug": "portfolio-reviews",
+      "title": "Ongoing Portfolio Reviews",
+      "shortDesc": "Keep your financial strategy aligned through structured half-yearly reviews, event-driven assessments and portfolio rebalancing discussions.",
+      "fullDesc": "A structured, ongoing governance mechanism to ensure your wealth architecture responds dynamically to market cycles and personal transitions. We provide institutional surveillance, disciplined rebalancing, and transparent progress benchmarking.",
+      "heroHeading": "Structured Portfolio Reviews & Strategy Alignment",
+      "heroSubtext": "Regular portfolio assessments and strategic reviews to keep your financial arrangements aligned with evolving markets and life milestones.",
+      "heroImage": "/images/services/chess-king.png",
+      "thumbnailImage": "/images/services/wealth-planning.png",
+      "iconName": "Target",
+      "benefits": [
+        {
+          "icon": "Target",
+          "title": "Disciplined Surveillance",
+          "description": "Ongoing evaluation of manager performance, style consistency, and risk factors."
+        },
+        {
+          "icon": "RotateCcw",
+          "title": "Objective Rebalancing",
+          "description": "Systematically trim inflated asset classes and reallocate into undervalued opportunities."
+        },
+        {
+          "icon": "Users",
+          "title": "Event-Driven Alignment",
+          "description": "Proactively adapt allocations following career moves, family events, or liquidity changes."
+        },
+        {
+          "icon": "TrendingUp",
+          "title": "Tax Drag Management",
+          "description": "Harvest losses strategically and optimize realization schedules to protect net gains."
+        }
+      ],
+      "features": [
+        {
+          "icon": "ClipboardList",
+          "image": "/images/services/chess-king.png",
+          "title": "Half-Yearly Governance Reviews",
+          "description": "Formal 360-degree review of performance, risk metrics, and asset distribution."
+        },
+        {
+          "icon": "BarChart3",
+          "image": "/images/services/wealth-planning.png",
+          "title": "Stress Testing & Risk Analytics",
+          "description": "Simulate how your portfolio responds to volatility, interest rate shifts, and drawdowns."
+        },
+        {
+          "icon": "TrendingUp",
+          "image": "/images/services/tax-planning.png",
+          "title": "Tax-Loss Harvesting Checkpoints",
+          "description": "Systematic reviews to capture offsetting capital losses and minimize annual tax liabilities."
+        },
+        {
+          "icon": "Compass",
+          "image": "/images/services/investment-advisory.png",
+          "title": "Milestone & Horizon Recalibration",
+          "description": "Realign target asset weights as target realization dates and life milestones draw near."
+        }
+      ],
+      "processSteps": [
+        {
+          "step": 1,
+          "title": "Portfolio Consolidation",
+          "description": "Extract latest valuations, cash flows, and performance data across accounts."
+        },
+        {
+          "step": 2,
+          "title": "Deviation Analysis",
+          "description": "Compare actual portfolio weights against target asset allocation mandates."
+        },
+        {
+          "step": 3,
+          "title": "Strategy Discussion",
+          "description": "Review findings, analyze economic outlook, and discuss recommended portfolio adjustments."
+        },
+        {
+          "step": 4,
+          "title": "Orderly Realignment",
+          "description": "Execute approved adjustments with full tax sensitivity and monitor performance."
+        }
+      ],
+      "ctaHeading": "Keep Your Financial Roadmap on Course",
+      "ctaButtonText": "Schedule a Portfolio Review",
+      "ctaButtonUrl": "/consultation?service=portfolio-reviews",
+      "seoTitle": "Ongoing Portfolio Reviews & Strategy Alignment | Vantage Wealth",
+      "seoDescription": "Half-yearly portfolio reviews, risk diagnostics, and disciplined rebalancing with Vantage Wealth advisors.",
+      "ogImage": "/images/services/chess-king.png",
+      "status": "PUBLISHED",
+      "displayOrder": 6,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z"
+    }
+  ],
+  "settings": {
+    "companyName": "Vantage Wealth",
+    "tagline": "A Clearer Perspective on Your Wealth",
+    "phone": "+91 98765 43210",
+    "email": "hello@vantagewealth.in",
+    "address": "New Delhi, India",
+    "consultationUrl": "/consultation",
+    "copyrightNotice": "© Vantage Wealth. All rights reserved."
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "members": [
+    {
+      "id": "founder-vineet-gupta",
+      "name": "Mr. Vineet Gupta",
+      "slug": "vineet-gupta",
+      "roleType": "FOUNDER",
+      "designation": "Founder & Principal Advisor",
+      "bio": "Vineet Gupta is the founder of Vantage Wealth with a deep passion for helping individuals and families achieve their financial goals. With a strong foundation in financial markets and wealth advisory, he brings a disciplined, long-term and client-centric approach to wealth management.\n\nUnder his leadership, Vantage Wealth operates with uncompromising integrity, ensuring that each portfolio architecture is custom-tailored to the specific risk parameters, liquidity requirements, and multi-generational vision of the families we advise.  \n\nNew paragraph content...",
+      "photoUrl": "/images/about/founder-vineet-gupta.png",
+      "experienceYears": "15+ Years",
+      "credentials": null,
+      "linkedInUrl": null,
+      "email": null,
+      "status": "PUBLISHED",
+      "displayOrder": 0,
+      "createdAt": "2026-11-06T00:14:18.120Z",
+      "updatedAt": "2026-11-05T19:15:33.295Z"
+    }
+  ]
+}

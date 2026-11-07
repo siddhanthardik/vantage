@@ -1,0 +1,477 @@
+// Prisma schema for Vantage Wealth
+// Comprehensive Wealth Solutions, Insights & Enquiries CMS
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ServiceStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}
+
+enum EnquiryType {
+  CONTACT
+  CONSULTATION
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  ARCHIVED
+}
+
+enum AdminRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum StorageType {
+  LOCAL
+  R2
+}
+
+model Service {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  shortDesc       String
+  fullDesc        String?       @db.Text
+  heroHeading     String?
+  heroSubtext     String?
+  heroImage       String?
+  thumbnailImage  String?
+  iconName        String?       @default("LineChart")
+  benefits        Json?         // [{ title, description, icon }]
+  features        Json?         // [{ title, description, image, icon }]
+  processSteps    Json?         // [{ step, title, description }]
+  contentSections Json?         // [{ heading, body, image, order }]
+  ctaHeading      String?
+  ctaButtonText   String?
+  ctaButtonUrl    String?
+  seoTitle        String?
+  seoDescription  String?
+  ogImage         String?
+  status          ServiceStatus @default(DRAFT)
+  displayOrder    Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status, displayOrder])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  articles    Article[]
+}
+
+model Tag {
+  id        String       @id @default(cuid())
+  name      String       @unique
+  slug      String       @unique
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  articles  ArticleTag[]
+}
+
+model Article {
+  id             String            @id @default(cuid())
+  slug           String            @unique
+  title          String
+  excerpt        String
+  content        String            @db.Text
+  categoryName   String            @default("Wealth Planning")
+  categoryId     String?
+  category       Category?         @relation(fields: [categoryId], references: [id])
+  readTime       String            @default("5 min read")
+  coverImage     String?
+  ogImage        String?
+  authorName     String            @default("Vantage Research Desk")
+  isFeatured     Boolean           @default(false)
+  status         ArticleStatus     @default(PUBLISHED)
+  publishedAt    DateTime          @default(now())
+  scheduledFor   DateTime?
+  seoTitle       String?
+  seoDescription String?
+  tags           ArticleTag[]
+  revisions      ArticleRevision[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([categoryName])
+  @@index([categoryId])
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+}
+
+model ArticleRevision {
+  id             String   @id @default(cuid())
+  articleId      String
+  article        Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  version        Int
+  title          String
+  excerpt        String
+  content        String   @db.Text
+  seoTitle       String?
+  seoDescription String?
+  authorEmail    String?
+  createdAt      DateTime @default(now())
+
+  @@index([articleId, version])
+}
+
+model Enquiry {
+  id                String        @id @default(cuid())
+  type              EnquiryType   @default(CONTACT)
+  fullName          String
+  email             String
+  phone             String
+  serviceSlug       String?
+  preferredMode     String?       @default("ONLINE") // "ONLINE" or "IN_PERSON"
+  preferredDate     String?
+  preferredTime     String?
+  subject           String?
+  message           String        @db.Text
+  status            EnquiryStatus @default(NEW)
+  ipAddress         String?
+  turnstileVerified Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  // Chatbot relations
+  chatLead          ChatLead?
+
+  @@index([type, status])
+  @@index([createdAt])
+}
+
+model AdminUser {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  role         AdminRole  @default(ADMIN)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
+  leadEvents   ChatLeadEvent[]
+}
+
+model AuditLog {
+  id         String     @id @default(cuid())
+  action     String     // e.g. "ARTICLE_CREATE", "ARTICLE_UPDATE", "SERVICE_UPDATE", "LOGIN_SUCCESS"
+  entityType String     // e.g. "ARTICLE", "SERVICE", "AUTH", "MEDIA", "ENQUIRY"
+  entityId   String?
+  userEmail  String?
+  userId     String?
+  user       AdminUser? @relation(fields: [userId], references: [id])
+  ipAddress  String?
+  details    Json?
+  createdAt  DateTime   @default(now())
+
+  @@index([action, createdAt])
+  @@index([entityType, entityId])
+}
+
+model MediaItem {
+  id           String      @id @default(cuid())
+  filename     String      @unique
+  originalName String
+  url          String
+  mimeType     String
+  sizeBytes    Int
+  storageType  StorageType @default(LOCAL)
+  altText      String?
+  width        Int?
+  height       Int?
+  createdAt    DateTime    @default(now())
+
+  @@index([mimeType])
+  @@index([createdAt])
+}
+
+model BusinessSettings {
+  id                String   @id @default("default")
+  companyName       String   @default("Vantage Wealth")
+  tagline           String   @default("A Clearer Perspective on Your Wealth")
+  phone             String   @default("+91 98765 43210")
+  email             String   @default("hello@vantagewealth.in")
+  address           String   @default("New Delhi, India")
+  consultationUrl   String   @default("/consultation")
+  copyrightNotice   String   @default("© Vantage Wealth. All rights reserved.")
+
+  // Homepage Hero CMS Configuration
+  heroHeading       String   @default("A Clearer Perspective on Your Wealth.")
+  heroSubheading    String   @default("Integrated financial solutions to help you grow, protect and preserve your wealth.")
+  heroNarrative     String   @default("At Vantage Wealth, we bring together investment solutions, financial protection, strategic financing, tax planning and retirement planning to help individuals and families make informed financial decisions.\n\nOur integrated approach is guided by three principles: Protect. Perform. Preserve.") @db.Text
+  heroImageUrl      String   @default("/images/home/hero-advisory.png")
+  heroImageAlt      String   @default("Vantage Wealth Senior Advisory Counsel")
+  heroImagePosition String   @default("object-center")
+  heroCtaText       String   @default("Book a Consultation")
+  heroCtaUrl        String   @default("/consultation")
+
+  updatedAt         DateTime @updatedAt
+}
+
+enum MemberRole {
+  FOUNDER
+  TEAM
+}
+
+enum MemberStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model TeamMember {
+  id              String       @id @default(cuid())
+  name            String
+  slug            String       @unique
+  roleType        MemberRole   @default(TEAM)
+  designation     String
+  bio             String       @db.Text
+  photoUrl        String?
+  experienceYears String?
+  credentials     String?
+  linkedInUrl     String?
+  email           String?
+  status          MemberStatus @default(PUBLISHED)
+  displayOrder    Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([roleType, status, displayOrder])
+}
+
+// ============================================================================
+// VANTAGE WEALTH ASSISTANT — PHASE 2 CHATBOT & KNOWLEDGE ENGINE
+// ============================================================================
+
+enum ConversationStatus {
+  ACTIVE
+  ENDED
+  EXPIRED
+  CONVERTED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum LeadQualificationStatus {
+  COLLECTING
+  QUALIFIED
+  CALLBACK_REQUESTED
+  CONVERTED_TO_ENQUIRY
+  DISQUALIFIED
+}
+
+enum CallbackPreferredMethod {
+  PHONE
+  EMAIL
+}
+
+enum KnowledgeSourceType {
+  SERVICE_PAGE
+  INSIGHT_ARTICLE
+  TEAM_PROFILE
+  STATIC_FAQ
+  DISCLAIMER_LEGAL
+}
+
+model ChatConversation {
+  id                 String             @id @default(cuid())
+  anonymousSessionId String             @db.VarChar(128)
+  status             ConversationStatus @default(ACTIVE)
+  language           String             @default("en") @db.VarChar(10) // "en", "hi", "hinglish"
+  messageCount       Int                @default(0)
+  lastUserMessageAt  DateTime?
+  expiresAt          DateTime
+  ipHash             String?            @db.VarChar(64)
+  userAgent          String?            @db.VarChar(512)
+  metadata           Json?              @default("{}")
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  messages           ChatMessage[]
+  lead               ChatLead?
+
+  @@index([anonymousSessionId, status, createdAt])
+  @@index([status, updatedAt])
+  @@map("chat_conversations")
+}
+
+model ChatMessage {
+  id             String           @id @default(cuid())
+  conversationId String
+  role           MessageRole
+  content        String           @db.Text
+  tokenCount     Int?
+  language       String?          @db.VarChar(10)
+  citations      Json?            // Array of referenced KnowledgeChunk IDs
+  isFlagged      Boolean          @default(false)
+  flagReason     String?          @db.VarChar(255)
+  createdAt      DateTime         @default(now())
+
+  conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  feedback       ChatbotFeedback?
+
+  @@index([conversationId, createdAt])
+  @@map("chat_messages")
+}
+
+model ChatbotFeedback {
+  id         String       @id @default(cuid())
+  messageId  String?      @unique
+  rating     Int          // 1 (Negative) or 5 (Positive)
+  comment    String?      @db.VarChar(500)
+  createdAt  DateTime     @default(now())
+
+  message    ChatMessage? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+
+  @@map("chatbot_feedback")
+}
+
+model ChatLead {
+  id                  String                  @id @default(cuid())
+  conversationId      String                  @unique
+  status              LeadQualificationStatus @default(COLLECTING)
+
+  // Progressive contact and profile fields
+  fullName            String?                 @db.VarChar(120)
+  email               String?                 @db.VarChar(191)
+  phone               String?                 @db.VarChar(32)
+  preferredMethod     CallbackPreferredMethod @default(PHONE)
+  preferredTimeWindow String?                 @db.VarChar(100)
+  financialObjective  String?                 @db.VarChar(255)
+  portfolioSize       String?                 @db.VarChar(64)
+  notes               String?                 @db.Text
+
+  // Consent and compliance tracking
+  consentGiven        Boolean                 @default(false)
+  consentTimestamp    DateTime?
+  consentIpHash       String?                 @db.VarChar(64)
+
+  // Link to operational Enquiry table (onDelete: SetNull so lead survives Enquiry deletion)
+  enquiryId           String?                 @unique
+
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  conversation        ChatConversation        @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+  enquiry             Enquiry?                @relation(fields: [enquiryId], references: [id], onDelete: SetNull)
+  events              ChatLeadEvent[]
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([phone])
+  @@map("chat_leads")
+}
+
+model ChatLeadEvent {
+  id          String     @id @default(cuid())
+  leadId      String
+  adminUserId String?
+  eventType   String     @db.VarChar(64) // e.g. "STATUS_CHANGE", "NOTE_ADDED", "ENQUIRY_LINKED"
+  metadata    Json?      @default("{}")
+  createdAt   DateTime   @default(now())
+
+  lead        ChatLead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+
+  @@index([leadId, createdAt])
+  @@index([adminUserId])
+  @@map("chat_lead_events")
+}
+
+model KnowledgeChunk {
+  id                String              @id @default(cuid())
+  sourceType        KnowledgeSourceType
+  sourceId          String?             @db.VarChar(128)
+  title             String              @db.VarChar(255)
+  slug              String?             @db.VarChar(255)
+  language          String              @default("en") @db.VarChar(10) // "en", "hi", "hinglish"
+  content           String              @db.Text
+  normalizedContent String?             @db.Text
+  tokens            Int?
+  keywords          String[]            @default([])
+  aliases           String[]            @default([])
+  isActive          Boolean             @default(true)
+  lastSyncedAt      DateTime            @default(now())
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@index([sourceType, language, isActive])
+  @@index([slug])
+  @@map("knowledge_chunks")
+}
+
+model ChatbotSettings {
+  id                          String   @id @default("default")
+  botName                     String   @default("Vantage Wealth Assistant")
+  isEnabled                   Boolean  @default(true)
+  welcomeMessageEn            String   @db.Text
+  welcomeMessageHi            String   @db.Text
+  disclaimerEn                String   @db.Text
+  disclaimerHi                String   @db.Text
+  systemInstructions          String?  @db.Text
+  salesInstructions           String?  @db.Text
+  qualificationInstructions   String?  @db.Text
+  financialSafetyInstructions String?  @db.Text
+  supportedLanguages          String[] @default(["en", "hi", "hinglish"])
+  workingDays                 String[] @default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
+  workingHoursStart           String   @default("09:30")
+  workingHoursEnd             String   @default("18:30")
+  timezone                    String   @default("Asia/Kolkata")
+  holidays                    Json?    @default("[]")
+  temporaryUnavailable        Boolean  @default(false)
+  unavailabilityReason        String?  @db.VarChar(255)
+  callbackWording             String   @db.Text
+  maxTurnsPerSession          Int      @default(30)
+  rateLimitPerMinute          Int      @default(8)
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  @@map("chatbot_settings")
+}
+
+model ChatRateLimitBucket {
+  key       String   @id @db.VarChar(128)
+  count     Int      @default(1)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@map("chat_rate_limit_buckets")
+}

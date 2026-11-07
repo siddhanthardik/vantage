@@ -1,26 +1,245 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F7F5F0;
+  --foreground: #172B46;
+
+  /* Approved Brand Colors */
+  --navy: #172B46;
+  --navy-dark: #0D1929;
+  --navy-light: #243D60;
+  --gold: #B08D57;
+  --gold-light: #C9A975;
+  --gold-dark: #91703E;
+  --ivory: #F7F5F0;
+  --ivory-light: #FDFAF5;
+  --border-subtle: #E5DFD5;
+
+  /* Public Website Typography Tokens (Manrope exclusively) */
+  /* Hero H1: 42–48px, weight 600 */
+  --font-size-public-h1: clamp(2.625rem, 3.5vw, 3rem); /* 42px to 48px */
+  /* Section H2: 30–34px, weight 600 */
+  --font-size-public-h2: clamp(1.875rem, 2.4vw, 2.125rem); /* 30px to 34px */
+  /* H3: 22–24px, weight 600 */
+  --font-size-public-h3: clamp(1.375rem, 1.8vw, 1.5rem); /* 22px to 24px */
+  /* Card headings: 18–20px, weight 600 */
+  --font-size-public-card: clamp(1.125rem, 1.4vw, 1.25rem); /* 18px to 20px */
+  /* Body: 16px, weight 400 */
+  --font-size-public-body: 1rem; /* 16px */
+  /* Navigation & Small: 14px */
+  --font-size-public-nav: 0.875rem; /* 14px */
+  --font-size-public-small: 0.875rem; /* 14px */
+  /* Footer headings: 18px, weight 600 */
+  --font-size-public-footer-h: 1.125rem; /* 18px */
+  /* Footer links: 14px, weight 400 */
+  --font-size-public-footer-link: 0.875rem; /* 14px */
+
+  /* Admin Dashboard Typography Tokens (Manrope exclusively) */
+  /* Page headings: 28–30px, weight 600 */
+  --font-size-admin-page-title: clamp(1.75rem, 2vw, 1.875rem); /* 28px to 30px */
+  /* Section headings: 20–22px, weight 600 */
+  --font-size-admin-section-title: clamp(1.25rem, 1.5vw, 1.375rem); /* 20px to 22px */
+  /* Card headings: 17–18px, weight 600 */
+  --font-size-admin-card-title: clamp(1.0625rem, 1.2vw, 1.125rem); /* 17px to 18px */
+  /* Body: 14–15px, weight 400 */
+  --font-size-admin-body: 0.90625rem; /* 14.5px */
+  /* Tables: 13–14px */
+  --font-size-admin-table: 0.84375rem; /* 13.5px */
+  /* Labels & metadata: 12–13px, weight 500 */
+  --font-size-admin-label: 0.78125rem; /* 12.5px */
+  /* Buttons: 13–14px, weight 600 */
+  --font-size-admin-btn: 0.84375rem; /* 13.5px */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  --color-navy: #172B46;
+  --color-navy-dark: #0D1929;
+  --color-navy-light: #243D60;
+  --color-gold: #B08D57;
+  --color-gold-light: #C9A975;
+  --color-gold-dark: #91703E;
+  --color-ivory: #F7F5F0;
+  --color-ivory-light: #FDFAF5;
+  --color-border-subtle: #E5DFD5;
+
+  /* Global Font: Manrope exclusively */
+  --font-sans: var(--font-sans), "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-sans), "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: var(--font-sans), "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
-  background: var(--background);
+  font-family: var(--font-sans), "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+}
+
+/* Explicit global font enforcement: Manrope exclusively across all elements */
+button, input, optgroup, select, textarea,
+h1, h2, h3, h4, h5, h6, p, a, span, li, dt, dd, th, td {
+  font-family: var(--font-sans), "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Base HTML Heading Typography Hierarchy */
+h1 {
+  font-size: var(--font-size-public-h1);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: var(--font-size-public-h2);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: var(--font-size-public-h3);
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: var(--font-size-public-card);
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+h5 {
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+h6 {
+  font-size: 0.875rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+p {
+  font-size: var(--font-size-public-body);
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+/* Public Website Typography Helper Classes */
+.public-h1 {
+  font-size: var(--font-size-public-h1);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+.public-h2 {
+  font-size: var(--font-size-public-h2);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.public-h3 {
+  font-size: var(--font-size-public-h3);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
+
+.public-card-title {
+  font-size: var(--font-size-public-card);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.public-body {
+  font-size: var(--font-size-public-body);
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+.public-small {
+  font-size: var(--font-size-public-small);
+  line-height: 1.55;
+}
+
+.text-overline,
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+}
+
+/* Admin Dashboard Specific Typography Hierarchy */
+.admin-portal h1,
+.admin-page-title {
+  font-size: var(--font-size-admin-page-title);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.admin-portal h2,
+.admin-section-title {
+  font-size: var(--font-size-admin-section-title);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.admin-portal h3,
+.admin-card-title {
+  font-size: var(--font-size-admin-card-title);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.admin-portal h4,
+.admin-label {
+  font-size: var(--font-size-admin-label);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.admin-portal p,
+.admin-body {
+  font-size: var(--font-size-admin-body);
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.admin-portal table,
+.admin-portal th,
+.admin-portal td,
+.admin-table-text {
+  font-size: var(--font-size-admin-table);
+}
+
+.admin-portal button,
+.admin-btn {
+  font-size: var(--font-size-admin-btn);
+  font-weight: 600;
+}
+
+/* Unobtrusive scrollbar utility for dashboard navigation */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
