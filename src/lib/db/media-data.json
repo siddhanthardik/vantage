@@ -1,6 +1,19 @@
 {
   "media": [
     {
+      "id": "med_1794085471921_jn54x",
+      "filename": "hero-advisory-8ecb4ec6c022.png",
+      "originalName": "hero-advisory.png",
+      "url": "/uploads/hero-advisory-8ecb4ec6c022.png",
+      "mimeType": "image/png",
+      "sizeBytes": 1970820,
+      "storageType": "LOCAL",
+      "altText": "Vantage Wealth Senior Advisory Counsel",
+      "width": null,
+      "height": null,
+      "createdAt": "2026-11-07T21:04:31.921Z"
+    },
+    {
       "id": "med_1794083184453_w5ksn",
       "filename": "hero-advisory-e48b1e1bfb57.png",
       "originalName": "hero-advisory.png",

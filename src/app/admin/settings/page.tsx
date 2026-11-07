@@ -39,8 +39,7 @@ export default function AdminSettingsPage() {
     copyrightNotice: "",
     heroHeading: "A Clearer Perspective on Your Wealth.",
     heroSubheading: "Integrated financial solutions to help you grow, protect and preserve your wealth.",
-    heroNarrative:
-      "At Vantage Wealth, we bring together investment solutions, financial protection, strategic financing, tax planning and retirement planning to help individuals and families make informed financial decisions.\n\nOur integrated approach is guided by three principles: Protect. Perform. Preserve.",
+    heroNarrative: "",
     heroImageUrl: "/images/home/hero-advisory.png",
     heroImageAlt: "Vantage Wealth Senior Advisory Counsel",
     heroImagePosition: "object-center",
@@ -79,9 +78,7 @@ export default function AdminSettingsPage() {
             heroSubheading:
               data.settings.heroSubheading ||
               "Integrated financial solutions to help you grow, protect and preserve your wealth.",
-            heroNarrative:
-              data.settings.heroNarrative ||
-              "At Vantage Wealth, we bring together investment solutions, financial protection, strategic financing, tax planning and retirement planning to help individuals and families make informed financial decisions.\n\nOur integrated approach is guided by three principles: Protect. Perform. Preserve.",
+            heroNarrative: data.settings.heroNarrative ?? "",
             heroImageUrl: data.settings.heroImageUrl || "/images/home/hero-advisory.png",
             heroImageAlt: data.settings.heroImageAlt || "Vantage Wealth Senior Advisory Counsel",
             heroImagePosition: data.settings.heroImagePosition || "object-center",

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { requireAdminAuth } from "@/lib/auth/guard";
 import { getBusinessSettings, updateBusinessSettings } from "@/server/repositories/serviceRepository";
 import { logAuditEvent } from "@/lib/security/audit";
@@ -27,6 +28,9 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
     const updated = await updateBusinessSettings(body);
+
+    revalidateTag("business-settings", "max");
+    revalidatePath("/", "layout");
 
     await logAuditEvent({
       action: "SETTINGS_UPDATED",

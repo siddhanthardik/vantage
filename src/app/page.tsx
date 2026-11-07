@@ -177,14 +177,14 @@ export default async function HomePage() {
 
   const heroHeading = settings.heroHeading || DEFAULT_BUSINESS_SETTINGS.heroHeading || "A Clearer Perspective on Your Wealth.";
   const heroSubheading = settings.heroSubheading || DEFAULT_BUSINESS_SETTINGS.heroSubheading || "Integrated financial solutions to help you grow, protect and preserve your wealth.";
-  const heroNarrative = settings.heroNarrative || DEFAULT_BUSINESS_SETTINGS.heroNarrative || "";
+  const heroNarrative = settings.heroNarrative ?? "";
   const heroImageUrl = settings.heroImageUrl || DEFAULT_BUSINESS_SETTINGS.heroImageUrl || "/images/home/hero-advisory.png";
   const heroImageAlt = settings.heroImageAlt || DEFAULT_BUSINESS_SETTINGS.heroImageAlt || "Vantage Wealth Senior Advisory Counsel";
   const heroImagePosition = settings.heroImagePosition || DEFAULT_BUSINESS_SETTINGS.heroImagePosition || "object-center";
   const heroCtaText = settings.heroCtaText || DEFAULT_BUSINESS_SETTINGS.heroCtaText || "Book a Consultation";
   const heroCtaUrl = settings.heroCtaUrl || DEFAULT_BUSINESS_SETTINGS.heroCtaUrl || "/consultation";
 
-  const narrativeParagraphs = heroNarrative.split("\n\n").filter(Boolean);
+  const narrativeParagraphs = heroNarrative.split("\n\n").map((p) => p.trim()).filter(Boolean);
 
   return (
     <div className="relative bg-[#F7F5F0] overflow-x-hidden font-sans">
@@ -211,11 +211,6 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Narrative Column */}
             <div className="lg:col-span-7 space-y-6 lg:pr-6">
-              {/* Category Sub-Tag */}
-              <div className="text-[11px] sm:text-xs font-semibold tracking-[0.22em] uppercase text-[#B08D57]">
-                Protect &bull; Perform &bull; Preserve
-              </div>
-
               {/* Main Headline from CMS / PostgreSQL */}
               <h1 className="text-[38px] sm:text-[44px] lg:text-[48px] font-semibold text-[#172B46] tracking-tight leading-[1.15]">
                 {heroHeading}
@@ -227,11 +222,12 @@ export default async function HomePage() {
                   {heroSubheading}
                 </p>
 
-                {narrativeParagraphs.map((para, i) => (
-                  <p key={i} className="text-[15px] sm:text-[16px] text-[#172B46]/80 font-normal leading-relaxed">
-                    {para}
-                  </p>
-                ))}
+                {narrativeParagraphs.length > 0 &&
+                  narrativeParagraphs.map((para, i) => (
+                    <p key={i} className="text-[15px] sm:text-[16px] text-[#172B46]/80 font-normal leading-relaxed">
+                      {para}
+                    </p>
+                  ))}
               </div>
 
               {/* Primary & Secondary CTAs */}
