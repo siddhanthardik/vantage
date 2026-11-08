@@ -135,21 +135,6 @@ export function NavFooterFallback() {
         </div>
       </div>
 
-      {/* Website-Wide Closing Message Banner */}
-      <div className="border-t border-[#E5DFD5] bg-[#FAF8F5]/80 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center space-y-2">
-          <p className="text-[15px] sm:text-[16px] font-semibold text-[#172B46] tracking-wide">
-            Protect what matters. Perform with purpose. Preserve for the future.
-          </p>
-          <p className="text-[13px] sm:text-[14px] text-[#172B46]/75 font-normal leading-relaxed">
-            At Vantage Wealth, we believe informed financial decisions and an integrated approach can help individuals and families navigate their financial journeys with greater clarity and confidence.
-          </p>
-          <p className="text-[13px] font-semibold text-[#B08D57] pt-1 uppercase tracking-wider">
-            Vantage Wealth — A Clearer Perspective on Your Wealth.
-          </p>
-        </div>
-      </div>
-
       <div className="border-t border-[#E5DFD5] py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-[#172B46]/70 gap-4">
           <div>
