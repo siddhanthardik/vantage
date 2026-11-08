@@ -1,0 +1,22 @@
+{
+  "enquiries": [
+    {
+      "id": "clb_1794124103120_wux3q",
+      "type": "CALLBACK",
+      "fullName": "Ananya Deshmukh",
+      "email": "ananya.deshmukh@example.in",
+      "phone": "9876546818",
+      "serviceSlug": "beyond-sips-why-indian-families-need-a-complete-wealth-strategy-not-just-monthly-investments",
+      "preferredMode": "PHONE",
+      "preferredDate": null,
+      "preferredTime": "Morning (9:30 AM - 1:00 PM)",
+      "subject": "Insight Callback: Portfolio Review [beyond-sips-why-indian-families-need-a-complete-wealth-strategy-not-just-monthly-investments]",
+      "message": "Area of Interest: Portfolio Review\nPreferred Time: Morning (9:30 AM - 1:00 PM)\nSource Article: /insights/beyond-sips-why-indian-families-need-a-complete-wealth-strategy-not-just-monthly-investments\nConsent Recorded: Yes (2026-11-08T07:48:23.110Z)",
+      "status": "NEW",
+      "ipAddress": "127.0.0.1",
+      "turnstileVerified": false,
+      "createdAt": "2026-11-08T07:48:23.110Z",
+      "updatedAt": "2026-11-08T07:48:23.110Z"
+    }
+  ]
+}

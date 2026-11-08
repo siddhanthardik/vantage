@@ -26,6 +26,7 @@ enum ArticleStatus {
 enum EnquiryType {
   CONTACT
   CONSULTATION
+  CALLBACK
 }
 
 enum EnquiryStatus {
@@ -176,6 +177,31 @@ model Enquiry {
 
   @@index([type, status])
   @@index([createdAt])
+}
+
+enum SubscriptionStatus {
+  SUBSCRIBED
+  UNSUBSCRIBED
+}
+
+model NewsletterSubscriber {
+  id               String             @id @default(cuid())
+  email            String             @unique
+  name             String?
+  source           String?            @default("INSIGHTS_ARTICLE")
+  sourceSlug       String?
+  status           SubscriptionStatus @default(SUBSCRIBED)
+  consentGiven     Boolean            @default(true)
+  consentTimestamp DateTime           @default(now())
+  unsubscribedAt   DateTime?
+  unsubscribeToken String             @unique @default(cuid())
+  ipAddress        String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@map("newsletter_subscribers")
 }
 
 model AdminUser {

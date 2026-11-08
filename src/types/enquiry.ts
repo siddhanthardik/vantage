@@ -1,4 +1,4 @@
-export type EnquiryType = "CONTACT" | "CONSULTATION";
+export type EnquiryType = "CONTACT" | "CONSULTATION" | "CALLBACK";
 export type EnquiryStatus = "NEW" | "CONTACTED" | "ARCHIVED";
 
 export interface EnquiryItem {
@@ -37,5 +37,17 @@ export interface ConsultationFormData {
   preferredDate: string;
   preferredTime: string;
   message?: string;
+  hp_field?: string; // honeypot
+}
+
+export interface CallbackFormData {
+  fullName: string;
+  phone: string;
+  email?: string;
+  areaOfInterest: string;
+  preferredTime?: string;
+  consent: boolean;
+  articleSlug: string;
+  articleTitle?: string;
   hp_field?: string; // honeypot
 }

@@ -10,6 +10,8 @@ import {
 import CtaBanner from "@/components/ui/CtaBanner";
 import ArticleContentRenderer from "@/components/insights/ArticleContentRenderer";
 import ArticleFaqAccordion from "@/components/insights/ArticleFaqAccordion";
+import ArticleNewsletterCard from "@/components/insights/ArticleNewsletterCard";
+import ArticleCallbackCard from "@/components/insights/ArticleCallbackCard";
 import {
   getArticleBySlug,
   getRelatedArticles,
@@ -70,17 +72,25 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 function InsightLoadingSkeleton() {
   return (
     <div className="min-h-[70vh] bg-[#FFFFFF] animate-pulse">
-      <div className="bg-[#F7F5F0] border-b border-[#E5DFD5] py-12 sm:py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
-          <div className="h-4 w-36 bg-[#E5DFD5] rounded" />
-          <div className="h-10 w-3/4 bg-[#E5DFD5] rounded" />
-          <div className="h-4 w-1/2 bg-[#E5DFD5]/70 rounded" />
+      {/* Full-width Hero image skeleton */}
+      <div className="w-full aspect-[16/9] sm:aspect-[16/8] lg:aspect-[16/7] max-h-[540px] bg-[#E5DFD5]/40 border-b border-[#E5DFD5]" />
+
+      {/* Two-column container */}
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 justify-between items-start">
+          <div className="w-full lg:max-w-[780px] space-y-6">
+            <div className="h-4 w-36 bg-[#E5DFD5] rounded" />
+            <div className="h-10 w-3/4 bg-[#E5DFD5] rounded" />
+            <div className="h-5 w-full bg-[#E5DFD5]/70 rounded" />
+            <div className="h-4 w-full bg-[#E5DFD5]/40 rounded mt-8" />
+            <div className="h-4 w-5/6 bg-[#E5DFD5]/40 rounded" />
+            <div className="h-4 w-4/6 bg-[#E5DFD5]/40 rounded" />
+          </div>
+          <div className="w-full lg:w-[320px] space-y-6 shrink-0">
+            <div className="h-64 bg-[#E5DFD5]/30 rounded" />
+            <div className="h-80 bg-[#E5DFD5]/30 rounded" />
+          </div>
         </div>
-      </div>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-4">
-        <div className="h-4 w-full bg-[#E5DFD5]/50 rounded" />
-        <div className="h-4 w-full bg-[#E5DFD5]/50 rounded" />
-        <div className="h-4 w-2/3 bg-[#E5DFD5]/50 rounded" />
       </div>
     </div>
   );
@@ -174,54 +184,71 @@ async function SingleInsightContent({ params }: ArticlePageProps) {
         </section>
       )}
 
-      {/* ARTICLE CONTENT CONTAINER (MAXIMUM WIDTH 780PX) */}
-      <div className="max-w-[780px] mx-auto px-5 sm:px-6 pt-8 pb-16">
-        {/* 2. BREADCRUMB NAVIGATION */}
-        <nav className="flex items-center gap-2 text-xs text-[#172B46]/60 font-medium mb-6" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-[#B08D57] transition-colors">
-            Home
-          </Link>
-          <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
-          <Link href="/insights" className="hover:text-[#B08D57] transition-colors">
-            Insights
-          </Link>
-          <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
-          <span className="text-[#172B46] font-semibold truncate max-w-xs sm:max-w-md">
-            {article.title}
-          </span>
-        </nav>
+      {/* 2. MAIN EDITORIAL CONTENT CONTAINER (APPROX 1240PX TWO-COLUMN LAYOUT) */}
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-10 lg:gap-12 xl:gap-16">
+          {/* MAIN ARTICLE COLUMN (APPROX 780PX) */}
+          <div className="w-full lg:max-w-[780px] min-w-0">
+            {/* 3. BREADCRUMB NAVIGATION */}
+            <nav className="flex items-center gap-2 text-xs text-[#172B46]/60 font-medium mb-6" aria-label="Breadcrumb">
+              <Link href="/" className="hover:text-[#B08D57] transition-colors">
+                Home
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
+              <Link href="/insights" className="hover:text-[#B08D57] transition-colors">
+                Insights
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
+              <span className="text-[#172B46] font-semibold truncate max-w-xs sm:max-w-md">
+                {article.title}
+              </span>
+            </nav>
 
-        {/* 3. ARTICLE TITLE (H1: 38-42px desktop, 29-32px mobile, weight 600) */}
-        <h1 className="text-[29px] sm:text-[34px] lg:text-[40px] font-semibold text-[#172B46] tracking-tight leading-[1.2] mb-5">
-          {article.title}
-        </h1>
+            {/* 4. ARTICLE TITLE (Desktop: 34–38px, Tablet: 32px, Mobile: 27–30px, weight 600, navy #172B46, left aligned) */}
+            <h1 className="text-[28px] sm:text-[32px] lg:text-[36px] font-semibold text-[#172B46] tracking-tight leading-[1.2] mb-5 text-left">
+              {article.title}
+            </h1>
 
-        {/* 4. SMALL ARTICLE DESCRIPTION / SUMMARY (18px desktop, 16px mobile, weight 400) */}
-        <p className="text-[16px] sm:text-[18px] text-[#172B46]/80 font-normal leading-relaxed border-l-2 border-[#B08D57] pl-4 mb-10">
-          {article.excerpt}
-        </p>
+            {/* 5. SMALL ARTICLE DESCRIPTION / EXCERPT (Desktop: 17px, Mobile: 16px, weight 400, line height 1.65) */}
+            <p className="text-[16px] lg:text-[17px] text-[#172B46]/80 font-normal leading-[1.65] border-l-2 border-[#B08D57] pl-4 mb-8 text-left">
+              {article.excerpt}
+            </p>
 
-        {/* 5. DETAILED ARTICLE CONTENT */}
-        <ArticleContentRenderer content={article.content} />
+            {/* 6. DETAILED ARTICLE CONTENT */}
+            <ArticleContentRenderer content={article.content} />
 
-        {/* 6. FREQUENTLY ASKED QUESTIONS (ONLY IF PUBLISHED FAQS EXIST) */}
-        {publishedFaqs.length > 0 && (
-          <ArticleFaqAccordion faqs={publishedFaqs} />
-        )}
+            {/* 7. FREQUENTLY ASKED QUESTIONS (ONLY IF PUBLISHED FAQS EXIST) */}
+            {publishedFaqs.length > 0 && (
+              <ArticleFaqAccordion faqs={publishedFaqs} />
+            )}
 
-        {/* 7. PUBLISHED BY INFORMATION (AFTER COMPLETE ARTICLE CONTENT & FAQS) */}
-        <div className="mt-12 pt-6 border-t border-[#E5DFD5] text-sm text-[#172B46]/75">
-          <span>
-            Published by <strong className="text-[#172B46] font-semibold">{article.authorName}</strong>
-          </span>
-        </div>
+            {/* 8. PUBLISHED BY INFORMATION (AFTER COMPLETE ARTICLE CONTENT & FAQS) */}
+            <div className="mt-12 pt-6 border-t border-[#E5DFD5] text-sm text-[#172B46]/75">
+              <span>
+                Published by <strong className="text-[#172B46] font-semibold">{article.authorName}</strong>
+              </span>
+            </div>
 
-        {/* 8. DISCLAIMER */}
-        <div className="mt-8 p-5 bg-[#F7F5F0] border-l-4 border-[#B08D57] rounded-xs space-y-1.5 text-xs text-[#172B46]/75 font-normal leading-relaxed">
-          <strong className="text-[#172B46] font-semibold block text-[13px]">
-            Editorial & Advisory Notice:
-          </strong>
-          The observations and commentary above are published for general wealth education and institutional perspective. They do not constitute specific investment, legal, or tax counsel for any individual circumstances. All asset allocations are subject to market conditions.
+            {/* 9. DISCLAIMER */}
+            <div className="mt-8 p-5 bg-[#F7F5F0] border-l-4 border-[#B08D57] rounded-xs space-y-1.5 text-xs text-[#172B46]/75 font-normal leading-relaxed">
+              <strong className="text-[#172B46] font-semibold block text-[13px]">
+                Editorial &amp; Advisory Notice:
+              </strong>
+              The observations and commentary above are published for general wealth education and institutional perspective. They do not constitute specific investment, legal, or tax counsel for any individual circumstances. All asset allocations are subject to market conditions.
+            </div>
+          </div>
+
+          {/* RIGHT SIDEBAR (APPROX 300-320PX, STICKY ON DESKTOP) */}
+          <aside
+            className="w-full lg:w-[320px] xl:w-[340px] shrink-0 space-y-6 lg:sticky lg:top-28"
+            aria-label="Insights sidebar"
+          >
+            {/* 1. Newsletter Subscription Card */}
+            <ArticleNewsletterCard articleSlug={article.slug} />
+
+            {/* 2. Callback Lead Capture Card */}
+            <ArticleCallbackCard articleSlug={article.slug} articleTitle={article.title} />
+          </aside>
         </div>
       </div>
 
