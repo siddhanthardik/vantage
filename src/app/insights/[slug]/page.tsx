@@ -5,11 +5,7 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import {
   ChevronRight,
-  Clock,
-  Calendar,
-  User,
   ArrowRight,
-  ShieldCheck,
 } from "lucide-react";
 import CtaBanner from "@/components/ui/CtaBanner";
 import ArticleContentRenderer from "@/components/insights/ArticleContentRenderer";
@@ -137,75 +133,9 @@ async function SingleInsightContent({ params }: ArticlePageProps) {
 
   return (
     <article className="relative bg-[#FFFFFF] overflow-x-hidden">
-      {/* 1. ARTICLE HEADER & BREADCRUMB */}
-      <section className="bg-gradient-to-b from-[#F7F5F0] to-[#FFFFFF] border-b border-[#E5DFD5] pt-8 pb-12 sm:pb-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs text-[#172B46]/60 font-medium" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-[#B08D57] transition-colors">
-              Home
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
-            <Link href="/insights" className="hover:text-[#B08D57] transition-colors">
-              Insights
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
-            <span className="text-[#172B46] font-semibold truncate max-w-xs sm:max-w-md">
-              {article.title}
-            </span>
-          </nav>
-
-          {/* Meta Badges */}
-          <div className="flex flex-wrap items-center gap-3 text-xs tracking-wider">
-            <span className="text-[#8C6B37] bg-[#B08D57]/15 px-3 py-1 rounded-xs font-semibold uppercase">
-              {article.category}
-            </span>
-            <span className="text-[#172B46]/30" aria-hidden="true">&bull;</span>
-            <span className="text-[#172B46]/70 flex items-center gap-1.5 font-medium">
-              <Clock className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" /> {article.readTime}
-            </span>
-            <span className="text-[#172B46]/30" aria-hidden="true">&bull;</span>
-            <span className="text-[#172B46]/70 flex items-center gap-1.5 font-medium">
-              <Calendar className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
-              {new Date(article.publishedAt).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </span>
-          </div>
-
-          {/* Article Title (H1: 38-42px desktop, 29-32px mobile, weight 600) */}
-          <h1 className="text-[29px] sm:text-[34px] lg:text-[40px] font-semibold text-[#172B46] tracking-tight leading-[1.2]">
-            {article.title}
-          </h1>
-
-          {/* Subtitle / Excerpt (18px desktop, 16px mobile, weight 400) */}
-          <p className="text-[16px] sm:text-[18px] text-[#172B46]/80 font-normal leading-relaxed border-l-2 border-[#B08D57] pl-4">
-            {article.excerpt}
-          </p>
-
-          {/* Author Byline */}
-          <div className="pt-4 flex flex-wrap items-center justify-between gap-4 text-xs text-[#172B46]/70 border-t border-[#E5DFD5]">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-[#B08D57]" aria-hidden="true" />
-              <span>
-                Published by <strong className="text-[#172B46] font-semibold">{article.authorName}</strong>
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5 text-[#8C6B37]">
-              <ShieldCheck className="w-4 h-4 text-[#B08D57]" aria-hidden="true" />
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#172B46]/70">
-                Fiduciary Research Desk
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. FULL-WIDTH EDGE-TO-EDGE HERO IMAGE */}
+      {/* 1. FULL-WIDTH ARTICLE HERO IMAGE (DIRECTLY BELOW GLOBAL NAVIGATION) */}
       {article.coverImage && (
-        <section className="relative w-full aspect-[16/9] sm:aspect-[16/8] lg:aspect-[16/7] max-h-[540px] overflow-hidden bg-[#172B46]/5 border-y border-[#E5DFD5]">
+        <section className="relative w-full aspect-[16/9] sm:aspect-[16/8] lg:aspect-[16/7] max-h-[540px] overflow-hidden bg-[#172B46]/5 border-b border-[#E5DFD5]">
           <Image
             src={article.coverImage}
             alt={article.title}
@@ -217,20 +147,51 @@ async function SingleInsightContent({ params }: ArticlePageProps) {
         </section>
       )}
 
-      {/* 3. ESSAY NARRATIVE BODY (Maximum width 780px) */}
-      <section className="py-12 sm:py-16 bg-[#FFFFFF]">
-        <div className="max-w-[780px] mx-auto px-5 sm:px-6">
-          <ArticleContentRenderer content={article.content} />
+      {/* ARTICLE CONTENT CONTAINER (MAXIMUM WIDTH 780PX) */}
+      <div className="max-w-[780px] mx-auto px-5 sm:px-6 pt-8 pb-16">
+        {/* 2. BREADCRUMB NAVIGATION */}
+        <nav className="flex items-center gap-2 text-xs text-[#172B46]/60 font-medium mb-6" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-[#B08D57] transition-colors">
+            Home
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
+          <Link href="/insights" className="hover:text-[#B08D57] transition-colors">
+            Insights
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
+          <span className="text-[#172B46] font-semibold truncate max-w-xs sm:max-w-md">
+            {article.title}
+          </span>
+        </nav>
 
-          {/* Compliance Review Disclaimer */}
-          <div className="mt-12 p-5 bg-[#F7F5F0] border-l-4 border-[#B08D57] rounded-xs space-y-1.5 text-xs text-[#172B46]/75 font-normal leading-relaxed">
-            <strong className="text-[#172B46] font-semibold block text-[13px]">
-              Editorial & Advisory Notice:
-            </strong>
-            The observations and commentary above are published for general wealth education and institutional perspective. They do not constitute specific investment, legal, or tax counsel for any individual circumstances. All asset allocations are subject to market conditions.
-          </div>
+        {/* 3. ARTICLE TITLE (H1: 38-42px desktop, 29-32px mobile, weight 600) */}
+        <h1 className="text-[29px] sm:text-[34px] lg:text-[40px] font-semibold text-[#172B46] tracking-tight leading-[1.2] mb-5">
+          {article.title}
+        </h1>
+
+        {/* 4. SMALL ARTICLE DESCRIPTION / SUMMARY (18px desktop, 16px mobile, weight 400) */}
+        <p className="text-[16px] sm:text-[18px] text-[#172B46]/80 font-normal leading-relaxed border-l-2 border-[#B08D57] pl-4 mb-10">
+          {article.excerpt}
+        </p>
+
+        {/* 5. DETAILED ARTICLE CONTENT */}
+        <ArticleContentRenderer content={article.content} />
+
+        {/* 6. PUBLISHED BY INFORMATION (AFTER COMPLETE ARTICLE CONTENT) */}
+        <div className="mt-12 pt-6 border-t border-[#E5DFD5] text-sm text-[#172B46]/75">
+          <span>
+            Published by <strong className="text-[#172B46] font-semibold">{article.authorName}</strong>
+          </span>
         </div>
-      </section>
+
+        {/* 7. DISCLAIMER */}
+        <div className="mt-8 p-5 bg-[#F7F5F0] border-l-4 border-[#B08D57] rounded-xs space-y-1.5 text-xs text-[#172B46]/75 font-normal leading-relaxed">
+          <strong className="text-[#172B46] font-semibold block text-[13px]">
+            Editorial & Advisory Notice:
+          </strong>
+          The observations and commentary above are published for general wealth education and institutional perspective. They do not constitute specific investment, legal, or tax counsel for any individual circumstances. All asset allocations are subject to market conditions.
+        </div>
+      </div>
 
       {/* 4. RELATED ARTICLES */}
       {related.length > 0 && (

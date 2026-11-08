@@ -629,22 +629,7 @@ export default function ArticleEditor({
       {/* TAB 2: LIVE PREVIEW */}
       {activeTab === "preview" && (
         <div className="bg-[#FFFFFF] p-6 sm:p-10 rounded-sm border border-[#E5DFD5] shadow-xs max-w-4xl mx-auto space-y-8 font-sans">
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#B08D57]">
-              <span>{formData.category || "General"}</span>
-              <span className="text-[#172B46]/30">&bull;</span>
-              <span className="text-[#172B46]/70 lowercase">{formData.readTime || "5 min read"}</span>
-            </div>
-            <h1 className="text-[26px] sm:text-[34px] font-semibold text-[#172B46] tracking-tight leading-[1.2]">
-              {formData.title || "Untitled Article"}
-            </h1>
-            {formData.excerpt && (
-              <p className="text-[15px] sm:text-[17px] text-[#172B46]/80 font-normal leading-relaxed border-l-2 border-[#B08D57] pl-4">
-                {formData.excerpt}
-              </p>
-            )}
-          </div>
-
+          {/* 1. HERO COVER IMAGE */}
           {formData.coverImage && (
             <div className="relative w-full aspect-[16/9] sm:aspect-[16/8] max-h-[420px] rounded-sm overflow-hidden border border-[#E5DFD5]">
               <Image
@@ -657,13 +642,47 @@ export default function ArticleEditor({
             </div>
           )}
 
-          <div className="max-w-[780px] mx-auto py-2">
-            <ArticleContentRenderer content={formData.content} />
-          </div>
+          <div className="max-w-[780px] mx-auto space-y-6">
+            {/* 2. BREADCRUMB / CATEGORY */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#B08D57]">
+              <span>Home</span>
+              <span className="text-[#172B46]/30">&gt;</span>
+              <span>Insights</span>
+              <span className="text-[#172B46]/30">&gt;</span>
+              <span className="text-[#172B46]">{formData.title || "Untitled Article"}</span>
+            </div>
 
-          <div className="pt-6 border-t border-[#E5DFD5] flex items-center justify-between text-xs text-[#172B46]/60">
-            <span>By {formData.authorName}</span>
-            <span>Tags: {formData.tags?.join(", ") || "None"}</span>
+            {/* 3. ARTICLE TITLE */}
+            <h1 className="text-[26px] sm:text-[34px] font-semibold text-[#172B46] tracking-tight leading-[1.2]">
+              {formData.title || "Untitled Article"}
+            </h1>
+
+            {/* 4. SMALL DESCRIPTION */}
+            {formData.excerpt && (
+              <p className="text-[15px] sm:text-[17px] text-[#172B46]/80 font-normal leading-relaxed border-l-2 border-[#B08D57] pl-4">
+                {formData.excerpt}
+              </p>
+            )}
+
+            {/* 5. DETAILED CONTENT */}
+            <div className="py-2">
+              <ArticleContentRenderer content={formData.content} />
+            </div>
+
+            {/* 6. PUBLISHED BY */}
+            <div className="pt-6 border-t border-[#E5DFD5] text-sm text-[#172B46]/80">
+              <span>
+                Published by <strong className="text-[#172B46] font-semibold">{formData.authorName}</strong>
+              </span>
+            </div>
+
+            {/* 7. DISCLAIMER */}
+            <div className="p-5 bg-[#F7F5F0] border-l-4 border-[#B08D57] rounded-xs space-y-1.5 text-xs text-[#172B46]/75 font-normal leading-relaxed">
+              <strong className="text-[#172B46] font-semibold block text-[13px]">
+                Editorial & Advisory Notice:
+              </strong>
+              The observations and commentary above are published for general wealth education and institutional perspective. They do not constitute specific investment, legal, or tax counsel for any individual circumstances. All asset allocations are subject to market conditions.
+            </div>
           </div>
         </div>
       )}
