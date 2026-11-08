@@ -1,7 +1,10 @@
 import { getAdminSession } from "@/lib/auth/session";
 import { redirect, notFound } from "next/navigation";
+import { connection } from "next/server";
 import { getArticleById, getArticleRevisions } from "@/server/repositories/articleRepository";
 import ArticleEditor from "@/components/admin/ArticleEditor";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Edit Article | Vantage Wealth CMS",
@@ -12,6 +15,7 @@ interface EditArticlePageProps {
 }
 
 export default async function EditArticleAdminPage({ params }: EditArticlePageProps) {
+  await connection();
   const session = await getAdminSession();
   if (!session) {
     redirect("/admin/login");

@@ -63,7 +63,8 @@ export default function ArticleEditor({
 
   const [newTagInput, setNewTagInput] = useState("");
   const [activeTab, setActiveTab] = useState<"edit" | "preview" | "revisions">("edit");
-  const [saving, setSaving] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [savingPublish, setSavingPublish] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [revisions, setRevisions] = useState<ArticleRevisionItem[]>(initialArticle?.revisions || []);
   const [restoringVersion, setRestoringVersion] = useState<number | null>(null);
@@ -104,32 +105,66 @@ export default function ArticleEditor({
     }));
   };
 
-  const handleSave = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleSaveAction = async (targetStatus?: "DRAFT" | "PUBLISHED" | "SCHEDULED") => {
     setStatusMessage(null);
 
+    const effectiveStatus = targetStatus || formData.status || "PUBLISHED";
+    const isDraft = effectiveStatus === "DRAFT";
+
+    // Client-side validations
     if (!formData.title.trim()) {
-      setStatusMessage({ type: "error", text: "Article title is required." });
-      return;
-    }
-    if (!formData.slug.trim()) {
-      setStatusMessage({ type: "error", text: "Article URL slug is required." });
-      return;
-    }
-    if (!formData.excerpt.trim()) {
-      setStatusMessage({ type: "error", text: "Article executive excerpt is required." });
-      return;
-    }
-    if (!formData.content.trim()) {
-      setStatusMessage({ type: "error", text: "Article content cannot be empty." });
-      return;
-    }
-    if (!formData.primaryKeyword?.trim()) {
-      setStatusMessage({ type: "error", text: "Primary SEO keyword is required in the SEO section." });
+      setStatusMessage({
+        type: "error",
+        text: isDraft ? "Please provide an article title to save a draft." : "Article title is required to publish.",
+      });
       return;
     }
 
-    setSaving(true);
+    let finalSlug = formData.slug.trim();
+    if (!finalSlug) {
+      finalSlug = formData.title
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      if (!finalSlug) {
+        finalSlug = `article-${Date.now()}`;
+      }
+    }
+
+    if (!isDraft) {
+      if (!formData.excerpt.trim()) {
+        setStatusMessage({ type: "error", text: "Article executive excerpt is required before publishing." });
+        return;
+      }
+      if (!formData.content.trim() || formData.content === "<p></p>") {
+        setStatusMessage({ type: "error", text: "Article content cannot be empty before publishing." });
+        return;
+      }
+      if (!formData.primaryKeyword?.trim()) {
+        setStatusMessage({
+          type: "error",
+          text: "Primary SEO keyword is required in the SEO section before publishing.",
+        });
+        return;
+      }
+      if (effectiveStatus === "SCHEDULED" && !formData.scheduledFor) {
+        setStatusMessage({ type: "error", text: "Please select a date and time for scheduled publication." });
+        return;
+      }
+    }
+
+    if (isDraft) {
+      setSavingDraft(true);
+    } else {
+      setSavingPublish(true);
+    }
+
+    const payload: ArticleFormData = {
+      ...formData,
+      slug: finalSlug,
+      status: effectiveStatus,
+    };
 
     try {
       const endpoint = isEditing && initialArticle?.id
@@ -141,19 +176,30 @@ export default function ArticleEditor({
       const res = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to save article.");
+        throw new Error(data.error || "Failed to persist article to database.");
       }
 
-      setStatusMessage({
-        type: "success",
-        text: `Article "${formData.title}" saved successfully to PostgreSQL.`,
-      });
+      setFormData(payload);
+
+      if (isDraft) {
+        setStatusMessage({
+          type: "success",
+          text: `Draft "${payload.title}" saved successfully to PostgreSQL.`,
+        });
+      } else {
+        setStatusMessage({
+          type: "success",
+          text: `Article "${payload.title}" ${
+            effectiveStatus === "SCHEDULED" ? "scheduled" : "published"
+          } successfully to PostgreSQL!`,
+        });
+      }
 
       if (!isEditing && data.article?.id) {
         router.push(`/admin/articles/${data.article.id}/edit`);
@@ -167,7 +213,8 @@ export default function ArticleEditor({
     } catch (err: any) {
       setStatusMessage({ type: "error", text: err.message || "Failed to save article." });
     } finally {
-      setSaving(false);
+      setSavingDraft(false);
+      setSavingPublish(false);
     }
   };
 
@@ -284,38 +331,71 @@ export default function ArticleEditor({
             </Link>
           )}
 
+          {/* Draft Button */}
           <button
             type="button"
-            onClick={() => handleSave()}
-            disabled={saving}
+            onClick={() => handleSaveAction("DRAFT")}
+            disabled={savingDraft || savingPublish}
+            className="inline-flex items-center gap-1.5 border border-[#172B46]/30 bg-[#FFFFFF] hover:bg-[#F7F5F0] text-[#172B46] px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-wider transition-colors shadow-xs cursor-pointer disabled:opacity-50"
+          >
+            <FileText className="w-3.5 h-3.5 text-[#172B46]" />
+            <span>{savingDraft ? "Saving Draft..." : "Save Draft"}</span>
+          </button>
+
+          {/* Publish / Update Button */}
+          <button
+            type="button"
+            onClick={() => handleSaveAction(formData.status === "SCHEDULED" ? "SCHEDULED" : "PUBLISHED")}
+            disabled={savingDraft || savingPublish}
             className="inline-flex items-center gap-2 bg-[#172B46] hover:bg-[#B08D57] text-[#FFFFFF] px-5 py-2 rounded-sm text-xs font-bold uppercase tracking-wider transition-colors shadow-xs cursor-pointer disabled:opacity-50"
           >
-            <Save className="w-4 h-4 text-[#C9A975]" />
-            <span>{saving ? "Saving..." : "Save Article"}</span>
+            <Sparkles className="w-4 h-4 text-[#C9A975]" />
+            <span>
+              {savingPublish
+                ? "Publishing..."
+                : formData.status === "SCHEDULED"
+                ? "Schedule Article"
+                : isEditing && initialArticle?.status === "PUBLISHED"
+                ? "Update & Publish"
+                : "Publish Article"}
+            </span>
           </button>
         </div>
       </div>
 
       {statusMessage && (
         <div
-          className={`p-4 rounded-sm border-l-4 flex items-center gap-3 text-xs ${
+          className={`p-4 rounded-sm border-l-4 flex flex-wrap items-center justify-between gap-3 text-xs ${
             statusMessage.type === "success"
               ? "bg-green-50 border-green-600 text-green-900"
               : "bg-red-50 border-red-600 text-red-900"
           }`}
         >
-          {statusMessage.type === "success" ? (
-            <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
-          ) : (
-            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+          <div className="flex items-center gap-2.5">
+            {statusMessage.type === "success" ? (
+              <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            )}
+            <span className="font-medium">{statusMessage.text}</span>
+          </div>
+
+          {statusMessage.type === "success" && formData.status === "PUBLISHED" && formData.slug && (
+            <Link
+              href={`/insights/${formData.slug}`}
+              target="_blank"
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-700 hover:bg-green-800 text-white rounded-xs font-bold text-[11px] transition-colors"
+            >
+              <span>View Live Article</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
           )}
-          <span>{statusMessage.text}</span>
         </div>
       )}
 
       {/* TAB 1: SEVEN-SECTION BLOG COMPOSER FORM */}
       {activeTab === "edit" && (
-        <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <form onSubmit={(e) => { e.preventDefault(); handleSaveAction(); }} className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Column: Sections 1, 2, 3, 4 (8 cols) */}
           <div className="lg:col-span-8 space-y-8">
             {/* 1. BASIC INFORMATION */}

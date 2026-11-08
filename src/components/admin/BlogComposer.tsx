@@ -10,7 +10,7 @@ import { Table } from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Bold,
   Italic,
@@ -35,8 +35,6 @@ import {
   Redo,
   Maximize2,
   Minimize2,
-  Columns,
-  Rows,
   Trash2,
 } from "lucide-react";
 import MediaPickerModal from "./MediaPickerModal";
@@ -60,13 +58,17 @@ export default function BlogComposer({
 
   // Convert incoming Markdown to HTML if needed for Tiptap
   const initialHtml = isHtmlContent(content) ? content : markdownToHtml(content);
+  const lastEmittedHtmlRef = useRef<string>(initialHtml);
 
   const editor = useEditor({
     extensions: [
+      // StarterKit with link & underline disabled to prevent duplicate extension warnings in Tiptap v3
       StarterKit.configure({
         heading: {
           levels: [1, 2, 3],
         },
+        link: false,
+        underline: false,
       }),
       Underline,
       TextAlign.configure({
@@ -109,22 +111,30 @@ export default function BlogComposer({
     editorProps: {
       attributes: {
         class:
-          "prose max-w-none focus:outline-none min-h-[320px] px-5 py-4 text-sm sm:text-base leading-relaxed text-[#172B46] font-sans",
+          "prose max-w-none focus:outline-none min-h-[340px] px-5 py-4 text-sm sm:text-base leading-relaxed text-[#172B46] font-sans",
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      const html = editor.getHTML();
+      lastEmittedHtmlRef.current = html;
+      onChange(html);
     },
     immediatelyRender: false,
   });
 
   // Keep editor content in sync when loaded/changed externally (e.g. revision rollback)
+  // Guarded against overwriting user's active typing or looping editor's own emitted HTML
   useEffect(() => {
-    if (editor && content) {
-      const targetHtml = isHtmlContent(content) ? content : markdownToHtml(content);
-      if (editor.getHTML() !== targetHtml) {
-        editor.commands.setContent(targetHtml);
-      }
+    if (!editor) return;
+    const targetHtml = isHtmlContent(content) ? content : markdownToHtml(content);
+    // Ignore updates if content matches what the editor already generated
+    if (targetHtml === lastEmittedHtmlRef.current) return;
+    // Never disrupt the user while the editor is actively focused
+    if (editor.isFocused) return;
+
+    if (editor.getHTML() !== targetHtml) {
+      lastEmittedHtmlRef.current = targetHtml;
+      editor.commands.setContent(targetHtml, { emitUpdate: false });
     }
   }, [content, editor]);
 
@@ -136,9 +146,21 @@ export default function BlogComposer({
     );
   }
 
-  const setLink = () => {
+  // Safe command execution helper that maintains focus without forcing page scroll jumps
+  const exec = (command: (chain: any) => { run: () => boolean }) => {
+    if (!editor) return;
+    command(editor.chain().focus(undefined, { scrollIntoView: false })).run();
+  };
+
+  const handleLinkPromptOpen = () => {
+    const prevUrl = editor.getAttributes("link").href || "";
+    setLinkUrl(prevUrl);
+    setIsLinkPromptOpen(true);
+  };
+
+  const applyLink = () => {
     if (!linkUrl.trim()) {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      editor.chain().focus(undefined, { scrollIntoView: false }).extendMarkRange("link").unsetLink().run();
       setIsLinkPromptOpen(false);
       return;
     }
@@ -148,7 +170,7 @@ export default function BlogComposer({
 
     editor
       .chain()
-      .focus()
+      .focus(undefined, { scrollIntoView: false })
       .extendMarkRange("link")
       .setLink({ href: formattedUrl })
       .run();
@@ -165,13 +187,17 @@ export default function BlogComposer({
     altText: string;
     caption?: string;
   }) => {
-    editor.chain().focus().setImage({ src: url, alt: altText, title: caption }).run();
+    editor
+      .chain()
+      .focus(undefined, { scrollIntoView: false })
+      .setImage({ src: url, alt: altText, title: caption })
+      .run();
   };
 
   const insertTable = () => {
     editor
       .chain()
-      .focus()
+      .focus(undefined, { scrollIntoView: false })
       .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
       .run();
   };
@@ -188,8 +214,9 @@ export default function BlogComposer({
         <div className="flex items-center border-r border-[#E5DFD5] pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Undo (Ctrl+Z)"
-            onClick={() => editor.chain().focus().undo().run()}
+            onClick={() => exec((chain) => chain.undo())}
             disabled={!editor.can().undo()}
             className="p-1.5 rounded-xs hover:bg-[#FFFFFF] disabled:opacity-30 transition-colors cursor-pointer text-[#172B46]"
           >
@@ -197,8 +224,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Redo (Ctrl+Y)"
-            onClick={() => editor.chain().focus().redo().run()}
+            onClick={() => exec((chain) => chain.redo())}
             disabled={!editor.can().redo()}
             className="p-1.5 rounded-xs hover:bg-[#FFFFFF] disabled:opacity-30 transition-colors cursor-pointer text-[#172B46]"
           >
@@ -210,8 +238,9 @@ export default function BlogComposer({
         <div className="flex items-center border-r border-[#E5DFD5] pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Paragraph"
-            onClick={() => editor.chain().focus().setParagraph().run()}
+            onClick={() => exec((chain) => chain.setParagraph())}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("paragraph") ? "bg-[#172B46] text-[#FFFFFF]" : "hover:bg-[#FFFFFF]"
             }`}
@@ -220,8 +249,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Heading 1"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            onClick={() => exec((chain) => chain.toggleHeading({ level: 1 }))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("heading", { level: 1 })
                 ? "bg-[#172B46] text-[#FFFFFF]"
@@ -232,8 +262,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Heading 2"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            onClick={() => exec((chain) => chain.toggleHeading({ level: 2 }))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("heading", { level: 2 })
                 ? "bg-[#172B46] text-[#FFFFFF]"
@@ -244,8 +275,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Heading 3"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            onClick={() => exec((chain) => chain.toggleHeading({ level: 3 }))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("heading", { level: 3 })
                 ? "bg-[#172B46] text-[#FFFFFF]"
@@ -260,8 +292,9 @@ export default function BlogComposer({
         <div className="flex items-center border-r border-[#E5DFD5] pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Bold (Ctrl+B)"
-            onClick={() => editor.chain().focus().toggleBold().run()}
+            onClick={() => exec((chain) => chain.toggleBold())}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("bold") ? "bg-[#172B46] text-[#FFFFFF]" : "hover:bg-[#FFFFFF]"
             }`}
@@ -270,8 +303,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Italic (Ctrl+I)"
-            onClick={() => editor.chain().focus().toggleItalic().run()}
+            onClick={() => exec((chain) => chain.toggleItalic())}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("italic") ? "bg-[#172B46] text-[#FFFFFF]" : "hover:bg-[#FFFFFF]"
             }`}
@@ -280,8 +314,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Underline (Ctrl+U)"
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            onClick={() => exec((chain) => chain.toggleUnderline())}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("underline") ? "bg-[#172B46] text-[#FFFFFF]" : "hover:bg-[#FFFFFF]"
             }`}
@@ -294,8 +329,9 @@ export default function BlogComposer({
         <div className="flex items-center border-r border-[#E5DFD5] pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Align Left"
-            onClick={() => editor.chain().focus().setTextAlign("left").run()}
+            onClick={() => exec((chain) => chain.setTextAlign("left"))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive({ textAlign: "left" })
                 ? "bg-[#172B46] text-[#FFFFFF]"
@@ -306,8 +342,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Align Center"
-            onClick={() => editor.chain().focus().setTextAlign("center").run()}
+            onClick={() => exec((chain) => chain.setTextAlign("center"))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive({ textAlign: "center" })
                 ? "bg-[#172B46] text-[#FFFFFF]"
@@ -318,8 +355,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Align Right"
-            onClick={() => editor.chain().focus().setTextAlign("right").run()}
+            onClick={() => exec((chain) => chain.setTextAlign("right"))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive({ textAlign: "right" })
                 ? "bg-[#172B46] text-[#FFFFFF]"
@@ -330,8 +368,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Justify"
-            onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+            onClick={() => exec((chain) => chain.setTextAlign("justify"))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive({ textAlign: "justify" })
                 ? "bg-[#172B46] text-[#FFFFFF]"
@@ -346,8 +385,9 @@ export default function BlogComposer({
         <div className="flex items-center border-r border-[#E5DFD5] pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Bullet List"
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            onClick={() => exec((chain) => chain.toggleBulletList())}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("bulletList") ? "bg-[#172B46] text-[#FFFFFF]" : "hover:bg-[#FFFFFF]"
             }`}
@@ -356,8 +396,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Numbered List"
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            onClick={() => exec((chain) => chain.toggleOrderedList())}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("orderedList") ? "bg-[#172B46] text-[#FFFFFF]" : "hover:bg-[#FFFFFF]"
             }`}
@@ -366,8 +407,9 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Blockquote"
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            onClick={() => exec((chain) => chain.toggleBlockquote())}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("blockquote") ? "bg-[#172B46] text-[#FFFFFF]" : "hover:bg-[#FFFFFF]"
             }`}
@@ -376,9 +418,10 @@ export default function BlogComposer({
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Horizontal Divider"
-            onClick={() => editor.chain().focus().setHorizontalRule().run()}
-            className="p-1.5 rounded-xs hover:bg-[#FFFFFF] transition-colors cursor-pointer"
+            onClick={() => exec((chain) => chain.setHorizontalRule())}
+            className="p-1.5 rounded-xs hover:bg-[#FFFFFF] transition-colors cursor-pointer text-[#172B46]"
           >
             <Minus className="w-3.5 h-3.5" />
           </button>
@@ -388,12 +431,9 @@ export default function BlogComposer({
         <div className="flex items-center border-r border-[#E5DFD5] pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Add Hyperlink"
-            onClick={() => {
-              const prevUrl = editor.getAttributes("link").href || "";
-              setLinkUrl(prevUrl);
-              setIsLinkPromptOpen(true);
-            }}
+            onClick={handleLinkPromptOpen}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
               editor.isActive("link") ? "bg-[#172B46] text-[#FFFFFF]" : "hover:bg-[#FFFFFF]"
             }`}
@@ -403,8 +443,9 @@ export default function BlogComposer({
           {editor.isActive("link") && (
             <button
               type="button"
+              onMouseDown={(e) => e.preventDefault()}
               title="Remove Hyperlink"
-              onClick={() => editor.chain().focus().unsetLink().run()}
+              onClick={() => exec((chain) => chain.unsetLink())}
               className="p-1.5 rounded-xs hover:bg-[#FFFFFF] text-red-600 transition-colors cursor-pointer"
             >
               <Unlink className="w-3.5 h-3.5" />
@@ -412,6 +453,7 @@ export default function BlogComposer({
           )}
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Insert Image from Media Library"
             onClick={() => setIsMediaPickerOpen(true)}
             className="p-1.5 rounded-xs hover:bg-[#FFFFFF] text-[#B08D57] transition-colors cursor-pointer font-semibold flex items-center gap-1"
@@ -425,6 +467,7 @@ export default function BlogComposer({
         <div className="flex items-center border-r border-[#E5DFD5] pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title="Insert 3x3 Table"
             onClick={insertTable}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
@@ -437,25 +480,28 @@ export default function BlogComposer({
             <>
               <button
                 type="button"
+                onMouseDown={(e) => e.preventDefault()}
                 title="Add Column"
-                onClick={() => editor.chain().focus().addColumnAfter().run()}
-                className="p-1 rounded-xs hover:bg-[#FFFFFF] text-[10px] text-[#172B46]"
+                onClick={() => exec((chain) => chain.addColumnAfter())}
+                className="p-1 rounded-xs hover:bg-[#FFFFFF] text-[10px] text-[#172B46] font-bold cursor-pointer"
               >
                 +Col
               </button>
               <button
                 type="button"
+                onMouseDown={(e) => e.preventDefault()}
                 title="Add Row"
-                onClick={() => editor.chain().focus().addRowAfter().run()}
-                className="p-1 rounded-xs hover:bg-[#FFFFFF] text-[10px] text-[#172B46]"
+                onClick={() => exec((chain) => chain.addRowAfter())}
+                className="p-1 rounded-xs hover:bg-[#FFFFFF] text-[10px] text-[#172B46] font-bold cursor-pointer"
               >
                 +Row
               </button>
               <button
                 type="button"
+                onMouseDown={(e) => e.preventDefault()}
                 title="Delete Table"
-                onClick={() => editor.chain().focus().deleteTable().run()}
-                className="p-1 rounded-xs hover:bg-[#FFFFFF] text-[10px] text-red-600"
+                onClick={() => exec((chain) => chain.deleteTable())}
+                className="p-1 rounded-xs hover:bg-[#FFFFFF] text-[10px] text-red-600 cursor-pointer"
               >
                 <Trash2 className="w-3 h-3" />
               </button>
@@ -467,6 +513,7 @@ export default function BlogComposer({
         <div className="ml-auto flex items-center">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             title={isFullScreen ? "Exit Fullscreen" : "Fullscreen Mode"}
             onClick={() => setIsFullScreen(!isFullScreen)}
             className="p-1.5 rounded-xs hover:bg-[#FFFFFF] transition-colors cursor-pointer text-[#172B46]"
@@ -488,7 +535,7 @@ export default function BlogComposer({
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                setLink();
+                applyLink();
               }
             }}
             className="flex-1 px-3 py-1.5 bg-[#FFFFFF] border border-[#E5DFD5] text-xs text-[#172B46] rounded-xs focus:outline-none focus:border-[#B08D57]"
@@ -496,13 +543,15 @@ export default function BlogComposer({
           />
           <button
             type="button"
-            onClick={setLink}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={applyLink}
             className="px-3 py-1.5 bg-[#172B46] hover:bg-[#B08D57] text-[#FFFFFF] text-xs font-semibold rounded-xs transition-colors cursor-pointer"
           >
             Apply
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsLinkPromptOpen(false)}
             className="px-2.5 py-1.5 border border-[#E5DFD5] bg-[#FFFFFF] text-[#172B46] text-xs rounded-xs hover:bg-[#F7F5F0] transition-colors cursor-pointer"
           >
