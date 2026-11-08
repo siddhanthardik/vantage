@@ -1,17 +1,9 @@
 import fs from "fs";
 import path from "path";
-import { EnquiryItem, ContactFormData, ConsultationFormData, CallbackFormData } from "@/types/enquiry";
+import { EnquiryItem, ContactFormData, ConsultationFormData, CallbackFormData, ALLOWED_AREAS_OF_INTEREST } from "@/types/enquiry";
 import { prisma } from "@/lib/db/prisma";
 
-export const ALLOWED_AREAS_OF_INTEREST = [
-  "Investment Planning",
-  "Portfolio Review",
-  "Insurance & Risk Management",
-  "Tax Advisory",
-  "Retirement Planning",
-  "Strategic Financing",
-  "General Financial Planning",
-] as const;
+export { ALLOWED_AREAS_OF_INTEREST };
 
 const DATA_FILE_PATH = path.join(process.cwd(), "src", "lib", "db", "enquiries-data.json");
 

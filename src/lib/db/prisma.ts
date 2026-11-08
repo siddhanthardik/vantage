@@ -5,7 +5,7 @@ let prisma: any = null;
 
 try {
   // If running in a script outside Next.js, load .env into process.env if needed
-  if (!process.env.DATABASE_URL) {
+  if (typeof window === "undefined" && !process.env.DATABASE_URL) {
     try {
       const fs = require("fs");
       const path = require("path");

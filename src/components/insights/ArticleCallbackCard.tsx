@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, AlertCircle, Loader2, PhoneCall } from "lucide-react";
-import { ALLOWED_AREAS_OF_INTEREST } from "@/server/repositories/enquiryRepository";
+import { ALLOWED_AREAS_OF_INTEREST } from "@/types/enquiry";
 
 interface ArticleCallbackCardProps {
   articleSlug: string;

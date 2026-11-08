@@ -40,6 +40,18 @@ export interface ConsultationFormData {
   hp_field?: string; // honeypot
 }
 
+export const ALLOWED_AREAS_OF_INTEREST = [
+  "Investment Planning",
+  "Portfolio Review",
+  "Insurance & Risk Management",
+  "Tax Advisory",
+  "Retirement Planning",
+  "Strategic Financing",
+  "General Financial Planning",
+] as const;
+
+export type AreaOfInterest = (typeof ALLOWED_AREAS_OF_INTEREST)[number];
+
 export interface CallbackFormData {
   fullName: string;
   phone: string;
