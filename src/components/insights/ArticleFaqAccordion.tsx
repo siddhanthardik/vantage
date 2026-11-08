@@ -69,7 +69,7 @@ export default function ArticleFaqAccordion({ faqs = [], className = "" }: Artic
 
               {isOpen && (
                 <div className="px-4 pb-5 sm:px-5 sm:pb-5 pt-0 text-sm sm:text-[15px] text-[#172B46]/85 font-normal leading-[1.72] border-t border-[#E5DFD5]/40 bg-[#F7F5F0]/30">
-                  <p className="whitespace-pre-line">{faq.answer}</p>
+                  <p className="whitespace-pre-line text-justify [text-justify:inter-word] hyphens-auto">{faq.answer}</p>
                 </div>
               )}
             </div>

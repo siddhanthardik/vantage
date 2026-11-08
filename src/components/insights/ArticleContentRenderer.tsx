@@ -244,7 +244,7 @@ export default function ArticleContentRenderer({
             return (
               <p
                 key={`p-${index}`}
-                className="text-[16px] sm:text-[17px] lg:text-[18px] text-[#172B46]/85 font-normal leading-[1.72] mb-6 last:mb-0"
+                className="text-[16px] sm:text-[17px] lg:text-[18px] text-[#172B46]/85 font-normal leading-[1.72] mb-6 last:mb-0 text-justify [text-justify:inter-word] hyphens-auto break-words"
               >
                 {parseInlineMarkdown(block.text)}
               </p>

@@ -113,6 +113,18 @@ export default function BlogComposer({
         class:
           "prose max-w-none focus:outline-none min-h-[340px] px-5 py-4 text-sm sm:text-base leading-relaxed text-[#172B46] font-sans",
       },
+      transformPastedHTML(html: string) {
+        if (!html) return html;
+        // If pasted from Microsoft Word / Office (identified by Mso or urn:schemas-microsoft-com)
+        if (/class="?Mso|urn:schemas-microsoft-com|mso-/i.test(html)) {
+          // Strip redundant Word paragraph default alignments (e.g. text-align: left or start)
+          // so paragraphs default to the standard justified article layout
+          html = html.replace(/(<p[^>]*?style=["'][^"']*?)text-align:\s*(?:left|start);?\s*/gi, "$1");
+          // Clean up empty style attributes if any remain
+          html = html.replace(/style=["']\s*["']/gi, "");
+        }
+        return html;
+      },
     },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
@@ -201,6 +213,21 @@ export default function BlogComposer({
       .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
       .run();
   };
+
+  // Compute alignment active states taking defaults into account:
+  // Paragraphs default to justify; Headings default to left.
+  const isParagraph = editor.isActive("paragraph");
+  const isHeading = editor.isActive("heading");
+  const hasExplicitLeft = editor.isActive({ textAlign: "left" });
+  const hasExplicitCenter = editor.isActive({ textAlign: "center" });
+  const hasExplicitRight = editor.isActive({ textAlign: "right" });
+  const hasExplicitJustify = editor.isActive({ textAlign: "justify" });
+  const hasExplicitAlignment = hasExplicitLeft || hasExplicitCenter || hasExplicitRight || hasExplicitJustify;
+
+  const isLeftActive = hasExplicitLeft || (isHeading && !hasExplicitAlignment);
+  const isCenterActive = hasExplicitCenter;
+  const isRightActive = hasExplicitRight;
+  const isJustifyActive = hasExplicitJustify || (isParagraph && !hasExplicitAlignment);
 
   return (
     <div
@@ -333,7 +360,7 @@ export default function BlogComposer({
             title="Align Left"
             onClick={() => exec((chain) => chain.setTextAlign("left"))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
-              editor.isActive({ textAlign: "left" })
+              isLeftActive
                 ? "bg-[#172B46] text-[#FFFFFF]"
                 : "hover:bg-[#FFFFFF]"
             }`}
@@ -346,7 +373,7 @@ export default function BlogComposer({
             title="Align Center"
             onClick={() => exec((chain) => chain.setTextAlign("center"))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
-              editor.isActive({ textAlign: "center" })
+              isCenterActive
                 ? "bg-[#172B46] text-[#FFFFFF]"
                 : "hover:bg-[#FFFFFF]"
             }`}
@@ -359,7 +386,7 @@ export default function BlogComposer({
             title="Align Right"
             onClick={() => exec((chain) => chain.setTextAlign("right"))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
-              editor.isActive({ textAlign: "right" })
+              isRightActive
                 ? "bg-[#172B46] text-[#FFFFFF]"
                 : "hover:bg-[#FFFFFF]"
             }`}
@@ -372,7 +399,7 @@ export default function BlogComposer({
             title="Justify"
             onClick={() => exec((chain) => chain.setTextAlign("justify"))}
             className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
-              editor.isActive({ textAlign: "justify" })
+              isJustifyActive
                 ? "bg-[#172B46] text-[#FFFFFF]"
                 : "hover:bg-[#FFFFFF]"
             }`}
