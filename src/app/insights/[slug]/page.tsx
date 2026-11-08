@@ -12,6 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import CtaBanner from "@/components/ui/CtaBanner";
+import ArticleContentRenderer from "@/components/insights/ArticleContentRenderer";
 import {
   getArticleBySlug,
   getRelatedArticles,
@@ -137,35 +138,35 @@ async function SingleInsightContent({ params }: ArticlePageProps) {
   return (
     <article className="relative bg-[#FFFFFF] overflow-x-hidden">
       {/* 1. ARTICLE HEADER & BREADCRUMB */}
-      <section className="bg-gradient-to-b from-[#F7F5F0] to-[#FFFFFF] border-b border-[#E5DFD5] pt-6 pb-12 sm:pb-16">
+      <section className="bg-gradient-to-b from-[#F7F5F0] to-[#FFFFFF] border-b border-[#E5DFD5] pt-8 pb-12 sm:pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs text-[#172B46]/60 font-medium">
+          <nav className="flex items-center gap-2 text-xs text-[#172B46]/60 font-medium" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-[#B08D57] transition-colors">
               Home
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
             <Link href="/insights" className="hover:text-[#B08D57] transition-colors">
               Insights
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
             <span className="text-[#172B46] font-semibold truncate max-w-xs sm:max-w-md">
               {article.title}
             </span>
           </nav>
 
           {/* Meta Badges */}
-          <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider">
-            <span className="text-[#B08D57] bg-[#B08D57]/10 px-3 py-1 rounded-xs">
+          <div className="flex flex-wrap items-center gap-3 text-xs tracking-wider">
+            <span className="text-[#8C6B37] bg-[#B08D57]/15 px-3 py-1 rounded-xs font-semibold uppercase">
               {article.category}
             </span>
-            <span className="text-[#172B46]/40">&bull;</span>
-            <span className="text-[#172B46]/70 flex items-center gap-1 font-medium">
-              <Clock className="w-3.5 h-3.5" /> {article.readTime}
+            <span className="text-[#172B46]/30" aria-hidden="true">&bull;</span>
+            <span className="text-[#172B46]/70 flex items-center gap-1.5 font-medium">
+              <Clock className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" /> {article.readTime}
             </span>
-            <span className="text-[#172B46]/40">&bull;</span>
-            <span className="text-[#172B46]/70 flex items-center gap-1 font-medium">
-              <Calendar className="w-3.5 h-3.5" />
+            <span className="text-[#172B46]/30" aria-hidden="true">&bull;</span>
+            <span className="text-[#172B46]/70 flex items-center gap-1.5 font-medium">
+              <Calendar className="w-3.5 h-3.5 text-[#B08D57]" aria-hidden="true" />
               {new Date(article.publishedAt).toLocaleDateString("en-US", {
                 month: "long",
                 day: "numeric",
@@ -174,101 +175,58 @@ async function SingleInsightContent({ params }: ArticlePageProps) {
             </span>
           </div>
 
-          {/* Article Title */}
-          <h1 className="text-[34px] sm:text-[40px] lg:text-[46px] font-semibold text-[#172B46] tracking-tight leading-[1.18]">
+          {/* Article Title (H1: 38-42px desktop, 29-32px mobile, weight 600) */}
+          <h1 className="text-[29px] sm:text-[34px] lg:text-[40px] font-semibold text-[#172B46] tracking-tight leading-[1.2]">
             {article.title}
           </h1>
 
-          {/* Subtitle / Excerpt */}
+          {/* Subtitle / Excerpt (18px desktop, 16px mobile, weight 400) */}
           <p className="text-[16px] sm:text-[18px] text-[#172B46]/80 font-normal leading-relaxed border-l-2 border-[#B08D57] pl-4">
             {article.excerpt}
           </p>
 
           {/* Author Byline */}
-          <div className="pt-2 flex items-center justify-between text-xs text-[#172B46]/70 border-t border-[#E5DFD5]/60">
+          <div className="pt-4 flex flex-wrap items-center justify-between gap-4 text-xs text-[#172B46]/70 border-t border-[#E5DFD5]">
             <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-[#B08D57]" />
+              <User className="w-4 h-4 text-[#B08D57]" aria-hidden="true" />
               <span>
                 Published by <strong className="text-[#172B46] font-semibold">{article.authorName}</strong>
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-[#B08D57]">
-              <ShieldCheck className="w-4 h-4" />
-              <span className="text-[11px] font-semibold uppercase tracking-wider">Fiduciary Research</span>
+            <div className="flex items-center gap-1.5 text-[#8C6B37]">
+              <ShieldCheck className="w-4 h-4 text-[#B08D57]" aria-hidden="true" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#172B46]/70">
+                Fiduciary Research Desk
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. COVER IMAGE */}
+      {/* 2. FULL-WIDTH EDGE-TO-EDGE HERO IMAGE */}
       {article.coverImage && (
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
-          <div className="relative w-full h-[320px] sm:h-[440px] rounded-sm overflow-hidden shadow-lg border border-[#E5DFD5]">
-            <Image
-              src={article.coverImage}
-              alt={article.title}
-              fill
-              sizes="(max-width: 1024px) 100vw, 896px"
-              priority
-              className="object-cover"
-            />
-          </div>
+        <section className="relative w-full aspect-[16/9] sm:aspect-[16/8] lg:aspect-[16/7] max-h-[540px] overflow-hidden bg-[#172B46]/5 border-y border-[#E5DFD5]">
+          <Image
+            src={article.coverImage}
+            alt={article.title}
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover object-center"
+          />
         </section>
       )}
 
-      {/* 3. ESSAY NARRATIVE BODY */}
-      <section className="py-12 sm:py-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-[#172B46]">
-          {article.content.split("\n\n").map((block, idx) => {
-            if (block.startsWith("### ")) {
-              return (
-                <h3
-                  key={idx}
-                  className="text-[20px] sm:text-[22px] font-semibold text-[#172B46] pt-6 pb-1 tracking-tight"
-                >
-                  {block.replace("### ", "")}
-                </h3>
-              );
-            }
-            if (block.startsWith("## ")) {
-              return (
-                <h2
-                  key={idx}
-                  className="text-[26px] sm:text-[30px] font-semibold text-[#172B46] pt-8 pb-2 tracking-tight"
-                >
-                  {block.replace("## ", "")}
-                </h2>
-              );
-            }
-            if (block.startsWith("- ")) {
-              const items = block.split("\n").filter((l) => l.startsWith("- "));
-              return (
-                <ul key={idx} className="space-y-2 py-2 pl-2">
-                  {items.map((it, i) => (
-                    <li
-                      key={i}
-                      className="flex items-start gap-2.5 text-sm sm:text-base text-[#172B46]/85 font-light leading-relaxed"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#B08D57] shrink-0 mt-2.5" />
-                      <span>{it.replace("- ", "")}</span>
-                    </li>
-                  ))}
-                </ul>
-              );
-            }
-            return (
-              <p
-                key={idx}
-                className="text-sm sm:text-base text-[#172B46]/85 font-light leading-relaxed"
-              >
-                {block}
-              </p>
-            );
-          })}
+      {/* 3. ESSAY NARRATIVE BODY (Maximum width 780px) */}
+      <section className="py-12 sm:py-16 bg-[#FFFFFF]">
+        <div className="max-w-[780px] mx-auto px-5 sm:px-6">
+          <ArticleContentRenderer content={article.content} />
 
           {/* Compliance Review Disclaimer */}
-          <div className="mt-12 p-5 bg-[#F7F5F0] border-l-4 border-[#B08D57] rounded-xs space-y-1 text-xs text-[#172B46]/75 font-light">
-            <strong className="text-[#172B46] font-semibold block">Editorial & Advisory Notice:</strong>
+          <div className="mt-12 p-5 bg-[#F7F5F0] border-l-4 border-[#B08D57] rounded-xs space-y-1.5 text-xs text-[#172B46]/75 font-normal leading-relaxed">
+            <strong className="text-[#172B46] font-semibold block text-[13px]">
+              Editorial & Advisory Notice:
+            </strong>
             The observations and commentary above are published for general wealth education and institutional perspective. They do not constitute specific investment, legal, or tax counsel for any individual circumstances. All asset allocations are subject to market conditions.
           </div>
         </div>

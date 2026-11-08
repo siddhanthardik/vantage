@@ -19,6 +19,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { ArticleItem, ArticleFormData, ArticleRevisionItem } from "@/types/article";
+import ArticleContentRenderer from "@/components/insights/ArticleContentRenderer";
 
 interface ArticleEditorProps {
   initialArticle?: ArticleItem;
@@ -627,38 +628,42 @@ export default function ArticleEditor({
 
       {/* TAB 2: LIVE PREVIEW */}
       {activeTab === "preview" && (
-        <div className="bg-[#FFFFFF] p-8 sm:p-12 rounded-sm border border-[#E5DFD5] shadow-xs max-w-4xl mx-auto space-y-8">
+        <div className="bg-[#FFFFFF] p-6 sm:p-10 rounded-sm border border-[#E5DFD5] shadow-xs max-w-4xl mx-auto space-y-8 font-sans">
           <div className="space-y-4">
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#B08D57]">
-              {formData.category} &bull; {formData.readTime}
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-[#172B46] leading-tight">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#B08D57]">
+              <span>{formData.category || "General"}</span>
+              <span className="text-[#172B46]/30">&bull;</span>
+              <span className="text-[#172B46]/70 lowercase">{formData.readTime || "5 min read"}</span>
+            </div>
+            <h1 className="text-[26px] sm:text-[34px] font-semibold text-[#172B46] tracking-tight leading-[1.2]">
               {formData.title || "Untitled Article"}
             </h1>
-            <p className="text-base text-[#172B46]/80 font-light italic leading-relaxed border-l-2 border-[#B08D57] pl-4">
-              {formData.excerpt}
-            </p>
+            {formData.excerpt && (
+              <p className="text-[15px] sm:text-[17px] text-[#172B46]/80 font-normal leading-relaxed border-l-2 border-[#B08D57] pl-4">
+                {formData.excerpt}
+              </p>
+            )}
           </div>
 
           {formData.coverImage && (
-            <div className="relative w-full h-72 sm:h-96 rounded-sm overflow-hidden border border-[#E5DFD5]">
+            <div className="relative w-full aspect-[16/9] sm:aspect-[16/8] max-h-[420px] rounded-sm overflow-hidden border border-[#E5DFD5]">
               <Image
                 src={formData.coverImage}
-                alt={formData.title}
+                alt={formData.title || "Article Cover"}
                 fill
                 sizes="(max-width: 1024px) 100vw, 896px"
-                className="object-cover"
+                className="object-cover object-center"
               />
             </div>
           )}
 
-          <div className="prose max-w-none text-sm text-[#172B46]/85 font-light leading-relaxed space-y-4 whitespace-pre-wrap">
-            {formData.content}
+          <div className="max-w-[780px] mx-auto py-2">
+            <ArticleContentRenderer content={formData.content} />
           </div>
 
           <div className="pt-6 border-t border-[#E5DFD5] flex items-center justify-between text-xs text-[#172B46]/60">
             <span>By {formData.authorName}</span>
-            <span>Tags: {formData.tags?.join(", ")}</span>
+            <span>Tags: {formData.tags?.join(", ") || "None"}</span>
           </div>
         </div>
       )}
