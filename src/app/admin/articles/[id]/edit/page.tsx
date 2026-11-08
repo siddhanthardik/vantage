@@ -4,8 +4,6 @@ import { connection } from "next/server";
 import { getArticleById, getArticleRevisions } from "@/server/repositories/articleRepository";
 import ArticleEditor from "@/components/admin/ArticleEditor";
 
-export const dynamic = "force-dynamic";
-
 export const metadata = {
   title: "Edit Article | Vantage Wealth CMS",
 };
