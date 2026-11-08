@@ -744,7 +744,7 @@ export default function ArticleEditor({
             </div>
 
             {/* 3. ARTICLE TITLE */}
-            <h1 className="text-[26px] sm:text-[34px] font-semibold text-[#172B46] tracking-tight leading-[1.2]">
+            <h1 className="article-title-heading">
               {formData.title || "Untitled Article"}
             </h1>
 

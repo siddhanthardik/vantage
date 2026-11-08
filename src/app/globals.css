@@ -244,6 +244,41 @@ p {
   scrollbar-width: none; /* Firefox */
 }
 
+/* Public Insights Individual Article Detail Page H1 */
+h1.article-title-heading,
+.article-title-heading {
+  font-family: var(--font-sans), "Manrope", sans-serif;
+  font-weight: 600;
+  color: #172B46;
+  text-align: left;
+  max-width: 760px;
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.015em;
+  /* Mobile (below 768px): 26px, line-height 1.3 */
+  font-size: 26px;
+  line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+  h1.article-title-heading,
+  .article-title-heading {
+    /* Tablet (768px–1023px): 29px, line-height 1.25 */
+    font-size: 29px;
+    line-height: 1.25;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1.article-title-heading,
+  .article-title-heading {
+    /* Desktop (1024px and above): 32px, line-height 1.25 */
+    font-size: 32px;
+    line-height: 1.25;
+  }
+}
+
 /* Editorial Article Content Body (Rich Text & HTML from WYSIWYG Editor) */
 .article-content-body h1,
 .article-content-body h2 {

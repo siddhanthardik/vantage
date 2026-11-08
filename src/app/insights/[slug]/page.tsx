@@ -204,8 +204,8 @@ async function SingleInsightContent({ params }: ArticlePageProps) {
               </span>
             </nav>
 
-            {/* 4. ARTICLE TITLE (Desktop: 34–38px, Tablet: 32px, Mobile: 27–30px, weight 600, navy #172B46, left aligned) */}
-            <h1 className="text-[28px] sm:text-[32px] lg:text-[36px] font-semibold text-[#172B46] tracking-tight leading-[1.2] mb-5 text-left">
+            {/* 4. ARTICLE TITLE (Desktop: 32px, Tablet: 29px, Mobile: 26px, weight 600, navy #172B46, left aligned) */}
+            <h1 className="article-title-heading">
               {article.title}
             </h1>
 
