@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import { isHtmlContent, sanitizeHtmlContent } from "@/lib/content/contentConverter";
 
 interface ArticleContentRendererProps {
   content: string;
@@ -19,11 +20,6 @@ type Block =
  */
 function parseInlineMarkdown(text: string): ReactNode[] {
   const tokens: ReactNode[] = [];
-  // Matches:
-  // [1,2,3]: [label](url)
-  // [4,5]: **bold**
-  // [6,7]: *italic*
-  // [8,9]: _italic_
   const regex = /(\[([^\]]+)\]\(([^)]+)\))|(\*\*([^*]+)\*\*)|(\*([^*]+)\*)|(_([^_]+)_)/g;
 
   let lastIndex = 0;
@@ -94,7 +90,6 @@ function parseInlineMarkdown(text: string): ReactNode[] {
 function parseContentBlocks(content: string): Block[] {
   if (!content) return [];
 
-  // Normalize LF and CRLF line endings
   const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   const lines = normalized.split("\n");
 
@@ -112,13 +107,12 @@ function parseContentBlocks(content: string): Block[] {
     const rawLine = lines[i];
     const trimmed = rawLine.trim();
 
-    // Blank line indicates block break
     if (!trimmed) {
       flush();
       continue;
     }
 
-    // Heading 3: "### Heading"
+    // Heading 3
     const h3Match = trimmed.match(/^###\s+(.+)$/);
     if (h3Match) {
       flush();
@@ -126,7 +120,7 @@ function parseContentBlocks(content: string): Block[] {
       continue;
     }
 
-    // Heading 2: "## Heading"
+    // Heading 2
     const h2Match = trimmed.match(/^##\s+(.+)$/);
     if (h2Match) {
       flush();
@@ -134,7 +128,7 @@ function parseContentBlocks(content: string): Block[] {
       continue;
     }
 
-    // Heading 1: "# Heading" (mapped to h2 to preserve single page-level h1)
+    // Heading 1 (maps to h2 to preserve page title h1)
     const h1Match = trimmed.match(/^#\s+(.+)$/);
     if (h1Match) {
       flush();
@@ -142,7 +136,7 @@ function parseContentBlocks(content: string): Block[] {
       continue;
     }
 
-    // Blockquote: "> Quote line"
+    // Blockquote
     const quoteMatch = trimmed.match(/^>\s?(.*)$/);
     if (quoteMatch) {
       if (currentBlock && currentBlock.type === "quote") {
@@ -154,7 +148,7 @@ function parseContentBlocks(content: string): Block[] {
       continue;
     }
 
-    // Unordered list item: "- Item" or "* Item"
+    // Unordered list
     const ulMatch = trimmed.match(/^[-*]\s+(.+)$/);
     if (ulMatch) {
       if (currentBlock && currentBlock.type === "ul") {
@@ -166,7 +160,7 @@ function parseContentBlocks(content: string): Block[] {
       continue;
     }
 
-    // Ordered list item: "1. Item", "2. Item"
+    // Ordered list
     const olMatch = trimmed.match(/^\d+\.\s+(.+)$/);
     if (olMatch) {
       if (currentBlock && currentBlock.type === "ol") {
@@ -178,7 +172,7 @@ function parseContentBlocks(content: string): Block[] {
       continue;
     }
 
-    // Standard paragraph text
+    // Paragraph
     if (currentBlock && currentBlock.type === "p") {
       currentBlock.text += " " + trimmed;
     } else {
@@ -194,14 +188,28 @@ function parseContentBlocks(content: string): Block[] {
 /**
  * ArticleContentRenderer
  *
- * Renders editorial Markdown content with strict typographic hierarchy,
- * deterministic separation between headings and paragraphs, and responsive
- * Manrope typography.
+ * Renders both modern WYSIWYG HTML (sanitized) and legacy editorial Markdown content
+ * with strict typographic hierarchy, responsive Manrope font, and Vantage Wealth design tokens.
  */
 export default function ArticleContentRenderer({
   content,
   className = "",
 }: ArticleContentRendererProps) {
+  if (!content || !content.trim()) {
+    return null;
+  }
+
+  // Dual-mode rendering: Structured HTML vs Markdown AST
+  if (isHtmlContent(content)) {
+    const sanitizedHtml = sanitizeHtmlContent(content);
+    return (
+      <div
+        className={`article-content-body font-sans text-[#172B46] ${className}`}
+        dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+      />
+    );
+  }
+
   const blocks = parseContentBlocks(content);
 
   if (!blocks || blocks.length === 0) {

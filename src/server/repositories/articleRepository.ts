@@ -73,7 +73,11 @@ function syncLocalArticlesCache(dbArticles: ArticleItem[]): void {
 }
 
 export async function getPublishedArticles(): Promise<ArticleItem[]> {
-  await connection();
+  try {
+    await connection();
+  } catch {
+    // Graceful fallback when called in standalone scripts or test suites
+  }
   const now = new Date();
 
   if (prisma) {
@@ -98,6 +102,8 @@ export async function getPublishedArticles(): Promise<ArticleItem[]> {
         ...a,
         category: a.categoryName,
         tags: a.tags ? a.tags.map((t: any) => t.tag.name) : [],
+        faqs: (a.faqs as any) || [],
+        secondaryKeywords: a.secondaryKeywords || [],
       }));
     } catch (e) {
       console.error("PostgreSQL getPublishedArticles query error:", e);
@@ -133,6 +139,8 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
         ...a,
         category: a.categoryName,
         tags: a.tags ? a.tags.map((t: any) => t.tag.name) : [],
+        faqs: (a.faqs as any) || [],
+        secondaryKeywords: a.secondaryKeywords || [],
       }));
 
       syncLocalArticlesCache(formatted);
@@ -165,6 +173,8 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
           ...article,
           category: article.categoryName,
           tags: article.tags ? article.tags.map((t: any) => t.tag.name) : [],
+          faqs: (article.faqs as any) || [],
+          secondaryKeywords: article.secondaryKeywords || [],
         };
       }
       return null;
@@ -192,6 +202,8 @@ export async function getArticleById(id: string): Promise<ArticleItem | null> {
           ...article,
           category: article.categoryName,
           tags: article.tags ? article.tags.map((t: any) => t.tag.name) : [],
+          faqs: (article.faqs as any) || [],
+          secondaryKeywords: article.secondaryKeywords || [],
         };
       }
       return null;
@@ -231,6 +243,8 @@ export async function getArticleRevisions(articleId: string): Promise<ArticleRev
       });
       return revs.map((r: any) => ({
         ...r,
+        faqs: (r.faqs as any) || [],
+        secondaryKeywords: r.secondaryKeywords || [],
         createdAt: r.createdAt.toISOString(),
       }));
     } catch (e) {
@@ -253,6 +267,9 @@ export async function saveArticleRevision(
     content: string;
     seoTitle?: string | null;
     seoDescription?: string | null;
+    primaryKeyword?: string | null;
+    secondaryKeywords?: string[];
+    faqs?: any;
   },
   authorEmail?: string
 ): Promise<ArticleRevisionItem> {
@@ -276,6 +293,9 @@ export async function saveArticleRevision(
           content: articleData.content,
           seoTitle: articleData.seoTitle || null,
           seoDescription: articleData.seoDescription || null,
+          primaryKeyword: articleData.primaryKeyword || null,
+          secondaryKeywords: articleData.secondaryKeywords || [],
+          faqs: (articleData.faqs as any) || [],
           authorEmail: authorEmail || "admin@vantagewealth.in",
           createdAt: now,
         },
@@ -283,6 +303,9 @@ export async function saveArticleRevision(
 
       return {
         ...createdRev,
+        primaryKeyword: createdRev.primaryKeyword,
+        secondaryKeywords: createdRev.secondaryKeywords,
+        faqs: createdRev.faqs as any,
         createdAt: createdRev.createdAt.toISOString(),
       };
     } catch (e: any) {
@@ -335,6 +358,9 @@ export async function createArticle(
           scheduledFor: formData.status === "SCHEDULED" && formData.scheduledFor ? new Date(formData.scheduledFor) : null,
           seoTitle: formData.seoTitle || `${formData.title.trim()} | Vantage Wealth Insights`,
           seoDescription: formData.seoDescription || formData.excerpt.trim(),
+          primaryKeyword: formData.primaryKeyword?.trim() || null,
+          secondaryKeywords: formData.secondaryKeywords || [],
+          faqs: (formData.faqs as any) || [],
           createdAt: now,
           updatedAt: now,
         },
@@ -347,6 +373,9 @@ export async function createArticle(
         ...created,
         category: created.categoryName,
         tags: formData.tags || ["Advisory", "Wealth Management"],
+        primaryKeyword: created.primaryKeyword,
+        secondaryKeywords: created.secondaryKeywords,
+        faqs: created.faqs as any,
         createdAt: created.createdAt.toISOString(),
         updatedAt: created.updatedAt.toISOString(),
         publishedAt: created.publishedAt.toISOString(),
@@ -414,6 +443,9 @@ export async function updateArticle(
           scheduledFor: formData.scheduledFor !== undefined ? (formData.scheduledFor ? new Date(formData.scheduledFor) : null) : existing.scheduledFor,
           seoTitle: formData.seoTitle !== undefined ? formData.seoTitle : existing.seoTitle,
           seoDescription: formData.seoDescription !== undefined ? formData.seoDescription : existing.seoDescription,
+          primaryKeyword: formData.primaryKeyword !== undefined ? (formData.primaryKeyword ? formData.primaryKeyword.trim() : null) : existing.primaryKeyword,
+          secondaryKeywords: formData.secondaryKeywords !== undefined ? formData.secondaryKeywords : existing.secondaryKeywords,
+          faqs: formData.faqs !== undefined ? (formData.faqs as any) : existing.faqs,
         },
       });
 
@@ -424,6 +456,9 @@ export async function updateArticle(
         ...updated,
         category: updated.categoryName,
         tags: formData.tags || ["Advisory", "Wealth Management"],
+        primaryKeyword: updated.primaryKeyword,
+        secondaryKeywords: updated.secondaryKeywords,
+        faqs: updated.faqs as any,
         createdAt: updated.createdAt.toISOString(),
         updatedAt: updated.updatedAt.toISOString(),
         publishedAt: updated.publishedAt.toISOString(),
@@ -470,6 +505,9 @@ export async function restoreArticleRevision(
       content: targetRevision.content,
       seoTitle: targetRevision.seoTitle,
       seoDescription: targetRevision.seoDescription,
+      primaryKeyword: targetRevision.primaryKeyword,
+      secondaryKeywords: targetRevision.secondaryKeywords,
+      faqs: targetRevision.faqs,
     },
     authorEmail
   );

@@ -1,6 +1,19 @@
 {
   "media": [
     {
+      "id": "med_1794114084717_o249k",
+      "filename": "beyons-sips-ed0ee1d60ccc.jpg",
+      "originalName": "beyons-SIPs.jpg",
+      "url": "/uploads/beyons-sips-ed0ee1d60ccc.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 433097,
+      "storageType": "LOCAL",
+      "altText": null,
+      "width": null,
+      "height": null,
+      "createdAt": "2026-11-08T05:01:24.718Z"
+    },
+    {
       "id": "med_1794085471921_jn54x",
       "filename": "hero-advisory-8ecb4ec6c022.png",
       "originalName": "hero-advisory.png",

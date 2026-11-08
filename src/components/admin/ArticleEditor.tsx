@@ -17,9 +17,17 @@ import {
   Tag,
   AlertCircle,
   ExternalLink,
+  Layers,
+  HelpCircle,
+  Settings,
 } from "lucide-react";
-import { ArticleItem, ArticleFormData, ArticleRevisionItem } from "@/types/article";
+import { ArticleItem, ArticleFormData, ArticleRevisionItem, ArticleFaqItem } from "@/types/article";
 import ArticleContentRenderer from "@/components/insights/ArticleContentRenderer";
+import ArticleFaqAccordion from "@/components/insights/ArticleFaqAccordion";
+import BlogComposer from "./BlogComposer";
+import FaqManager from "./FaqManager";
+import SeoSection from "./SeoSection";
+import MediaPickerModal from "./MediaPickerModal";
 
 interface ArticleEditorProps {
   initialArticle?: ArticleItem;
@@ -48,6 +56,9 @@ export default function ArticleEditor({
     scheduledFor: initialArticle?.scheduledFor || "",
     seoTitle: initialArticle?.seoTitle || "",
     seoDescription: initialArticle?.seoDescription || "",
+    primaryKeyword: initialArticle?.primaryKeyword || "",
+    secondaryKeywords: initialArticle?.secondaryKeywords || [],
+    faqs: initialArticle?.faqs || [],
   });
 
   const [newTagInput, setNewTagInput] = useState("");
@@ -57,7 +68,9 @@ export default function ArticleEditor({
   const [revisions, setRevisions] = useState<ArticleRevisionItem[]>(initialArticle?.revisions || []);
   const [restoringVersion, setRestoringVersion] = useState<number | null>(null);
 
-  // Auto-generate slug from title if in create mode or slug is empty
+  // Media picker modal states for Cover & OG image
+  const [mediaPickerTarget, setMediaPickerTarget] = useState<"cover" | "og" | null>(null);
+
   const handleTitleChange = (val: string) => {
     setFormData((prev) => {
       const updated = { ...prev, title: val };
@@ -91,8 +104,8 @@ export default function ArticleEditor({
     }));
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setStatusMessage(null);
 
     if (!formData.title.trim()) {
@@ -104,11 +117,15 @@ export default function ArticleEditor({
       return;
     }
     if (!formData.excerpt.trim()) {
-      setStatusMessage({ type: "error", text: "Article summary excerpt is required." });
+      setStatusMessage({ type: "error", text: "Article executive excerpt is required." });
       return;
     }
     if (!formData.content.trim()) {
       setStatusMessage({ type: "error", text: "Article content cannot be empty." });
+      return;
+    }
+    if (!formData.primaryKeyword?.trim()) {
+      setStatusMessage({ type: "error", text: "Primary SEO keyword is required in the SEO section." });
       return;
     }
 
@@ -135,23 +152,20 @@ export default function ArticleEditor({
 
       setStatusMessage({
         type: "success",
-        text: `Article "${formData.title}" saved successfully.`,
+        text: `Article "${formData.title}" saved successfully to PostgreSQL.`,
       });
 
       if (!isEditing && data.article?.id) {
         router.push(`/admin/articles/${data.article.id}/edit`);
-      } else {
-        // Refresh revisions
-        if (data.article?.id) {
-          const revRes = await fetch(`/api/admin/articles/${data.article.id}`);
-          const revData = await revRes.json();
-          if (revData.article?.revisions) {
-            setRevisions(revData.article.revisions);
-          }
+      } else if (data.article?.id) {
+        const revRes = await fetch(`/api/admin/articles/${data.article.id}`);
+        const revData = await revRes.json();
+        if (revData.article?.revisions) {
+          setRevisions(revData.article.revisions);
         }
       }
     } catch (err: any) {
-      setStatusMessage({ type: "error", text: err.message || "Failed to save article" });
+      setStatusMessage({ type: "error", text: err.message || "Failed to save article." });
     } finally {
       setSaving(false);
     }
@@ -159,20 +173,26 @@ export default function ArticleEditor({
 
   const handleRestoreRevision = async (version: number) => {
     if (!initialArticle?.id) return;
-    if (!confirm(`Are you sure you want to restore to version ${version}? This will overwrite your current unsaved changes.`)) {
-      return;
-    }
+    const confirmRestore = confirm(
+      `Are you sure you want to restore Version ${version}? This will update the active article content.`
+    );
+    if (!confirmRestore) return;
 
     setRestoringVersion(version);
+    setStatusMessage(null);
+
     try {
-      const res = await fetch(`/api/admin/articles/${initialArticle.id}/restore`, {
+      const res = await fetch(`/api/admin/articles/${initialArticle.id}/revisions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ version }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to restore revision");
+
+      if (!res.ok) {
+        throw new Error(data.error || `Failed to restore version ${version}.`);
+      }
 
       setFormData((prev) => ({
         ...prev,
@@ -181,62 +201,62 @@ export default function ArticleEditor({
         content: data.article.content,
         seoTitle: data.article.seoTitle || "",
         seoDescription: data.article.seoDescription || "",
+        primaryKeyword: data.article.primaryKeyword || "",
+        secondaryKeywords: data.article.secondaryKeywords || [],
+        faqs: data.article.faqs || [],
       }));
 
       setStatusMessage({
         type: "success",
-        text: `Restored article content to version ${version}.`,
+        text: `Successfully rolled back to snapshot Version ${version}.`,
       });
+
       setActiveTab("edit");
     } catch (err: any) {
-      setStatusMessage({ type: "error", text: err.message || "Failed to restore revision" });
+      setStatusMessage({ type: "error", text: err.message || "Rollback failed." });
     } finally {
       setRestoringVersion(null);
     }
   };
 
   return (
-    <div className="space-y-6 w-full pb-20">
-      {/* Top Header */}
+    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-16">
+      {/* Top Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E5DFD5]">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Link
             href="/admin/articles"
-            className="p-2 rounded-sm border border-[#E5DFD5] bg-[#FFFFFF] text-[#172B46] hover:bg-[#F7F5F0] transition-colors"
+            className="p-2 border border-[#E5DFD5] bg-[#FFFFFF] text-[#172B46] hover:bg-[#F7F5F0] rounded-sm transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-[#B08D57]">
-              {isEditing ? "Edit Article" : "Create New Publication"}
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#B08D57]">
+              Insights CMS &bull; Blog Composer 2.0
             </span>
-            <h1 className="text-2xl font-sans font-bold text-[#172B46] mt-0.5">
-              {formData.title || "Untitled Article"}
+            <h1 className="text-xl sm:text-2xl font-bold text-[#172B46]">
+              {isEditing ? `Edit: ${formData.title || "Untitled"}` : "Create New Research Publication"}
             </h1>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Tab toggles */}
-          <div className="flex border border-[#E5DFD5] rounded-sm overflow-hidden bg-[#FFFFFF]">
+        {/* Tab Switcher & Save Button */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex bg-[#FFFFFF] border border-[#E5DFD5] rounded-sm p-0.5 text-xs font-semibold">
             <button
               type="button"
               onClick={() => setActiveTab("edit")}
-              className={`px-3 py-1.5 text-xs font-semibold cursor-pointer ${
-                activeTab === "edit"
-                  ? "bg-[#172B46] text-[#FFFFFF]"
-                  : "text-[#172B46]/70 hover:bg-[#F7F5F0]"
+              className={`px-3 py-1.5 rounded-xs transition-colors cursor-pointer ${
+                activeTab === "edit" ? "bg-[#172B46] text-[#FFFFFF]" : "text-[#172B46]/70 hover:bg-[#F7F5F0]"
               }`}
             >
-              Editor
+              Composer
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("preview")}
-              className={`px-3 py-1.5 text-xs font-semibold cursor-pointer ${
-                activeTab === "preview"
-                  ? "bg-[#172B46] text-[#FFFFFF]"
-                  : "text-[#172B46]/70 hover:bg-[#F7F5F0]"
+              className={`px-3 py-1.5 rounded-xs transition-colors cursor-pointer ${
+                activeTab === "preview" ? "bg-[#172B46] text-[#FFFFFF]" : "text-[#172B46]/70 hover:bg-[#F7F5F0]"
               }`}
             >
               Live Preview
@@ -245,10 +265,8 @@ export default function ArticleEditor({
               <button
                 type="button"
                 onClick={() => setActiveTab("revisions")}
-                className={`px-3 py-1.5 text-xs font-semibold cursor-pointer ${
-                  activeTab === "revisions"
-                    ? "bg-[#172B46] text-[#FFFFFF]"
-                    : "text-[#172B46]/70 hover:bg-[#F7F5F0]"
+                className={`px-3 py-1.5 rounded-xs transition-colors cursor-pointer ${
+                  activeTab === "revisions" ? "bg-[#172B46] text-[#FFFFFF]" : "text-[#172B46]/70 hover:bg-[#F7F5F0]"
                 }`}
               >
                 Revisions ({revisions.length})
@@ -268,7 +286,7 @@ export default function ArticleEditor({
 
           <button
             type="button"
-            onClick={handleSave}
+            onClick={() => handleSave()}
             disabled={saving}
             className="inline-flex items-center gap-2 bg-[#172B46] hover:bg-[#B08D57] text-[#FFFFFF] px-5 py-2 rounded-sm text-xs font-bold uppercase tracking-wider transition-colors shadow-xs cursor-pointer disabled:opacity-50"
           >
@@ -295,12 +313,20 @@ export default function ArticleEditor({
         </div>
       )}
 
-      {/* TAB 1: EDITOR FORM */}
+      {/* TAB 1: SEVEN-SECTION BLOG COMPOSER FORM */}
       {activeTab === "edit" && (
         <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Main Content Fields (8 cols) */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
+          {/* Main Column: Sections 1, 2, 3, 4 (8 cols) */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* 1. BASIC INFORMATION */}
+            <section className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
+              <div className="flex items-center gap-2 border-b border-[#E5DFD5] pb-2">
+                <FileText className="w-4 h-4 text-[#B08D57]" />
+                <h2 className="text-sm font-bold text-[#172B46] uppercase tracking-wider">
+                  1. Basic Information
+                </h2>
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#172B46] mb-1">
                   Article Title *
@@ -308,7 +334,7 @@ export default function ArticleEditor({
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Navigating Multi-Generational Wealth Preservation"
+                  placeholder="e.g. Navigating Multi-Generational Wealth Preservation in Volatile Markets"
                   value={formData.title}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   className="w-full px-4 py-2.5 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-base font-sans text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
@@ -339,93 +365,218 @@ export default function ArticleEditor({
                 <textarea
                   rows={3}
                   required
-                  placeholder="A concise 2-3 sentence overview that appears on article cards and search previews..."
+                  placeholder="A concise 2-3 sentence overview that appears on article cards, search engine previews, and directly below the title..."
                   value={formData.excerpt}
                   onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                   className="w-full px-4 py-2.5 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm leading-relaxed"
                 />
               </div>
+            </section>
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#172B46]">
-                    Full Article Content *
-                  </label>
-                  <span className="text-[11px] text-[#172B46]/60">
-                    Supports Markdown (## Headings, **bold**, lists, &gt; quotes)
-                  </span>
+            {/* 2. RICH TEXT BLOG COMPOSER */}
+            <section className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-[#E5DFD5] pb-2">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-[#B08D57]" />
+                  <h2 className="text-sm font-bold text-[#172B46] uppercase tracking-wider">
+                    2. Rich Text Blog Composer (WYSIWYG)
+                  </h2>
                 </div>
-                <textarea
-                  rows={18}
-                  required
-                  placeholder="Compose your research article here..."
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-sm text-[#172B46] font-mono focus:outline-none focus:border-[#B08D57] rounded-sm leading-relaxed"
-                />
+                <span className="text-[11px] text-[#172B46]/60">
+                  Full formatting, tables, media & live preview
+                </span>
               </div>
-            </div>
 
-            {/* SEO Information Panel */}
-            <div className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
+              <BlogComposer
+                content={formData.content}
+                onChange={(html) => setFormData((prev) => ({ ...prev, content: html }))}
+              />
+            </section>
+
+            {/* 3. FAQ MANAGER */}
+            <section>
+              <FaqManager
+                faqs={formData.faqs || []}
+                onChange={(faqs) => setFormData((prev) => ({ ...prev, faqs }))}
+              />
+            </section>
+
+            {/* 4. SEO & SOCIAL SHARING */}
+            <section>
+              <SeoSection
+                primaryKeyword={formData.primaryKeyword || ""}
+                secondaryKeywords={formData.secondaryKeywords || []}
+                seoTitle={formData.seoTitle || ""}
+                seoDescription={formData.seoDescription || ""}
+                slug={formData.slug}
+                articleTitle={formData.title}
+                articleExcerpt={formData.excerpt}
+                articleContent={formData.content}
+                onPrimaryKeywordChange={(val) => setFormData((prev) => ({ ...prev, primaryKeyword: val }))}
+                onSecondaryKeywordsChange={(keywords) => setFormData((prev) => ({ ...prev, secondaryKeywords: keywords }))}
+                onSeoTitleChange={(val) => setFormData((prev) => ({ ...prev, seoTitle: val }))}
+                onSeoDescriptionChange={(val) => setFormData((prev) => ({ ...prev, seoDescription: val }))}
+              />
+            </section>
+          </div>
+
+          {/* Right Sidebar: Sections 5, 6, 7 (4 cols) */}
+          <div className="lg:col-span-4 space-y-8">
+            {/* 5. CATEGORISATION */}
+            <section className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
               <div className="flex items-center gap-2 border-b border-[#E5DFD5] pb-2">
-                <Sparkles className="w-4 h-4 text-[#B08D57]" />
-                <h3 className="text-sm font-sans font-bold text-[#172B46]">
-                  Search Engine Optimization (SEO) & Social Sharing
-                </h3>
+                <Tag className="w-4 h-4 text-[#B08D57]" />
+                <h2 className="text-xs font-bold uppercase tracking-wider text-[#172B46]">
+                  5. Categorisation
+                </h2>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#172B46] mb-1">
-                  SEO Title Tag
+                <label className="block text-xs font-semibold text-[#172B46] mb-1">
+                  Primary Solution / Category
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#F7F5F0] border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm cursor-pointer"
+                >
+                  <option value="Wealth Planning">Wealth Planning</option>
+                  <option value="Market Updates">Market Updates</option>
+                  <option value="Tax & Legacy">Tax & Legacy</option>
+                  <option value="Retirement">Retirement</option>
+                  <option value="Portfolio Strategy">Portfolio Strategy</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#172B46] mb-1">
+                  Estimated Read Time
                 </label>
                 <input
                   type="text"
-                  placeholder="Defaults to article title | Vantage Wealth"
-                  value={formData.seoTitle || ""}
-                  onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
-                  className="w-full px-4 py-2 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
+                  placeholder="e.g. 6 min read"
+                  value={formData.readTime}
+                  onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#172B46] mb-1">
-                  Meta Description
+                <label className="block text-xs font-semibold text-[#172B46] mb-1">
+                  Tags & Topics
                 </label>
-                <textarea
-                  rows={2}
-                  placeholder="Defaults to article excerpt..."
-                  value={formData.seoDescription || ""}
-                  onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
-                  className="w-full px-4 py-2 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    placeholder="Add a topic tag..."
+                    value={newTagInput}
+                    onChange={(e) => setNewTagInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddTag();
+                      }
+                    }}
+                    className="flex-1 px-3 py-1.5 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddTag}
+                    className="px-3 py-1.5 bg-[#172B46] text-[#FFFFFF] text-xs font-semibold rounded-sm hover:bg-[#B08D57] transition-colors cursor-pointer"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {formData.tags?.map((t) => (
+                    <span
+                      key={t}
+                      className="inline-flex items-center gap-1 bg-[#F7F5F0] border border-[#E5DFD5] px-2 py-0.5 rounded-xs text-[11px] text-[#172B46]"
+                    >
+                      {t}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTag(t)}
+                        className="text-[#172B46]/40 hover:text-red-600"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 6. ARTICLE MEDIA */}
+            <section className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
+              <div className="flex items-center gap-2 border-b border-[#E5DFD5] pb-2">
+                <ImageIcon className="w-4 h-4 text-[#B08D57]" />
+                <h2 className="text-xs font-bold uppercase tracking-wider text-[#172B46]">
+                  6. Article Media
+                </h2>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-semibold text-[#172B46]">Cover Hero Image URL</label>
+                  <button
+                    type="button"
+                    onClick={() => setMediaPickerTarget("cover")}
+                    className="text-[11px] text-[#B08D57] font-semibold hover:underline cursor-pointer flex items-center gap-1"
+                  >
+                    <ImageIcon className="w-3 h-3" /> Select Asset
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  placeholder="/images/insights/article.png"
+                  value={formData.coverImage || ""}
+                  onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-xs font-mono text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
                 />
               </div>
 
-              {/* Google SERP Snippet Preview */}
-              <div className="p-4 bg-[#F7F5F0] rounded-sm border border-[#E5DFD5] space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#172B46]/60">
-                  Search Engine Preview
-                </span>
-                <div className="text-sm font-medium text-blue-800 truncate">
-                  {formData.seoTitle || formData.title || "Article Title"} | Vantage Wealth
+              {formData.coverImage && (
+                <div className="relative aspect-video rounded-sm overflow-hidden border border-[#E5DFD5] bg-[#F7F5F0]">
+                  <Image
+                    src={formData.coverImage}
+                    alt="Cover preview"
+                    fill
+                    sizes="350px"
+                    className="object-cover"
+                  />
                 </div>
-                <div className="text-xs text-green-700 truncate">
-                  https://vantagewealth.in/insights/{formData.slug || "article-slug"}
-                </div>
-                <div className="text-xs text-[#172B46]/75 line-clamp-2 leading-relaxed">
-                  {formData.seoDescription || formData.excerpt || "Meta description preview."}
-                </div>
-              </div>
-            </div>
-          </div>
+              )}
 
-          {/* Right Sidebar Settings (4 cols) */}
-          <div className="lg:col-span-4 space-y-6">
-            {/* Publication Status & Schedule */}
-            <div className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#172B46] border-b border-[#E5DFD5] pb-2">
-                Publishing Controls
-              </h3>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-semibold text-[#172B46]">Social Share Image (OG)</label>
+                  <button
+                    type="button"
+                    onClick={() => setMediaPickerTarget("og")}
+                    className="text-[11px] text-[#B08D57] font-semibold hover:underline cursor-pointer flex items-center gap-1"
+                  >
+                    <ImageIcon className="w-3 h-3" /> Select Asset
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Defaults to cover image"
+                  value={formData.ogImage || ""}
+                  onChange={(e) => setFormData({ ...formData, ogImage: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-xs font-mono text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
+                />
+              </div>
+            </section>
+
+            {/* 7. PUBLISHING CONTROLS */}
+            <section className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
+              <div className="flex items-center gap-2 border-b border-[#E5DFD5] pb-2">
+                <Settings className="w-4 h-4 text-[#B08D57]" />
+                <h2 className="text-xs font-bold uppercase tracking-wider text-[#172B46]">
+                  7. Publishing Controls
+                </h2>
+              </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#172B46] mb-1">
@@ -450,183 +601,43 @@ export default function ArticleEditor({
                   </label>
                   <input
                     type="datetime-local"
-                    value={formData.scheduledFor || ""}
+                    value={formData.scheduledFor ? new Date(formData.scheduledFor).toISOString().slice(0, 16) : ""}
                     onChange={(e) => setFormData({ ...formData, scheduledFor: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
+                    className="w-full px-3 py-1.5 bg-[#FFFFFF] border border-[#E5DFD5] text-xs text-[#172B46] rounded-xs"
                   />
-                  <p className="text-[10px] text-[#172B46]/70 leading-relaxed">
-                    Article will automatically publish when the scheduled timestamp is reached.
-                  </p>
                 </div>
               )}
 
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="featuredCheck"
-                  checked={formData.isFeatured}
-                  onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-                  className="w-4 h-4 text-[#B08D57] rounded-xs border-gray-300"
-                />
-                <label htmlFor="featuredCheck" className="text-xs text-[#172B46] cursor-pointer">
-                  Feature in Hero Banner on Insights Hub
-                </label>
-              </div>
-            </div>
-
-            {/* Categorization & Tags */}
-            <div className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#172B46] border-b border-[#E5DFD5] pb-2">
-                Categorization
-              </h3>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#172B46] mb-1">
-                  Primary Category
-                </label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#F7F5F0] border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm cursor-pointer"
-                >
-                  <option value="Wealth Planning">Wealth Planning</option>
-                  <option value="Tax Planning">Tax Planning</option>
-                  <option value="Investment Strategy">Investment Strategy</option>
-                  <option value="Family Office">Family Office</option>
-                  <option value="Retirement">Retirement Planning</option>
-                  <option value="Market Updates">Market Updates</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#172B46] mb-1">
-                  Tags & Topics
-                </label>
-                <div className="flex items-center gap-2">
+              <div className="pt-2">
+                <label className="flex items-center gap-2 text-xs font-semibold text-[#172B46] cursor-pointer">
                   <input
-                    type="text"
-                    placeholder="Add tag..."
-                    value={newTagInput}
-                    onChange={(e) => setNewTagInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddTag();
-                      }
-                    }}
-                    className="flex-1 px-3 py-1.5 bg-[#F7F5F0] border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
+                    type="checkbox"
+                    checked={formData.isFeatured}
+                    onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                    className="rounded-xs text-[#B08D57] focus:ring-[#B08D57] cursor-pointer"
                   />
-                  <button
-                    type="button"
-                    onClick={handleAddTag}
-                    className="px-3 py-1.5 bg-[#172B46] text-[#FFFFFF] text-xs font-semibold rounded-sm hover:bg-[#B08D57] transition-colors cursor-pointer"
-                  >
-                    Add
-                  </button>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5 pt-2">
-                  {formData.tags?.map((t) => (
-                    <span
-                      key={t}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#F7F5F0] border border-[#E5DFD5] text-[11px] text-[#172B46] rounded-xs"
-                    >
-                      <span>{t}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTag(t)}
-                        className="text-red-500 hover:text-red-700 ml-1 cursor-pointer"
-                      >
-                        &times;
-                      </button>
-                    </span>
-                  ))}
-                </div>
+                  <span>Feature on Insights Hub Hero</span>
+                </label>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#172B46] mb-1">
-                  Estimated Read Time
+                  Author Byline
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. 5 min read"
-                  value={formData.readTime}
-                  onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#F7F5F0] border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#172B46] mb-1">
-                  Author Signature
-                </label>
-                <input
-                  type="text"
-                  placeholder="Vantage Research Desk"
+                  placeholder="e.g. Vantage Research Desk"
                   value={formData.authorName}
                   onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#F7F5F0] border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
+                  className="w-full px-3 py-2 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
                 />
               </div>
-            </div>
-
-            {/* Featured Image & Media */}
-            <div className="bg-[#FFFFFF] p-6 rounded-sm border border-[#E5DFD5] shadow-xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#172B46] border-b border-[#E5DFD5] pb-2">
-                Article Media
-              </h3>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#172B46] mb-1">
-                  Featured Cover Image URL
-                </label>
-                <input
-                  type="text"
-                  placeholder="/images/insights/featured-article.png"
-                  value={formData.coverImage || ""}
-                  onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#F7F5F0] border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
-                />
-                <p className="text-[10px] text-[#172B46]/60 mt-1">
-                  Paste URL or select from{" "}
-                  <Link href="/admin/media" target="_blank" className="text-[#B08D57] underline">
-                    Media Library
-                  </Link>
-                  .
-                </p>
-              </div>
-
-              {formData.coverImage && (
-                <div className="relative w-full h-36 rounded-sm overflow-hidden border border-[#E5DFD5] bg-[#F7F5F0]">
-                  <Image
-                    src={formData.coverImage}
-                    alt="Cover preview"
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 380px"
-                    className="object-cover"
-                  />
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-semibold text-[#172B46] mb-1">
-                  Social Share (OG) Image URL
-                </label>
-                <input
-                  type="text"
-                  placeholder="Defaults to cover image..."
-                  value={formData.ogImage || ""}
-                  onChange={(e) => setFormData({ ...formData, ogImage: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#F7F5F0] border border-[#E5DFD5] text-xs text-[#172B46] focus:outline-none focus:border-[#B08D57] rounded-sm"
-                />
-              </div>
-            </div>
+            </section>
           </div>
         </form>
       )}
 
-      {/* TAB 2: LIVE PREVIEW */}
+      {/* TAB 2: LIVE PREVIEW MATCHING PUBLIC PAGE LAYOUT */}
       {activeTab === "preview" && (
         <div className="bg-[#FFFFFF] p-6 sm:p-10 rounded-sm border border-[#E5DFD5] shadow-xs max-w-4xl mx-auto space-y-8 font-sans">
           {/* 1. HERO COVER IMAGE */}
@@ -643,7 +654,7 @@ export default function ArticleEditor({
           )}
 
           <div className="max-w-[780px] mx-auto space-y-6">
-            {/* 2. BREADCRUMB / CATEGORY */}
+            {/* 2. BREADCRUMB */}
             <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#B08D57]">
               <span>Home</span>
               <span className="text-[#172B46]/30">&gt;</span>
@@ -669,14 +680,19 @@ export default function ArticleEditor({
               <ArticleContentRenderer content={formData.content} />
             </div>
 
-            {/* 6. PUBLISHED BY */}
+            {/* 6. FAQS PREVIEW */}
+            {formData.faqs && formData.faqs.filter((f) => f.isEnabled).length > 0 && (
+              <ArticleFaqAccordion faqs={formData.faqs} />
+            )}
+
+            {/* 7. PUBLISHED BY */}
             <div className="pt-6 border-t border-[#E5DFD5] text-sm text-[#172B46]/80">
               <span>
                 Published by <strong className="text-[#172B46] font-semibold">{formData.authorName}</strong>
               </span>
             </div>
 
-            {/* 7. DISCLAIMER */}
+            {/* 8. DISCLAIMER */}
             <div className="p-5 bg-[#F7F5F0] border-l-4 border-[#B08D57] rounded-xs space-y-1.5 text-xs text-[#172B46]/75 font-normal leading-relaxed">
               <strong className="text-[#172B46] font-semibold block text-[13px]">
                 Editorial & Advisory Notice:
@@ -696,48 +712,49 @@ export default function ArticleEditor({
                 Article Revision History
               </h3>
               <p className="text-xs text-[#172B46]/65 font-light">
-                Every save creates an immutable version snapshot. You can inspect or rollback to any previous version.
+                Every save creates an immutable version snapshot containing article content, SEO keywords, and FAQs.
               </p>
             </div>
           </div>
 
           {revisions.length === 0 ? (
-            <div className="py-8 text-center text-xs text-[#172B46]/60">
-              No previous revisions recorded.
+            <div className="py-12 text-center text-xs text-[#172B46]/60 bg-[#F7F5F0]/40 rounded-sm border border-dashed border-[#E5DFD5]">
+              No previous revisions captured for this article.
             </div>
           ) : (
             <div className="space-y-4">
               {revisions.map((rev) => (
                 <div
-                  key={rev.id}
-                  className="p-5 bg-[#F7F5F0] rounded-sm border border-[#E5DFD5] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  key={rev.id || rev.version}
+                  className="p-5 bg-[#F7F5F0]/50 rounded-sm border border-[#E5DFD5] flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold bg-[#172B46] text-[#C9A975] px-2 py-0.5 rounded-xs">
-                        v{rev.version}
+                      <span className="text-xs font-bold uppercase tracking-wider text-[#B08D57] bg-[#B08D57]/10 px-2 py-0.5 rounded-xs">
+                        Snapshot v{rev.version}
                       </span>
-                      <span className="text-xs font-bold text-[#172B46]">
-                        {rev.title}
+                      <span className="text-xs text-[#172B46]/50">&bull;</span>
+                      <span className="text-xs text-[#172B46]/70">
+                        {new Date(rev.createdAt).toLocaleString()}
                       </span>
                     </div>
-                    <p className="text-xs text-[#172B46]/70 line-clamp-1">
-                      {rev.excerpt}
-                    </p>
-                    <div className="text-[11px] text-[#172B46]/50">
-                      Modified by {rev.authorEmail || "Admin"} on{" "}
-                      {new Date(rev.createdAt).toLocaleString()}
-                    </div>
+                    <h4 className="text-sm font-semibold text-[#172B46]">{rev.title}</h4>
+                    <p className="text-xs text-[#172B46]/70 line-clamp-1">{rev.excerpt}</p>
+                    {rev.primaryKeyword && (
+                      <span className="text-[11px] text-[#B08D57] block">
+                        Primary Keyword: {rev.primaryKeyword}
+                      </span>
+                    )}
                   </div>
 
                   <button
                     type="button"
-                    onClick={() => handleRestoreRevision(rev.version)}
                     disabled={restoringVersion === rev.version}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FFFFFF] border border-[#172B46]/40 hover:border-[#B08D57] hover:text-[#B08D57] text-[#172B46] text-xs font-semibold rounded-sm transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+                    onClick={() => handleRestoreRevision(rev.version)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#172B46] text-[#172B46] hover:bg-[#172B46] hover:text-[#FFFFFF] rounded-sm text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer shrink-0 disabled:opacity-50"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>{restoringVersion === rev.version ? "Restoring..." : "Restore Version"}</span>
+                    <span>{restoringVersion === rev.version ? "Restoring..." : "Rollback to Version"}</span>
                   </button>
                 </div>
               ))}
@@ -745,6 +762,20 @@ export default function ArticleEditor({
           )}
         </div>
       )}
+
+      {/* MEDIA PICKER MODAL FOR COVER OR OG IMAGE */}
+      <MediaPickerModal
+        isOpen={mediaPickerTarget !== null}
+        onClose={() => setMediaPickerTarget(null)}
+        title={mediaPickerTarget === "cover" ? "Select Article Cover Hero Image" : "Select Social Share (OG) Image"}
+        onSelect={({ url }) => {
+          if (mediaPickerTarget === "cover") {
+            setFormData((prev) => ({ ...prev, coverImage: url }));
+          } else if (mediaPickerTarget === "og") {
+            setFormData((prev) => ({ ...prev, ogImage: url }));
+          }
+        }}
+      />
     </div>
   );
 }

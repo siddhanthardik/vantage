@@ -2,6 +2,14 @@ export type ArticleCategory = "Market Updates" | "Wealth Planning" | "Tax & Lega
 
 export type ArticleStatusType = "DRAFT" | "PUBLISHED" | "SCHEDULED" | "ARCHIVED";
 
+export interface ArticleFaqItem {
+  id: string;
+  question: string;
+  answer: string;
+  displayOrder: number;
+  isEnabled: boolean;
+}
+
 export interface ArticleRevisionItem {
   id: string;
   articleId: string;
@@ -11,6 +19,9 @@ export interface ArticleRevisionItem {
   content: string;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  primaryKeyword?: string | null;
+  secondaryKeywords?: string[];
+  faqs?: ArticleFaqItem[];
   authorEmail?: string | null;
   createdAt: string;
 }
@@ -33,6 +44,9 @@ export interface ArticleItem {
   scheduledFor?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  primaryKeyword?: string | null;
+  secondaryKeywords?: string[];
+  faqs?: ArticleFaqItem[];
   revisions?: ArticleRevisionItem[];
   createdAt: string;
   updatedAt: string;
@@ -54,4 +68,7 @@ export interface ArticleFormData {
   scheduledFor?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  primaryKeyword?: string | null;
+  secondaryKeywords?: string[];
+  faqs?: ArticleFaqItem[];
 }

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import CtaBanner from "@/components/ui/CtaBanner";
 import ArticleContentRenderer from "@/components/insights/ArticleContentRenderer";
+import ArticleFaqAccordion from "@/components/insights/ArticleFaqAccordion";
 import {
   getArticleBySlug,
   getRelatedArticles,
@@ -131,8 +132,34 @@ async function SingleInsightContent({ params }: ArticlePageProps) {
 
   const related = await getRelatedArticles(article.slug, article.category, 3);
 
+  // Filter published and enabled FAQs in order
+  const publishedFaqs = (article.faqs || [])
+    .filter((f) => f && f.isEnabled)
+    .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+
+  // Generate structured data only when FAQs exist and match visible content
+  const faqJsonLd = publishedFaqs.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": publishedFaqs.map((f) => ({
+      "@type": "Question",
+      "name": f.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": f.answer,
+      },
+    })),
+  } : null;
+
   return (
     <article className="relative bg-[#FFFFFF] overflow-x-hidden">
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
+
       {/* 1. FULL-WIDTH ARTICLE HERO IMAGE (DIRECTLY BELOW GLOBAL NAVIGATION) */}
       {article.coverImage && (
         <section className="relative w-full aspect-[16/9] sm:aspect-[16/8] lg:aspect-[16/7] max-h-[540px] overflow-hidden bg-[#172B46]/5 border-b border-[#E5DFD5]">
@@ -177,14 +204,19 @@ async function SingleInsightContent({ params }: ArticlePageProps) {
         {/* 5. DETAILED ARTICLE CONTENT */}
         <ArticleContentRenderer content={article.content} />
 
-        {/* 6. PUBLISHED BY INFORMATION (AFTER COMPLETE ARTICLE CONTENT) */}
+        {/* 6. FREQUENTLY ASKED QUESTIONS (ONLY IF PUBLISHED FAQS EXIST) */}
+        {publishedFaqs.length > 0 && (
+          <ArticleFaqAccordion faqs={publishedFaqs} />
+        )}
+
+        {/* 7. PUBLISHED BY INFORMATION (AFTER COMPLETE ARTICLE CONTENT & FAQS) */}
         <div className="mt-12 pt-6 border-t border-[#E5DFD5] text-sm text-[#172B46]/75">
           <span>
             Published by <strong className="text-[#172B46] font-semibold">{article.authorName}</strong>
           </span>
         </div>
 
-        {/* 7. DISCLAIMER */}
+        {/* 8. DISCLAIMER */}
         <div className="mt-8 p-5 bg-[#F7F5F0] border-l-4 border-[#B08D57] rounded-xs space-y-1.5 text-xs text-[#172B46]/75 font-normal leading-relaxed">
           <strong className="text-[#172B46] font-semibold block text-[13px]">
             Editorial & Advisory Notice:

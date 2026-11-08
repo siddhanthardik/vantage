@@ -110,9 +110,12 @@ model Article {
   status         ArticleStatus     @default(PUBLISHED)
   publishedAt    DateTime          @default(now())
   scheduledFor   DateTime?
-  seoTitle       String?
-  seoDescription String?
-  tags           ArticleTag[]
+  seoTitle          String?
+  seoDescription    String?
+  primaryKeyword    String?
+  secondaryKeywords String[]          @default([])
+  faqs              Json?             @default("[]")
+  tags              ArticleTag[]
   revisions      ArticleRevision[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
@@ -139,9 +142,12 @@ model ArticleRevision {
   title          String
   excerpt        String
   content        String   @db.Text
-  seoTitle       String?
-  seoDescription String?
-  authorEmail    String?
+  seoTitle          String?
+  seoDescription    String?
+  primaryKeyword    String?
+  secondaryKeywords String[] @default([])
+  faqs              Json?    @default("[]")
+  authorEmail       String?
   createdAt      DateTime @default(now())
 
   @@index([articleId, version])
