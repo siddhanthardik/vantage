@@ -233,7 +233,7 @@ export default function ServiceEditor({ initialData, isNew = false }: ServiceEdi
           </Link>
           <div>
             <span className="text-xs uppercase font-bold tracking-widest text-[#B08D57]">
-              {isNew ? "Create New Service" : "Edit Advisory Discipline"}
+              {isNew ? "Create New Service" : "Edit Financial Service"}
             </span>
             <h1 className="text-2xl font-sans font-bold text-[#172B46] mt-0.5">
               {formData.title || "Untitled Service"}

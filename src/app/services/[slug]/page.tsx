@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { permanentRedirect } from "next/navigation";
+import { permanentRedirect, notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
   ArrowRight,
@@ -64,17 +64,21 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 
   if (!service || service.status !== "PUBLISHED") {
     return {
-      title: "Service | Vantage Wealth",
-      description: "Bespoke wealth management and advisory disciplines.",
+      title: "Service Not Found | Vantage Wealth",
+      description: "The requested financial service could not be found.",
     };
   }
 
   return {
     title: service.seoTitle || `${service.title} | Vantage Wealth`,
     description: service.seoDescription || service.shortDesc,
+    alternates: {
+      canonical: `/services/${service.slug}`,
+    },
     openGraph: {
       title: service.seoTitle || service.title,
       description: service.seoDescription || service.shortDesc,
+      url: `/services/${service.slug}`,
       images: service.ogImage ? [{ url: service.ogImage }] : undefined,
     },
   };
@@ -201,42 +205,9 @@ async function DynamicServiceContent({ params }: ServicePageProps) {
     );
   }
 
-  // If service does not exist or is not published in PostgreSQL, handle gracefully
+  // If service does not exist or is not published in PostgreSQL, trigger genuine 404
   if (!service || service.status !== "PUBLISHED") {
-    return (
-      <div className="min-h-[70vh] bg-[#F7F5F0] py-24 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-        <div className="max-w-xl mx-auto text-center space-y-6 bg-[#FFFFFF] p-10 rounded-sm border border-[#E5DFD5] shadow-lg">
-          <div className="inline-block p-3 rounded-full bg-[#B08D57]/10 text-[#B08D57]">
-            <Compass className="w-8 h-8" />
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-[#172B46]">
-            Advisory Discipline Not Found
-          </h1>
-          <p className="text-sm text-[#172B46]/75 font-light leading-relaxed">
-            The requested wealth practice is either no longer active, archived, or undergoing scheduled restructuring. Please explore our currently published advisory disciplines below.
-          </p>
-          <div className="pt-4 flex flex-wrap justify-center gap-2">
-            {allPublished.map((s) => (
-              <Link
-                key={s.slug}
-                href={`/services/${s.slug}`}
-                className="px-3.5 py-1.5 bg-[#F7F5F0] hover:bg-[#B08D57] hover:text-[#FFFFFF] text-xs font-semibold rounded-sm transition-colors border border-[#E5DFD5]"
-              >
-                {s.title}
-              </Link>
-            ))}
-          </div>
-          <div className="pt-4 border-t border-[#E5DFD5]">
-            <Link
-              href="/services"
-              className="text-xs font-bold uppercase tracking-wider text-[#B08D57] hover:underline"
-            >
-              &larr; View All Advisory Services
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   const heroImg =
@@ -304,10 +275,10 @@ async function DynamicServiceContent({ params }: ServicePageProps) {
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
                 <Link
-                  href="/consultation"
+                  href={service.ctaButtonUrl || "/consultation"}
                   className="inline-flex items-center justify-center gap-2 bg-[#B08D57] hover:bg-[#9B7A46] text-[#FFFFFF] px-7 py-3.5 rounded-sm text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-xs group"
                 >
-                  <span>Book a Consultation</span>
+                  <span>{service.ctaButtonText || "Book a Consultation"}</span>
                   <ArrowRight className="w-4 h-4 text-[#FFFFFF] group-hover:translate-x-1 transition-transform" />
                 </Link>
 
@@ -535,10 +506,10 @@ async function DynamicServiceContent({ params }: ServicePageProps) {
 
       {/* 6. BOTTOM CTA BANNER matching Reference 4 */}
       <CtaBanner
-        title={`Let's Build Your ${service.title} Plan`}
-        description="Talk to our advisors and get a personalised investment strategy for your goals."
-        buttonText="Book a Consultation"
-        buttonHref="/consultation"
+        title={service.ctaHeading || `Let's Build Your ${service.title} Plan`}
+        description="Talk to our advisors and get a personalised financial roadmap for your family goals."
+        buttonText={service.ctaButtonText || "Book a Consultation"}
+        buttonHref={service.ctaButtonUrl || "/consultation"}
       />
     </div>
   );

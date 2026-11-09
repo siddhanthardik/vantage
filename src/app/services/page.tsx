@@ -112,7 +112,7 @@ async function ServicesGrid() {
                 href={`/services/${item.slug}`}
                 className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#172B46] group-hover:text-[#B08D57] transition-colors pt-4"
               >
-                <span>Explore Discipline</span>
+                <span>Explore Service</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#B08D57] group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>

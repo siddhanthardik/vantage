@@ -30,7 +30,7 @@ export default function Footer({ services = [], settings }: FooterProps) {
     { title: "Tax Advisory & Tax Compliance", slug: "tax-advisory" },
     { title: "Strategic Financing & Liability Solutions", slug: "strategic-financing" },
     { title: "Retirement Planning", slug: "retirement-planning" },
-    { title: "Ongoing Portfolio Reviews", slug: "portfolio-reviews" },
+    { title: "Ongoing Portfolio Reviews", slug: "ongoing-portfolio-reviews" },
   ];
 
   const displayServices = services.length > 0 ? services : defaultSolutions;
@@ -129,7 +129,7 @@ export default function Footer({ services = [], settings }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/services/portfolio-reviews" className="hover:text-[#B08D57] transition-colors">
+                <Link href="/services/ongoing-portfolio-reviews" className="hover:text-[#B08D57] transition-colors">
                   Ongoing Portfolio Reviews
                 </Link>
               </li>

@@ -461,8 +461,8 @@
       "updatedAt": "2026-11-08T00:00:00.000Z"
     },
     {
-      "id": "srv_portfolio_reviews",
-      "slug": "portfolio-reviews",
+      "id": "srv_ongoing_portfolio_reviews",
+      "slug": "ongoing-portfolio-reviews",
       "title": "Ongoing Portfolio Reviews",
       "shortDesc": "Keep your financial strategy aligned through structured half-yearly reviews, event-driven assessments and portfolio rebalancing discussions.",
       "fullDesc": "A structured, ongoing governance mechanism to ensure your wealth architecture responds dynamically to market cycles and personal transitions. We provide institutional surveillance, disciplined rebalancing, and transparent progress benchmarking.",
@@ -543,7 +543,7 @@
       ],
       "ctaHeading": "Keep Your Financial Roadmap on Course",
       "ctaButtonText": "Schedule a Portfolio Review",
-      "ctaButtonUrl": "/consultation?service=portfolio-reviews",
+      "ctaButtonUrl": "/consultation?service=ongoing-portfolio-reviews",
       "seoTitle": "Ongoing Portfolio Reviews & Strategy Alignment | Vantage Wealth",
       "seoDescription": "Half-yearly portfolio reviews, risk diagnostics, and disciplined rebalancing with Vantage Wealth advisors.",
       "ogImage": "/images/services/chess-king.png",

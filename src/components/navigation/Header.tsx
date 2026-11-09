@@ -25,7 +25,7 @@ export default function Header({ services = [] }: HeaderProps) {
     { title: "Tax Advisory & Tax Compliance", slug: "tax-advisory" },
     { title: "Strategic Financing & Liability Solutions", slug: "strategic-financing" },
     { title: "Retirement Planning", slug: "retirement-planning" },
-    { title: "Ongoing Portfolio Reviews", slug: "portfolio-reviews" },
+    { title: "Ongoing Portfolio Reviews", slug: "ongoing-portfolio-reviews" },
   ];
 
   const isHome = pathname === "/";
@@ -131,7 +131,7 @@ export default function Header({ services = [] }: HeaderProps) {
                       href="/services"
                       className="block text-center text-[11px] font-semibold text-[#B08D57] hover:underline py-1"
                     >
-                      View All Disciplines &rarr;
+                      View All Services &rarr;
                     </Link>
                   </div>
                 </div>

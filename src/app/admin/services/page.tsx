@@ -22,7 +22,7 @@ export default function AdminServicesListPage() {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | "PUBLISHED" | "DRAFT">("ALL");
+  const [statusFilter, setStatusFilter] = useState<"ALL" | "PUBLISHED" | "DRAFT" | "ARCHIVED">("ALL");
   const [deleteModalId, setDeleteModalId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [actionMessage, setActionMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -172,7 +172,7 @@ export default function AdminServicesListPage() {
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <Filter className="w-4 h-4 text-[#B08D57]" />
           <span className="text-xs text-[#172B46]/70 font-medium">Filter:</span>
-          {(["ALL", "PUBLISHED", "DRAFT"] as const).map((status) => (
+          {(["ALL", "PUBLISHED", "DRAFT", "ARCHIVED"] as const).map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
@@ -182,7 +182,7 @@ export default function AdminServicesListPage() {
                   : "bg-[#F7F5F0] text-[#172B46]/70 hover:bg-[#E5DFD5]"
               }`}
             >
-              {status === "ALL" ? "All Services" : status}
+              {status === "ALL" ? "All Services" : status === "ARCHIVED" ? "Archived" : status}
             </button>
           ))}
         </div>
@@ -265,6 +265,8 @@ export default function AdminServicesListPage() {
                         className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                           service.status === "PUBLISHED"
                             ? "bg-green-100 text-green-800 hover:bg-green-200"
+                            : service.status === "ARCHIVED"
+                            ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             : "bg-amber-100 text-amber-800 hover:bg-amber-200"
                         }`}
                       >
@@ -272,6 +274,11 @@ export default function AdminServicesListPage() {
                           <>
                             <CheckCircle className="w-3 h-3 text-green-700" />
                             Published
+                          </>
+                        ) : service.status === "ARCHIVED" ? (
+                          <>
+                            <AlertCircle className="w-3 h-3 text-gray-600" />
+                            Archived
                           </>
                         ) : (
                           <>

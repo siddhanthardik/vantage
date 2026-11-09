@@ -12,6 +12,7 @@ export const SLUG_REDIRECTS: Record<string, string> = {
   "investment-advisory": "/services/investment-solutions",
   "tax-planning": "/services/tax-advisory",
   "loans": "/services/strategic-financing",
+  "portfolio-reviews": "/services/ongoing-portfolio-reviews",
   "wealth-planning": "/services",
   "family-wealth-legacy": "/services",
 };
@@ -46,7 +47,9 @@ export const DEFAULT_BUSINESS_SETTINGS: BusinessSettingsData = {
  */
 export async function getPublishedServices(): Promise<ServiceItem[]> {
   "use cache";
-  cacheTag("published-services");
+  try {
+    cacheTag("published-services");
+  } catch {}
 
   if (!prisma) {
     throw new Error("Database client unavailable: cannot query published services without PostgreSQL connection.");
@@ -81,7 +84,9 @@ export async function getAllServices(): Promise<ServiceItem[]> {
  */
 export async function getServiceBySlug(slug: string): Promise<ServiceItem | null> {
   "use cache";
-  cacheTag(`service-${slug}`, "published-services");
+  try {
+    cacheTag(`service-${slug}`, "published-services");
+  } catch {}
 
   if (!prisma) {
     throw new Error("Database client unavailable: cannot query service without PostgreSQL connection.");
@@ -199,6 +204,10 @@ export async function updateService(id: string, formData: Partial<ServiceFormDat
     });
     if (duplicate) {
       throw new Error(`Slug "${checkSlug}" is already in use by another service.`);
+    }
+    // Preserve legacy URL via permanent redirect if a published service slug changes
+    if (existing.status === "PUBLISHED") {
+      SLUG_REDIRECTS[existing.slug] = `/services/${checkSlug}`;
     }
     finalSlug = checkSlug;
   }

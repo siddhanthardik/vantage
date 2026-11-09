@@ -102,7 +102,7 @@ export function NavFooterFallback() {
                 </Link>
               </li>
               <li>
-                <Link href="/services/portfolio-reviews" className="hover:text-[#B08D57] transition-colors">
+                <Link href="/services/ongoing-portfolio-reviews" className="hover:text-[#B08D57] transition-colors">
                   Ongoing Portfolio Reviews
                 </Link>
               </li>

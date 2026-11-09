@@ -84,6 +84,7 @@ async function HomeServicesGrid() {
     "tax-advisory": "Explore Tax Solutions",
     "strategic-financing": "Explore Financing Solutions",
     "retirement-planning": "Plan Your Retirement",
+    "ongoing-portfolio-reviews": "Understand Our Review Process",
     "portfolio-reviews": "Understand Our Review Process",
   };
 
@@ -95,7 +96,7 @@ async function HomeServicesGrid() {
           service.thumbnailImage ||
           service.heroImage ||
           "/images/services/investment-advisory.png";
-        const ctaText = ctaLabels[service.slug] || "Explore Discipline";
+        const ctaText = ctaLabels[service.slug] || "Explore Service";
 
         return (
           <div
