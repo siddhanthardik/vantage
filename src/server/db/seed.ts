@@ -134,7 +134,7 @@ export async function seedDatabase() {
       await prisma.adminUser.create({
         data: {
           email: defaultEmail,
-          name: "Principal Administrator",
+          name: "Administrator",
           passwordHash,
           role: "ADMIN",
         },

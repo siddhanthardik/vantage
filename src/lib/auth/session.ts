@@ -82,9 +82,14 @@ export async function getAdminSession(): Promise<AdminSession | null> {
     const payload = verifyPayload(sessionCookie.value, secret);
 
     if (payload && payload.email) {
+      let displayName = payload.name || "Administrator";
+      if (displayName.toLowerCase().includes("principal administrator")) {
+        displayName = displayName.replace(/Principal\s*/i, "").trim() || "Administrator";
+      }
+
       return {
         email: payload.email,
-        name: payload.name || "Administrator",
+        name: displayName,
         role: payload.role || "ADMIN",
         isAuthenticated: true,
       };

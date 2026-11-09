@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
           if (valid) {
             authenticatedUser = {
               email: configuredEmail,
-              name: "Principal Administrator",
+              name: "Administrator",
               role: "ADMIN",
             };
           }
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
           if (password === configuredPassword) {
             authenticatedUser = {
               email: configuredEmail,
-              name: "Principal Administrator",
+              name: "Administrator",
               role: "ADMIN",
             };
           }
