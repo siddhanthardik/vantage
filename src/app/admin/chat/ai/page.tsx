@@ -5,12 +5,8 @@ import {
   Cpu,
   CheckCircle2,
   AlertCircle,
-  Clock,
-  RefreshCw,
-  Shield,
   Key,
   Activity,
-  Layers,
   Sparkles,
 } from "lucide-react";
 
@@ -172,19 +168,6 @@ export default function AiDiagnosticsPage() {
           </div>
         </div>
       )}
-
-      {/* Technical Notes Card */}
-      <div className="bg-white p-5 rounded-sm border border-stone-200/80 shadow-2xs text-[13px] space-y-2 text-stone-600">
-        <h3 className="font-semibold text-[#172B46] text-[13px] uppercase tracking-wider">
-          Security &amp; Operational Architecture
-        </h3>
-        <ul className="list-disc pl-4 space-y-1 text-[13px] text-stone-600">
-          <li>All calls to Google Gemini are made server-to-server from the Next.js backend runtime.</li>
-          <li>Visitor browser requests communicate solely with our own Next.js endpoints (<code className="font-mono text-stone-800 bg-stone-100 px-1 py-0.5 rounded">/api/chat/*</code>).</li>
-          <li>All user prompts are sanitized server-side, removing email, phone, PAN, and Aadhaar numbers prior to LLM dispatch.</li>
-          <li>Zero browser-side API keys or client credential exposure.</li>
-        </ul>
-      </div>
     </div>
   );
 }

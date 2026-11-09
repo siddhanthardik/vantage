@@ -53,25 +53,26 @@ export class GeminiAdapter implements AiProviderAdapter {
 
     const startTime = Date.now();
     try {
-      // Minimal test ping to verify model readiness and API authentication
+      // Diagnostic verification ping to test API key and model readiness
       const response = await this.client.models.generateContent({
         model,
-        contents: "ping",
+        contents: "Respond with the word pong",
         config: {
-          maxOutputTokens: 5,
           temperature: 0.1,
         },
       });
 
       const latencyMs = Date.now() - startTime;
 
-      if (response && response.text !== undefined) {
+      const outputText = response?.text || response?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (response && outputText !== undefined) {
         return {
           ok: true,
           provider: this.name,
           model,
           status: "CONNECTED",
-          message: `Successfully connected to Google Gemini API (${model}).`,
+          message: `Successfully connected to Google Gemini Developer API (${model}). Diagnostic response: "${outputText.trim()}"`,
           latencyMs,
         };
       }
