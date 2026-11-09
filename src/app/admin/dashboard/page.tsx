@@ -1,7 +1,5 @@
+import { Suspense } from "react";
 import Link from "next/link";
-import { getAdminSession } from "@/lib/auth/session";
-import { redirect } from "next/navigation";
-import { connection } from "next/server";
 import { getAllServices } from "@/server/repositories/serviceRepository";
 import { getAllArticles } from "@/server/repositories/articleRepository";
 import { getAllEnquiries } from "@/server/repositories/enquiryRepository";
@@ -21,13 +19,7 @@ import {
   Calendar,
 } from "lucide-react";
 
-export default async function AdminDashboardPage() {
-  await connection();
-  const session = await getAdminSession();
-  if (!session) {
-    redirect("/admin/login");
-  }
-
+async function DashboardContent() {
   const [services, articles, enquiries, media] = await Promise.all([
     getAllServices(),
     getAllArticles(),
@@ -232,5 +224,19 @@ export default async function AdminDashboardPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-12 text-center text-xs text-[#172B46]/60 bg-[#FFFFFF] border border-[#E5DFD5] rounded-sm animate-pulse">
+          Loading dashboard metrics...
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
   );
 }

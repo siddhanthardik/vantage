@@ -1,6 +1,5 @@
-import { getAdminSession } from "@/lib/auth/session";
-import { redirect, notFound } from "next/navigation";
-import { connection } from "next/server";
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
 import { getArticleById, getArticleRevisions } from "@/server/repositories/articleRepository";
 import ArticleEditor from "@/components/admin/ArticleEditor";
 
@@ -12,13 +11,7 @@ interface EditArticlePageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function EditArticleAdminPage({ params }: EditArticlePageProps) {
-  await connection();
-  const session = await getAdminSession();
-  if (!session) {
-    redirect("/admin/login");
-  }
-
+async function EditArticleLoader({ params }: EditArticlePageProps) {
   const { id } = await params;
   const [article, revisions] = await Promise.all([
     getArticleById(id),
@@ -35,4 +28,18 @@ export default async function EditArticleAdminPage({ params }: EditArticlePagePr
   };
 
   return <ArticleEditor initialArticle={articleWithRevisions} isEditing={true} />;
+}
+
+export default function EditArticleAdminPage({ params }: EditArticlePageProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-12 text-center text-xs text-[#172B46]/60 bg-[#FFFFFF] border border-[#E5DFD5] rounded-sm">
+          Loading article editor...
+        </div>
+      }
+    >
+      <EditArticleLoader params={params} />
+    </Suspense>
+  );
 }
