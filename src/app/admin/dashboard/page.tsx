@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAdminSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { getAllServices } from "@/server/repositories/serviceRepository";
 import { getAllArticles } from "@/server/repositories/articleRepository";
 import { getAllEnquiries } from "@/server/repositories/enquiryRepository";
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 
 export default async function AdminDashboardPage() {
+  await connection();
   const session = await getAdminSession();
   if (!session) {
     redirect("/admin/login");

@@ -69,11 +69,7 @@ function verifyPayload(token: string, secret: string): SessionTokenPayload | nul
  * Retrieve verified session from secure HTTP-only cookie
  */
 export async function getAdminSession(): Promise<AdminSession | null> {
-  try {
-    await connection();
-  } catch {
-    // Graceful fallback if called outside request context (e.g. testing or scripts)
-  }
+  await connection();
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get(ADMIN_COOKIE_NAME);
 
