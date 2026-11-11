@@ -280,8 +280,8 @@ export default function ChatWidget() {
               </div>
               <div className="min-w-0 flex-1">
                 <span
-                  className="chat-header-title block font-sans text-[13.5px] font-semibold tracking-tight text-white truncate leading-tight"
-                  style={{ fontSize: "13.5px", lineHeight: "1.25" }}
+                  className="chat-header-title block font-sans text-[13.5px] sm:text-[14px] font-semibold tracking-tight text-white whitespace-nowrap leading-tight"
+                  style={{ fontSize: "13.5px", lineHeight: "1.25", whiteSpace: "nowrap" }}
                   title="Vantage Wealth Assistant"
                 >
                   Vantage Wealth Assistant

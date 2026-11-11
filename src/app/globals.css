@@ -470,6 +470,7 @@ h1.article-title-heading,
   line-height: 1.25 !important;
   letter-spacing: -0.01em !important;
   color: #FFFFFF !important;
+  white-space: nowrap !important;
 }
 
 .chatbot-portal p,

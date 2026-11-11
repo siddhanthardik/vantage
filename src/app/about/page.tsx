@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/icons";
 import CtaBanner from "@/components/ui/CtaBanner";
-import { getFounderProfile, getPublishedTeamMembers } from "@/server/repositories/teamRepository";
+import { getFounderProfile, getPublishedTeamMembers, formatExperience } from "@/server/repositories/teamRepository";
 
 export const metadata: Metadata = {
   title: "About Us | Vantage Wealth",
@@ -122,7 +122,7 @@ async function FounderAndTeamContent() {
 
                 {founder?.experienceYears && (
                   <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#172B46]/70 bg-[#172B46]/5 px-2.5 py-0.5 rounded-xs">
-                    <Clock className="w-3 h-3 text-[#B08D57]" /> {founder.experienceYears}
+                    <Clock className="w-3 h-3 text-[#B08D57]" /> {formatExperience(founder.experienceYears)}
                   </span>
                 )}
 
@@ -239,7 +239,7 @@ async function FounderAndTeamContent() {
                         </span>
                         {member.experienceYears && (
                           <span className="text-[10px] font-semibold text-[#172B46]/60">
-                            {member.experienceYears}
+                            {formatExperience(member.experienceYears)}
                           </span>
                         )}
                       </div>

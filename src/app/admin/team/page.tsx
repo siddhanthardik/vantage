@@ -20,6 +20,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { TeamMemberItem } from "@/types/team";
+import { formatExperience } from "@/lib/team/formatters";
 
 export default function AdminTeamListPage() {
   const [members, setMembers] = useState<TeamMemberItem[]>([]);
@@ -232,7 +233,7 @@ export default function AdminTeamListPage() {
               </h2>
               <p className="text-[13px] text-[#172B46]/70">
                 {founder?.designation || "Founder & Principal Advisor"}
-                {founder?.experienceYears && ` • ${founder.experienceYears}`}
+                {founder?.experienceYears && ` • ${formatExperience(founder.experienceYears)}`}
               </p>
             </div>
           </div>
@@ -410,7 +411,7 @@ export default function AdminTeamListPage() {
                       <td className="py-3 px-4 space-y-0.5">
                         {member.experienceYears && (
                           <div className="text-[11px] font-semibold text-[#172B46]/80 flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-[#B08D57]" /> {member.experienceYears}
+                            <Clock className="w-3 h-3 text-[#B08D57]" /> {formatExperience(member.experienceYears)}
                           </div>
                         )}
                         {member.credentials ? (

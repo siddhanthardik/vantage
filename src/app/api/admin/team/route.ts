@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/auth/guard";
-import { getAllTeamMembers, createTeamMember } from "@/server/repositories/teamRepository";
+import { getAllTeamMembers, createTeamMember, revalidateTeamCache } from "@/server/repositories/teamRepository";
 import { logAuditEvent } from "@/lib/security/audit";
 
 export async function GET() {
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     const created = await createTeamMember(body);
+    await revalidateTeamCache();
 
     await logAuditEvent({
       action: "TEAM_MEMBER_CREATED",

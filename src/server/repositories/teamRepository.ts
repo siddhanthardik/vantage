@@ -60,6 +60,46 @@ export function normalizePhotoUrl(url?: string | null): string {
 }
 
 /**
+ * Normalizes and formats experience string to include "Years"
+ * E.g., "20+" -> "20+ Years", "15" -> "15 Years", "20+ Years" -> "20+ Years", "15+ yrs" -> "15+ Years"
+ * Prevents duplicates like "20+ Years Years"
+ */
+export function formatExperience(val?: string | null): string {
+  if (!val) return "";
+  let trimmed = val.trim();
+  if (!trimmed) return "";
+
+  // Strip any existing repeated "years" or "yrs" suffix
+  trimmed = trimmed.replace(/(\s*(years?|yrs?))+$/i, "");
+
+  if (!trimmed) return "";
+  return `${trimmed} Years`;
+}
+
+/**
+ * Universal Cache Invalidation helper for Team & Founder data
+ * Invalidates Cache Components cache tags and public/admin route caches
+ */
+export async function revalidateTeamCache(): Promise<void> {
+  try {
+    const { revalidateTag, revalidatePath } = await import("next/cache");
+    // Next.js 16 Cache Components tag invalidation
+    revalidateTag("team-founder", "max");
+    revalidateTag("team-members", "max");
+    revalidateTag("team", "max");
+
+    // Public and Admin route cache invalidation
+    revalidatePath("/about", "page");
+    revalidatePath("/about");
+    revalidatePath("/admin/team", "page");
+    revalidatePath("/admin/team");
+    revalidatePath("/", "layout");
+  } catch (e) {
+    console.warn("revalidateTeamCache notice:", e);
+  }
+}
+
+/**
  * Fetch Founder Profile for Public About Page and Admin CMS.
  * Prioritizes PostgreSQL as the primary source of truth.
  */
@@ -77,6 +117,7 @@ export async function getFounderProfile(): Promise<TeamMemberItem | null> {
         return {
           ...dbFounder,
           photoUrl: normalizePhotoUrl(dbFounder.photoUrl),
+          experienceYears: dbFounder.experienceYears ? formatExperience(dbFounder.experienceYears) : null,
           createdAt: dbFounder.createdAt.toISOString(),
           updatedAt: dbFounder.updatedAt.toISOString(),
         } as unknown as TeamMemberItem;
@@ -90,7 +131,7 @@ export async function getFounderProfile(): Promise<TeamMemberItem | null> {
 
   const data = readDataStore();
   const founder = data.members.find((m) => m.roleType === "FOUNDER");
-  return founder ? { ...founder, photoUrl: normalizePhotoUrl(founder.photoUrl) } : null;
+  return founder ? { ...founder, photoUrl: normalizePhotoUrl(founder.photoUrl), experienceYears: formatExperience(founder.experienceYears) } : null;
 }
 
 /**
@@ -110,6 +151,7 @@ export async function getPublishedTeamMembers(): Promise<TeamMemberItem[]> {
       return dbMembers.map((m: any) => ({
         ...m,
         photoUrl: normalizePhotoUrl(m.photoUrl),
+        experienceYears: m.experienceYears ? formatExperience(m.experienceYears) : null,
         createdAt: m.createdAt.toISOString(),
         updatedAt: m.updatedAt.toISOString(),
       })) as unknown as TeamMemberItem[];
@@ -122,7 +164,7 @@ export async function getPublishedTeamMembers(): Promise<TeamMemberItem[]> {
   const data = readDataStore();
   return data.members
     .filter((m) => m.roleType === "TEAM" && m.status === "PUBLISHED")
-    .map((m) => ({ ...m, photoUrl: normalizePhotoUrl(m.photoUrl) }))
+    .map((m) => ({ ...m, photoUrl: normalizePhotoUrl(m.photoUrl), experienceYears: formatExperience(m.experienceYears) }))
     .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 }
 
@@ -143,6 +185,7 @@ export async function getAllTeamMembers(): Promise<TeamMemberItem[]> {
       return dbMembers.map((m: any) => ({
         ...m,
         photoUrl: normalizePhotoUrl(m.photoUrl),
+        experienceYears: m.experienceYears ? formatExperience(m.experienceYears) : null,
         createdAt: m.createdAt.toISOString(),
         updatedAt: m.updatedAt.toISOString(),
       })) as unknown as TeamMemberItem[];
@@ -153,7 +196,7 @@ export async function getAllTeamMembers(): Promise<TeamMemberItem[]> {
   }
 
   const data = readDataStore();
-  return data.members.sort((a, b) => {
+  return data.members.map((m) => ({ ...m, experienceYears: formatExperience(m.experienceYears) })).sort((a, b) => {
     if (a.roleType === "FOUNDER" && b.roleType !== "FOUNDER") return -1;
     if (b.roleType === "FOUNDER" && a.roleType !== "FOUNDER") return 1;
     return (a.displayOrder || 0) - (b.displayOrder || 0);
@@ -173,6 +216,7 @@ export async function getTeamMemberById(id: string): Promise<TeamMemberItem | nu
         return {
           ...dbMember,
           photoUrl: normalizePhotoUrl(dbMember.photoUrl),
+          experienceYears: dbMember.experienceYears ? formatExperience(dbMember.experienceYears) : null,
           createdAt: dbMember.createdAt.toISOString(),
           updatedAt: dbMember.updatedAt.toISOString(),
         } as unknown as TeamMemberItem;
@@ -186,7 +230,7 @@ export async function getTeamMemberById(id: string): Promise<TeamMemberItem | nu
 
   const data = readDataStore();
   const member = data.members.find((m) => m.id === id);
-  return member ? { ...member, photoUrl: normalizePhotoUrl(member.photoUrl) } : null;
+  return member ? { ...member, photoUrl: normalizePhotoUrl(member.photoUrl), experienceYears: formatExperience(member.experienceYears) } : null;
 }
 
 /**
@@ -202,6 +246,7 @@ export async function getTeamMemberBySlug(slug: string): Promise<TeamMemberItem 
         return {
           ...dbMember,
           photoUrl: normalizePhotoUrl(dbMember.photoUrl),
+          experienceYears: dbMember.experienceYears ? formatExperience(dbMember.experienceYears) : null,
           createdAt: dbMember.createdAt.toISOString(),
           updatedAt: dbMember.updatedAt.toISOString(),
         } as unknown as TeamMemberItem;
@@ -215,7 +260,7 @@ export async function getTeamMemberBySlug(slug: string): Promise<TeamMemberItem 
 
   const data = readDataStore();
   const member = data.members.find((m) => m.slug === slug);
-  return member ? { ...member, photoUrl: normalizePhotoUrl(member.photoUrl) } : null;
+  return member ? { ...member, photoUrl: normalizePhotoUrl(member.photoUrl), experienceYears: formatExperience(member.experienceYears) } : null;
 }
 
 /**
@@ -230,6 +275,9 @@ export async function createTeamMember(formData: Partial<TeamMemberFormData>): P
     .replace(/^-+|-+$/g, "");
 
   const canonicalPhotoUrl = normalizePhotoUrl(formData.photoUrl);
+  const canonicalExperience = formData.experienceYears?.trim()
+    ? formatExperience(formData.experienceYears)
+    : null;
 
   if (prisma) {
     const existing = await prisma.teamMember.findUnique({ where: { slug } });
@@ -247,7 +295,7 @@ export async function createTeamMember(formData: Partial<TeamMemberFormData>): P
           designation: formData.designation ? formData.designation.trim() : "Advisory Specialist",
           bio: formData.bio ? formData.bio.trim() : "",
           photoUrl: canonicalPhotoUrl,
-          experienceYears: formData.experienceYears?.trim() || null,
+          experienceYears: canonicalExperience,
           credentials: formData.credentials?.trim() || null,
           linkedInUrl: formData.linkedInUrl?.trim() || null,
           email: formData.email?.trim() || null,
@@ -259,6 +307,7 @@ export async function createTeamMember(formData: Partial<TeamMemberFormData>): P
       const formatted: TeamMemberItem = {
         ...createdDb,
         photoUrl: normalizePhotoUrl(createdDb.photoUrl),
+        experienceYears: createdDb.experienceYears ? formatExperience(createdDb.experienceYears) : null,
         createdAt: createdDb.createdAt.toISOString(),
         updatedAt: createdDb.updatedAt.toISOString(),
       } as unknown as TeamMemberItem;
@@ -268,6 +317,9 @@ export async function createTeamMember(formData: Partial<TeamMemberFormData>): P
       data.members = data.members.filter((m) => m.id !== createdDb.id);
       data.members.push(formatted);
       writeDataStore(data);
+
+      // Revalidate cache tags and public routes
+      await revalidateTeamCache();
 
       return formatted;
     } catch (e: any) {
@@ -313,6 +365,10 @@ export async function updateTeamMember(
       ? normalizePhotoUrl(formData.photoUrl)
       : normalizePhotoUrl(existingDb.photoUrl);
 
+    const updatedExperience = formData.experienceYears !== undefined
+      ? (formData.experienceYears?.trim() ? formatExperience(formData.experienceYears) : null)
+      : existingDb.experienceYears;
+
     try {
       const updatedDb = await prisma.teamMember.update({
         where: { id },
@@ -322,7 +378,7 @@ export async function updateTeamMember(
           designation: formData.designation !== undefined ? formData.designation.trim() : existingDb.designation,
           bio: formData.bio !== undefined ? formData.bio.trim() : existingDb.bio,
           photoUrl: updatedPhotoUrl,
-          experienceYears: formData.experienceYears !== undefined ? (formData.experienceYears?.trim() || null) : existingDb.experienceYears,
+          experienceYears: updatedExperience,
           credentials: formData.credentials !== undefined ? (formData.credentials?.trim() || null) : existingDb.credentials,
           linkedInUrl: formData.linkedInUrl !== undefined ? (formData.linkedInUrl?.trim() || null) : existingDb.linkedInUrl,
           email: formData.email !== undefined ? (formData.email?.trim() || null) : existingDb.email,
@@ -334,6 +390,8 @@ export async function updateTeamMember(
 
       const formatted: TeamMemberItem = {
         ...updatedDb,
+        photoUrl: normalizePhotoUrl(updatedDb.photoUrl),
+        experienceYears: updatedDb.experienceYears ? formatExperience(updatedDb.experienceYears) : null,
         createdAt: updatedDb.createdAt.toISOString(),
         updatedAt: updatedDb.updatedAt.toISOString(),
       } as unknown as TeamMemberItem;
@@ -347,6 +405,9 @@ export async function updateTeamMember(
         data.members.push(formatted);
       }
       writeDataStore(data);
+
+      // Revalidate cache tags and public routes
+      await revalidateTeamCache();
 
       return formatted;
     } catch (e: any) {
@@ -378,6 +439,10 @@ export async function deleteTeamMember(id: string): Promise<boolean> {
       const data = readDataStore();
       data.members = data.members.filter((m) => m.id !== id);
       writeDataStore(data);
+
+      // Revalidate cache tags and public routes
+      await revalidateTeamCache();
+
       return true;
     } catch (e: any) {
       console.error("CRITICAL: PostgreSQL deleteTeamMember failed:", e);
@@ -406,6 +471,10 @@ export async function reorderTeamMembers(orderedIds: string[]): Promise<void> {
         orderBy: [{ roleType: "asc" }, { displayOrder: "asc" }],
       });
       syncLocalStoreFromDb(allMembers);
+
+      // Revalidate cache tags and public routes
+      await revalidateTeamCache();
+
       return;
     } catch (e: any) {
       console.error("CRITICAL: PostgreSQL reorderTeamMembers failed:", e);

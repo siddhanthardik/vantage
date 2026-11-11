@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { PrismaClient } from "@prisma/client";
+import { formatExperience } from "../../lib/team/formatters";
 
 // Ensure DATABASE_URL is loaded from .env if not already set
 if (!process.env.DATABASE_URL) {
@@ -108,22 +109,38 @@ async function main() {
     console.log(`[Database] Found ${teamMembers.length} team member records in PostgreSQL.`);
 
     for (const member of teamMembers) {
+      let updatedPhoto = member.photoUrl;
+      let updatedExp = member.experienceYears;
+      let hasChanges = false;
+
       if (member.photoUrl && /^\/?uploads\//i.test(member.photoUrl)) {
         const canonical = member.photoUrl.replace(/^\/?uploads\//i, "/uploads/");
         if (canonical !== member.photoUrl) {
-          console.log(`  Updating Team Member "${member.name}" (${member.slug}):`);
-          console.log(`    Before: ${member.photoUrl}`);
-          console.log(`    After:  ${canonical}`);
-
-          await prisma.teamMember.update({
-            where: { id: member.id },
-            data: {
-              photoUrl: canonical,
-              updatedAt: new Date(),
-            },
-          });
-          teamUpdatedCount++;
+          console.log(`  Normalizing photo URL for "${member.name}": ${member.photoUrl} -> ${canonical}`);
+          updatedPhoto = canonical;
+          hasChanges = true;
         }
+      }
+
+      if (member.experienceYears) {
+        const canonicalExp = formatExperience(member.experienceYears);
+        if (canonicalExp !== member.experienceYears) {
+          console.log(`  Normalizing experience for "${member.name}": "${member.experienceYears}" -> "${canonicalExp}"`);
+          updatedExp = canonicalExp;
+          hasChanges = true;
+        }
+      }
+
+      if (hasChanges) {
+        await prisma.teamMember.update({
+          where: { id: member.id },
+          data: {
+            photoUrl: updatedPhoto,
+            experienceYears: updatedExp,
+            updatedAt: new Date(),
+          },
+        });
+        teamUpdatedCount++;
       }
     }
 
@@ -148,6 +165,25 @@ async function main() {
           mediaUpdatedCount++;
         }
       }
+    }
+    // Sync local fallback data store from updated PostgreSQL records
+    const latestDbMembers = await prisma.teamMember.findMany({
+      orderBy: [{ roleType: "asc" }, { displayOrder: "asc" }],
+    });
+    const localStorePath = path.resolve(process.cwd(), "src/lib/db/team-data.json");
+    if (fs.existsSync(localStorePath) && latestDbMembers.length > 0) {
+      const syncedJson = {
+        members: latestDbMembers.map((m) => ({
+          ...m,
+          photoUrl: m.photoUrl ? m.photoUrl.replace(/^\/?uploads\//i, "/uploads/") : "",
+          experienceYears: m.experienceYears ? formatExperience(m.experienceYears) : null,
+          createdAt: m.createdAt.toISOString(),
+          updatedAt: m.updatedAt.toISOString(),
+        })),
+        lastUpdated: new Date().toISOString(),
+      };
+      fs.writeFileSync(localStorePath, JSON.stringify(syncedJson, null, 2), "utf-8");
+      console.log(`[Store] Synchronized ${latestDbMembers.length} records into src/lib/db/team-data.json`);
     }
   } catch (dbErr: any) {
     console.error("Database query failed:", dbErr.message);

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/auth/guard";
-import { reorderTeamMembers } from "@/server/repositories/teamRepository";
+import { reorderTeamMembers, revalidateTeamCache } from "@/server/repositories/teamRepository";
 import { logAuditEvent } from "@/lib/security/audit";
 
 export async function PUT(req: NextRequest) {
@@ -17,6 +17,7 @@ export async function PUT(req: NextRequest) {
     }
 
     await reorderTeamMembers(orderedIds);
+    await revalidateTeamCache();
 
     await logAuditEvent({
       action: "TEAM_MEMBERS_REORDERED",

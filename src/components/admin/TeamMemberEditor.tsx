@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/icons";
 import { TeamMemberItem, TeamMemberFormData, MemberRole, MemberStatus } from "@/types/team";
+import { formatExperience } from "@/lib/team/formatters";
 
 interface TeamMemberEditorProps {
   initialMember?: TeamMemberItem;
@@ -684,7 +685,7 @@ export default function TeamMemberEditor({
                   <div className="flex flex-wrap gap-2 py-1">
                     {formData.experienceYears && (
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#B08D57]/10 text-[#B08D57] text-[10px] font-bold uppercase tracking-wider rounded-xs">
-                        <Clock className="w-3 h-3" /> {formData.experienceYears}
+                        <Clock className="w-3 h-3" /> {formatExperience(formData.experienceYears)}
                       </span>
                     )}
                     {formData.credentials && (
@@ -749,7 +750,7 @@ export default function TeamMemberEditor({
                   </span>
                   {formData.experienceYears && (
                     <span className="text-[10px] font-semibold text-[#172B46]/60">
-                      {formData.experienceYears}
+                      {formatExperience(formData.experienceYears)}
                     </span>
                   )}
                 </div>

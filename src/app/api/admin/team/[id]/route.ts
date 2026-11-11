@@ -4,6 +4,7 @@ import {
   getTeamMemberById,
   updateTeamMember,
   deleteTeamMember,
+  revalidateTeamCache,
 } from "@/server/repositories/teamRepository";
 import { logAuditEvent } from "@/lib/security/audit";
 
@@ -35,6 +36,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   try {
     const body = await req.json();
     const updated = await updateTeamMember(id, body);
+    await revalidateTeamCache();
 
     await logAuditEvent({
       action: "TEAM_MEMBER_UPDATED",
@@ -72,6 +74,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     if (!deleted) {
       return NextResponse.json({ error: "Failed to delete team member." }, { status: 400 });
     }
+    await revalidateTeamCache();
 
     await logAuditEvent({
       action: "TEAM_MEMBER_DELETED",
