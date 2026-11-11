@@ -8,12 +8,10 @@ import {
   Minus,
   Send,
   Phone,
-  Mail,
   CheckCircle2,
   ThumbsUp,
   ThumbsDown,
   ExternalLink,
-  Clock,
   Headset,
   AlertCircle,
   HelpCircle,
@@ -46,8 +44,6 @@ export default function ChatWidget() {
   // Callback form state
   const [cbName, setCbName] = useState("");
   const [cbPhone, setCbPhone] = useState("");
-  const [cbEmail, setCbEmail] = useState("");
-  const [cbMethod, setCbMethod] = useState<"PHONE" | "EMAIL">("PHONE");
   const [cbTimeWindow, setCbTimeWindow] = useState("Weekday Afternoon (2 PM - 5 PM)");
   const [cbConsent, setCbConsent] = useState(false);
 
@@ -171,12 +167,8 @@ export default function ChatWidget() {
       setErrorMsg("Please provide your full name.");
       return;
     }
-    if (cbMethod === "PHONE" && !cbPhone.trim()) {
+    if (!cbPhone.trim()) {
       setErrorMsg("Please provide a phone number for callback.");
-      return;
-    }
-    if (cbMethod === "EMAIL" && (!cbEmail.trim() || !cbEmail.includes("@"))) {
-      setErrorMsg("Please provide a valid email address.");
       return;
     }
     if (!cbConsent) {
@@ -192,10 +184,9 @@ export default function ChatWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           conversationId,
-          fullName: cbName,
-          phone: cbPhone,
-          email: cbEmail,
-          preferredMethod: cbMethod,
+          fullName: cbName.trim(),
+          phone: cbPhone.trim(),
+          preferredMethod: "PHONE",
           preferredTimeWindow: cbTimeWindow,
           consentGiven: cbConsent,
         }),
@@ -211,7 +202,7 @@ export default function ChatWidget() {
           {
             id: `cb-confirm-${Date.now()}`,
             role: "assistant",
-            content: `Thank you, ${cbName}. Your callback request (${data.referenceId}) has been registered. Our wealth advisory desk will contact you during standard business hours (Monday to Friday, 9:30 AM – 6:30 PM IST).`,
+            content: `Thank you, ${cbName.trim()}. Your callback request (${data.referenceId}) has been registered. Our private wealth advisory desk will contact you at your preferred time.`,
             createdAt: new Date().toISOString(),
           },
         ]);
@@ -463,54 +454,16 @@ export default function ChatWidget() {
                         />
                       </div>
 
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setCbMethod("PHONE")}
-                          className={`flex-1 py-1 text-[11px] rounded border font-medium cursor-pointer ${
-                            cbMethod === "PHONE"
-                              ? "bg-[#172B46] text-white border-[#172B46]"
-                              : "bg-stone-50 text-stone-600 border-stone-200"
-                          }`}
-                        >
-                          Phone Call
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setCbMethod("EMAIL")}
-                          className={`flex-1 py-1 text-[11px] rounded border font-medium cursor-pointer ${
-                            cbMethod === "EMAIL"
-                              ? "bg-[#172B46] text-white border-[#172B46]"
-                              : "bg-stone-50 text-stone-600 border-stone-200"
-                          }`}
-                        >
-                          Email Summary
-                        </button>
+                      <div>
+                        <input
+                          type="tel"
+                          placeholder="Phone Number (+91 XXXXX XXXXX)"
+                          value={cbPhone}
+                          onChange={(e) => setCbPhone(e.target.value)}
+                          className="w-full text-[12px] px-2.5 py-1.5 rounded border border-stone-300 focus:outline-none focus:border-[#B08D57]"
+                          required
+                        />
                       </div>
-
-                      {cbMethod === "PHONE" ? (
-                        <div>
-                          <input
-                            type="tel"
-                            placeholder="Phone Number (+91 XXXXX XXXXX)"
-                            value={cbPhone}
-                            onChange={(e) => setCbPhone(e.target.value)}
-                            className="w-full text-[12px] px-2.5 py-1.5 rounded border border-stone-300 focus:outline-none focus:border-[#B08D57]"
-                            required
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <input
-                            type="email"
-                            placeholder="Email Address"
-                            value={cbEmail}
-                            onChange={(e) => setCbEmail(e.target.value)}
-                            className="w-full text-[12px] px-2.5 py-1.5 rounded border border-stone-300 focus:outline-none focus:border-[#B08D57]"
-                            required
-                          />
-                        </div>
-                      )}
 
                       <div>
                         <select
@@ -576,12 +529,9 @@ export default function ChatWidget() {
               {/* Bottom Quick Action Bar (Request Callback button) */}
               {!showCallbackCard && !callbackSubmitted && (
                 <div
-                  className="chat-callback-bar px-3 py-1 bg-stone-100/80 border-t border-stone-200/80 flex justify-between items-center text-[11px] shrink-0"
+                  className="chat-callback-bar px-3 py-1.5 bg-stone-100/80 border-t border-stone-200/80 flex justify-end items-center text-[11px] shrink-0"
                   style={{ fontSize: "11px" }}
                 >
-                  <span className="text-stone-500 flex items-center gap-1 text-[11px]" style={{ fontSize: "11px" }}>
-                    <Clock className="w-3 h-3 text-[#B08D57]" /> Mon–Fri 9:30–18:30
-                  </span>
                   <button
                     onClick={() => setShowCallbackCard(true)}
                     className="chat-callback-link text-[#B08D57] hover:text-[#172B46] font-medium flex items-center gap-1 hover:underline text-[11px] cursor-pointer"
