@@ -114,3 +114,65 @@ export function extractLeadIntent(text: string): ExtractedLeadData {
 
   return result;
 }
+
+/**
+ * Detects whether the user's message is a simple salutation or polite greeting.
+ */
+export function isPureGreeting(text: string): boolean {
+  if (!text) return false;
+
+  const clean = text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, "")
+    .trim();
+
+  const greetingExactPatterns = [
+    "hi",
+    "hii",
+    "hiii",
+    "hello",
+    "helloo",
+    "hey",
+    "heyy",
+    "heya",
+    "hi there",
+    "hello there",
+    "hey there",
+    "greetings",
+    "good morning",
+    "good afternoon",
+    "good evening",
+    "good day",
+    "namaste",
+    "namaskar",
+    "namaste ji",
+    "namaskar ji",
+    "hi vantage",
+    "hello vantage",
+    "hey vantage",
+    "vantage assistant",
+    "hi how are you",
+    "hello how are you",
+    "how are you",
+  ];
+
+  if (greetingExactPatterns.includes(clean)) {
+    return true;
+  }
+
+  const greetingRegex = /^(?:hi|hello|hey|greetings|namaste|namaskar)(?:\s+(?:there|vantage|assistant|team|sir|maam|madam|ji))?$/i;
+  return greetingRegex.test(clean);
+}
+
+/**
+ * Returns the polite, concise greeting response requested for Vantage Wealth.
+ */
+export function getGreetingResponse(language: DetectedLanguage = "en"): string {
+  if (language === "hi") {
+    return "वैनटेज वेल्थ में आपका स्वागत है।\n\nआज मैं आपकी वेल्थ एडवाइजरी या पोर्टफोलियो योजना में किस प्रकार सहायता कर सकता हूँ?";
+  }
+  if (language === "hinglish") {
+    return "Welcome to Vantage Wealth.\n\nAaj main aapki wealth advisory ya portfolio considerations me kaise assist kar sakta hoon?";
+  }
+  return "Welcome to Vantage Wealth.\n\nHow may I assist you with your wealth advisory or portfolio considerations today?";
+}

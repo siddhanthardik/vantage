@@ -11,6 +11,7 @@ import {
   checkFinancialSafetyViolation,
   buildGroundedSystemPrompt,
 } from "./financialSafetyGuardrails";
+import { isPureGreeting, getGreetingResponse } from "./languageAndIntent";
 
 export const DEFAULT_GEMINI_MODEL = "gemini-3.8-flash";
 
@@ -122,7 +123,15 @@ export class GeminiAdapter implements AiProviderAdapter {
       };
     }
 
-    // 3. Fallback if Gemini client is unconfigured
+    // 3. Greeting check: Immediate polite, simple greeting without corporate bloat
+    if (isPureGreeting(lastUserTurn)) {
+      return {
+        content: getGreetingResponse(language as any),
+        isFlagged: false,
+      };
+    }
+
+    // 4. Fallback if Gemini client is unconfigured
     if (!this.client || !this.apiKey) {
       const unconfiguredMsg =
         language === "hi"

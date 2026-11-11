@@ -7,7 +7,7 @@ import { chatbotSettingsRepository } from "@/server/repositories/chatbotSettings
 import { chatRateLimitRepository } from "@/server/repositories/chatRateLimitRepository";
 import { chatLeadRepository } from "@/server/repositories/chatLeadRepository";
 import { verifyAnonymousSessionToken, hashClientIp } from "@/lib/security/chatSecurity";
-import { detectLanguage, extractLeadIntent } from "@/server/ai/languageAndIntent";
+import { detectLanguage, extractLeadIntent, isPureGreeting } from "@/server/ai/languageAndIntent";
 import { getAiProvider } from "@/server/ai/aiProviderFactory";
 
 export async function POST(request: NextRequest) {
@@ -96,11 +96,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 8. Knowledge Base Retrieval
-    const relevantChunks = await chatKnowledgeRepository.searchKnowledge(trimmedContent, {
-      language: detectedLanguage,
-      limit: 4,
-    });
+    // 8. Knowledge Base Retrieval (skip for simple greetings to maximize efficiency)
+    const isGreeting = isPureGreeting(trimmedContent);
+    const relevantChunks = isGreeting
+      ? []
+      : await chatKnowledgeRepository.searchKnowledge(trimmedContent, {
+          language: detectedLanguage,
+          limit: 4,
+        });
 
     // 9. Load Chatbot Settings
     const settings = await chatbotSettingsRepository.getSettings();
