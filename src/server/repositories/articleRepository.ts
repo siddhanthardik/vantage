@@ -3,6 +3,30 @@ import path from "path";
 import { connection } from "next/server";
 import { ArticleItem, ArticleFormData, ArticleRevisionItem } from "@/types/article";
 import { prisma } from "@/lib/db/prisma";
+import { normalizePhotoUrl } from "@/lib/team/formatters";
+
+/**
+ * Universal Cache Invalidation helper for Articles / Insights data
+ * Invalidates Cache Components tags and public/admin route caches
+ */
+export async function revalidateArticleCache(slug?: string): Promise<void> {
+  try {
+    const { revalidateTag, revalidatePath } = await import("next/cache");
+    revalidateTag("published-articles", "max");
+    if (slug) {
+      revalidateTag(`article-${slug}`, "max");
+      revalidatePath(`/insights/${slug}`, "page");
+      revalidatePath(`/insights/${slug}`);
+    }
+    revalidatePath("/insights", "page");
+    revalidatePath("/insights");
+    revalidatePath("/", "page");
+    revalidatePath("/", "layout");
+    revalidatePath("/admin/articles");
+  } catch (e) {
+    console.warn("revalidateArticleCache notice:", e);
+  }
+}
 
 const DATA_FILE_PATH = path.join(process.cwd(), "src", "lib", "db", "articles-data.json");
 const REVISIONS_FILE_PATH = path.join(process.cwd(), "src", "lib", "db", "article-revisions.json");
@@ -349,8 +373,8 @@ export async function createArticle(
           content: formData.content.trim(),
           categoryName: formData.category || "Wealth Planning",
           readTime: formData.readTime || "5 min read",
-          coverImage: formData.coverImage || "/images/insights/featured-article.png",
-          ogImage: formData.ogImage || formData.coverImage || null,
+          coverImage: formData.coverImage ? normalizePhotoUrl(formData.coverImage) : "/images/insights/featured-article.png",
+          ogImage: formData.ogImage ? normalizePhotoUrl(formData.ogImage) : (formData.coverImage ? normalizePhotoUrl(formData.coverImage) : null),
           authorName: formData.authorName || "Vantage Research Desk",
           isFeatured: formData.isFeatured || false,
           status: formData.status || "PUBLISHED",
@@ -386,6 +410,8 @@ export async function createArticle(
       const store = readDataStore();
       store.articles.unshift(formatted);
       writeDataStore(store);
+
+      await revalidateArticleCache(created.slug);
 
       return formatted;
     } catch (e: any) {
@@ -435,8 +461,8 @@ export async function updateArticle(
           content: formData.content !== undefined ? formData.content.trim() : existing.content,
           categoryName: formData.category !== undefined ? formData.category : existing.categoryName,
           readTime: formData.readTime !== undefined ? formData.readTime : existing.readTime,
-          coverImage: formData.coverImage !== undefined ? formData.coverImage : existing.coverImage,
-          ogImage: formData.ogImage !== undefined ? formData.ogImage : existing.ogImage,
+          coverImage: formData.coverImage !== undefined ? (formData.coverImage ? normalizePhotoUrl(formData.coverImage) : null) : existing.coverImage,
+          ogImage: formData.ogImage !== undefined ? (formData.ogImage ? normalizePhotoUrl(formData.ogImage) : null) : existing.ogImage,
           authorName: formData.authorName !== undefined ? formData.authorName : existing.authorName,
           isFeatured: formData.isFeatured !== undefined ? formData.isFeatured : existing.isFeatured,
           status: formData.status !== undefined ? formData.status : existing.status,
@@ -474,6 +500,11 @@ export async function updateArticle(
         store.articles.unshift(formatted);
       }
       writeDataStore(store);
+
+      await revalidateArticleCache(updated.slug);
+      if (existing.slug !== updated.slug) {
+        await revalidateArticleCache(existing.slug);
+      }
 
       return formatted;
     } catch (e: any) {
@@ -526,6 +557,8 @@ export async function deleteArticle(id: string): Promise<boolean> {
       const store = readDataStore();
       store.articles = store.articles.filter((a) => a.id !== id);
       writeDataStore(store);
+
+      await revalidateArticleCache(existing.slug);
 
       return true;
     } catch (e: any) {

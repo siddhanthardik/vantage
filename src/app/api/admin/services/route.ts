@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/auth/guard";
-import { getAllServices, createService } from "@/server/repositories/serviceRepository";
+import { getAllServices, createService, revalidateServiceCache } from "@/server/repositories/serviceRepository";
 import { logAuditEvent } from "@/lib/security/audit";
 
 export async function GET() {
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     }
 
     const created = await createService(body);
+    await revalidateServiceCache(created.slug);
 
     await logAuditEvent({
       action: "SERVICE_CREATED",

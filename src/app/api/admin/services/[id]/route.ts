@@ -4,6 +4,7 @@ import {
   getServiceById,
   updateService,
   deleteService,
+  revalidateServiceCache,
 } from "@/server/repositories/serviceRepository";
 import { logAuditEvent } from "@/lib/security/audit";
 
@@ -35,6 +36,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   try {
     const body = await req.json();
     const updated = await updateService(id, body);
+    await revalidateServiceCache(updated.slug);
 
     await logAuditEvent({
       action: "SERVICE_UPDATED",
@@ -67,6 +69,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     if (!deleted) {
       return NextResponse.json({ error: "Service not found or already deleted" }, { status: 404 });
     }
+    await revalidateServiceCache();
 
     await logAuditEvent({
       action: "SERVICE_DELETED",

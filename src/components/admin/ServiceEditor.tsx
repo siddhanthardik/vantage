@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,23 +17,13 @@ import {
   Sparkles,
 } from "lucide-react";
 import { ServiceItem, ServiceFormData, ServiceBenefit, ServiceProcessStep } from "@/types/service";
+import MediaPickerModal from "./MediaPickerModal";
+import { normalizePhotoUrl } from "@/lib/team/formatters";
 
 interface ServiceEditorProps {
   initialData?: ServiceItem;
   isNew?: boolean;
 }
-
-const AVAILABLE_IMAGES = [
-  { label: "Chart with Golden Coins", path: "/images/services/investment-advisory.png" },
-  { label: "Family Silhouette at Sunset", path: "/images/services/wealth-protection.png" },
-  { label: "Couple on Sunset Bench", path: "/images/services/retirement-bench.png" },
-  { label: "Golden Chess King & Pieces", path: "/images/services/chess-king.png" },
-  { label: "Desk with Pen & Financial Report", path: "/images/services/tax-planning.png" },
-  { label: "Luxury Villa & Estate", path: "/images/services/loans.png" },
-  { label: "Financial Books & Bull Statue (Hero)", path: "/images/services/investment-advisory-hero.png" },
-  { label: "Modern Headquarters Facade", path: "/images/about/vantage-headquarters.png" },
-  { label: "Advisor with Clients", path: "/images/home/hero-advisory.png" },
-];
 
 const AVAILABLE_ICONS = [
   "LineChart",
@@ -58,6 +48,18 @@ export default function ServiceEditor({ initialData, isNew = false }: ServiceEdi
   const [notification, setNotification] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [imagePickerTarget, setImagePickerTarget] = useState<"thumbnailImage" | "heroImage" | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
 
   // Form State
   const [formData, setFormData] = useState<ServiceFormData>({
@@ -189,6 +191,7 @@ export default function ServiceEditor({ initialData, isNew = false }: ServiceEdi
         type: "success",
         text: `Service "${payload.title}" saved successfully as ${payload.status}!`,
       });
+      setIsDirty(false);
 
       if (isNew && resData.service?.id) {
         setTimeout(() => {
@@ -869,62 +872,23 @@ export default function ServiceEditor({ initialData, isNew = false }: ServiceEdi
         </div>
       </div>
 
-      {/* Image Selection Modal */}
-      {imagePickerTarget && (
-        <div className="fixed inset-0 z-50 bg-[#172B46]/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#FFFFFF] rounded-sm max-w-2xl w-full p-6 shadow-2xl border border-[#E5DFD5] space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E5DFD5]">
-              <h3 className="text-base font-sans font-bold text-[#172B46]">
-                Select Image from Vantage Media Library
-              </h3>
-              <button
-                type="button"
-                onClick={() => setImagePickerTarget(null)}
-                className="p-1 hover:bg-[#F7F5F0] rounded-sm"
-              >
-                <X className="w-5 h-5 text-[#172B46]" />
-              </button>
-            </div>
-
-            <div className="overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 gap-4 p-2">
-              {AVAILABLE_IMAGES.map((img) => (
-                <button
-                  key={img.path}
-                  type="button"
-                  onClick={() => {
-                    setFormData({ ...formData, [imagePickerTarget]: img.path });
-                    setImagePickerTarget(null);
-                  }}
-                  className="group flex flex-col items-center p-2 rounded-sm border border-[#E5DFD5] hover:border-[#B08D57] transition-all text-left"
-                >
-                  <div className="w-full h-24 relative bg-[#F7F5F0] rounded-xs overflow-hidden mb-2">
-                    <Image
-                      src={img.path}
-                      alt={img.label}
-                      fill
-                      sizes="(max-width: 640px) 50vw, 160px"
-                      className="object-cover group-hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  <span className="text-[11px] font-medium text-[#172B46] line-clamp-1 w-full">
-                    {img.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            <div className="pt-3 border-t border-[#E5DFD5] flex justify-end">
-              <button
-                type="button"
-                onClick={() => setImagePickerTarget(null)}
-                className="px-4 py-2 border border-[#E5DFD5] text-xs font-semibold text-[#172B46] hover:bg-[#F7F5F0] rounded-sm"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Image Selection Modal via Vantage Media Library */}
+      <MediaPickerModal
+        isOpen={!!imagePickerTarget}
+        onClose={() => setImagePickerTarget(null)}
+        onSelect={(media) => {
+          if (imagePickerTarget) {
+            const canonicalUrl = normalizePhotoUrl(media.url);
+            setFormData((prev) => ({
+              ...prev,
+              [imagePickerTarget]: canonicalUrl,
+              ...(imagePickerTarget === "heroImage" && !prev.ogImage ? { ogImage: canonicalUrl } : {}),
+            }));
+          }
+          setImagePickerTarget(null);
+        }}
+        title={`Select ${imagePickerTarget === "heroImage" ? "Hero" : "Thumbnail"} Image from Media Library`}
+      />
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmOpen && (

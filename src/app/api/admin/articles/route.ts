@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/auth/guard";
-import { getAllArticles, createArticle } from "@/server/repositories/articleRepository";
+import { getAllArticles, createArticle, revalidateArticleCache } from "@/server/repositories/articleRepository";
 import { logAuditEvent } from "@/lib/security/audit";
 
 export async function GET(req: NextRequest) {
@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
     }
 
     const created = await createArticle(body, auth.session.email);
+    await revalidateArticleCache(created.slug);
 
     await logAuditEvent({
       action: "ARTICLE_CREATED",

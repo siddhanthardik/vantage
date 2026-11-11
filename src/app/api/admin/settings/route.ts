@@ -31,6 +31,10 @@ export async function PUT(req: NextRequest) {
 
     revalidateTag("business-settings", "max");
     revalidatePath("/", "layout");
+    revalidatePath("/", "page");
+    revalidatePath("/");
+    revalidatePath("/contact");
+    revalidatePath("/consultation");
 
     await logAuditEvent({
       action: "SETTINGS_UPDATED",

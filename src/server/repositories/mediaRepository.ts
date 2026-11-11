@@ -146,6 +146,47 @@ export async function deleteMediaItem(id: string): Promise<boolean> {
     const existing = await prisma.mediaItem.findUnique({ where: { id } });
     if (!existing) return false;
 
+    // Safety check: Prevent deleting media actively referenced by existing pages
+    const [serviceRef, articleRef, teamRef, settingsRef] = await Promise.all([
+      prisma.service.findFirst({
+        where: {
+          OR: [
+            { thumbnailImage: { contains: existing.filename } },
+            { heroImage: { contains: existing.filename } },
+            { ogImage: { contains: existing.filename } },
+          ],
+        },
+      }),
+      prisma.article.findFirst({
+        where: {
+          OR: [
+            { coverImage: { contains: existing.filename } },
+            { ogImage: { contains: existing.filename } },
+            { content: { contains: existing.filename } },
+          ],
+        },
+      }),
+      prisma.teamMember.findFirst({
+        where: { photoUrl: { contains: existing.filename } },
+      }),
+      prisma.businessSettings.findFirst({
+        where: { heroImageUrl: { contains: existing.filename } },
+      }),
+    ]);
+
+    if (serviceRef || articleRef || teamRef || settingsRef) {
+      const location = serviceRef
+        ? `Service "${serviceRef.title}"`
+        : articleRef
+        ? `Article "${articleRef.title}"`
+        : teamRef
+        ? `Team Member "${teamRef.name}"`
+        : "Homepage Hero Settings";
+      throw new Error(
+        `Cannot delete media asset "${existing.originalName}": It is actively referenced by ${location}. Please replace or remove the image in the editor before deleting it.`
+      );
+    }
+
     // Remove local file if stored locally
     if (existing.storageType === "LOCAL") {
       try {

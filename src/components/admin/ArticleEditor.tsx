@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -71,6 +71,18 @@ export default function ArticleEditor({
 
   // Media picker modal states for Cover & OG image
   const [mediaPickerTarget, setMediaPickerTarget] = useState<"cover" | "og" | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
 
   const handleTitleChange = (val: string) => {
     setFormData((prev) => {
@@ -186,6 +198,7 @@ export default function ArticleEditor({
       }
 
       setFormData(payload);
+      setIsDirty(false);
 
       if (isDraft) {
         setStatusMessage({

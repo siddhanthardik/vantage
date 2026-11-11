@@ -5,6 +5,7 @@ import {
   updateArticle,
   deleteArticle,
   getArticleRevisions,
+  revalidateArticleCache,
 } from "@/server/repositories/articleRepository";
 import { logAuditEvent } from "@/lib/security/audit";
 
@@ -44,6 +45,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   try {
     const body = await req.json();
     const updated = await updateArticle(id, body, auth.session.email);
+    await revalidateArticleCache(updated.slug);
 
     await logAuditEvent({
       action: "ARTICLE_UPDATED",
@@ -78,6 +80,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     if (!deleted) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
+    await revalidateArticleCache();
 
     await logAuditEvent({
       action: "ARTICLE_DELETED",

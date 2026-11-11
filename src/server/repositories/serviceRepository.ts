@@ -1,6 +1,48 @@
 import { cacheTag } from "next/cache";
 import { ServiceItem, ServiceFormData, BusinessSettingsData } from "@/types/service";
 import { prisma } from "@/lib/db/prisma";
+import { normalizePhotoUrl } from "@/lib/team/formatters";
+
+/**
+ * Universal Cache Invalidation helper for Services data
+ * Invalidates Cache Components tags and public/admin route caches
+ */
+export async function revalidateServiceCache(slug?: string): Promise<void> {
+  try {
+    const { revalidateTag, revalidatePath } = await import("next/cache");
+    revalidateTag("published-services", "max");
+    if (slug) {
+      revalidateTag(`service-${slug}`, "max");
+      revalidatePath(`/services/${slug}`, "page");
+      revalidatePath(`/services/${slug}`);
+    }
+    revalidatePath("/services", "page");
+    revalidatePath("/services");
+    revalidatePath("/", "page");
+    revalidatePath("/", "layout");
+    revalidatePath("/admin/services");
+  } catch (e) {
+    console.warn("revalidateServiceCache notice:", e);
+  }
+}
+
+/**
+ * Universal Cache Invalidation helper for Business Settings & Homepage Hero data
+ */
+export async function revalidateBusinessSettingsCache(): Promise<void> {
+  try {
+    const { revalidateTag, revalidatePath } = await import("next/cache");
+    revalidateTag("business-settings", "max");
+    revalidatePath("/", "layout");
+    revalidatePath("/", "page");
+    revalidatePath("/");
+    revalidatePath("/contact");
+    revalidatePath("/consultation");
+    revalidatePath("/admin/settings");
+  } catch (e) {
+    console.warn("revalidateBusinessSettingsCache notice:", e);
+  }
+}
 
 /**
  * Canonical URL redirects for retired service slugs.
@@ -155,8 +197,8 @@ export async function createService(formData: ServiceFormData): Promise<ServiceI
       fullDesc: formData.fullDesc || null,
       heroHeading: formData.heroHeading || formData.title.trim(),
       heroSubtext: formData.heroSubtext || formData.shortDesc.trim(),
-      heroImage: formData.heroImage || "/images/services/investment-advisory-hero.png",
-      thumbnailImage: formData.thumbnailImage || "/images/services/investment-advisory.png",
+      heroImage: formData.heroImage ? normalizePhotoUrl(formData.heroImage) : "/images/services/investment-advisory-hero.png",
+      thumbnailImage: formData.thumbnailImage ? normalizePhotoUrl(formData.thumbnailImage) : "/images/services/investment-advisory.png",
       iconName: formData.iconName || "LineChart",
       benefits: (formData.benefits as any) || [],
       features: (formData.features as any) || [],
@@ -167,13 +209,15 @@ export async function createService(formData: ServiceFormData): Promise<ServiceI
       ctaButtonUrl: formData.ctaButtonUrl || "/consultation",
       seoTitle: formData.seoTitle || `${formData.title.trim()} | Vantage Wealth`,
       seoDescription: formData.seoDescription || formData.shortDesc.trim(),
-      ogImage: formData.ogImage || formData.heroImage || null,
+      ogImage: formData.ogImage ? normalizePhotoUrl(formData.ogImage) : (formData.heroImage ? normalizePhotoUrl(formData.heroImage) : null),
       status: formData.status || "DRAFT",
       displayOrder: nextOrder,
       createdAt: now,
       updatedAt: now,
     },
   });
+
+  await revalidateServiceCache(created.slug);
 
   return created as unknown as ServiceItem;
 }
@@ -222,8 +266,8 @@ export async function updateService(id: string, formData: Partial<ServiceFormDat
   if (formData.fullDesc !== undefined) updateData.fullDesc = formData.fullDesc || null;
   if (formData.heroHeading !== undefined) updateData.heroHeading = formData.heroHeading || null;
   if (formData.heroSubtext !== undefined) updateData.heroSubtext = formData.heroSubtext || null;
-  if (formData.heroImage !== undefined) updateData.heroImage = formData.heroImage || null;
-  if (formData.thumbnailImage !== undefined) updateData.thumbnailImage = formData.thumbnailImage || null;
+  if (formData.heroImage !== undefined) updateData.heroImage = formData.heroImage ? normalizePhotoUrl(formData.heroImage) : null;
+  if (formData.thumbnailImage !== undefined) updateData.thumbnailImage = formData.thumbnailImage ? normalizePhotoUrl(formData.thumbnailImage) : null;
   if (formData.iconName !== undefined) updateData.iconName = formData.iconName || null;
   if (formData.benefits !== undefined) updateData.benefits = formData.benefits;
   if (formData.features !== undefined) updateData.features = formData.features;
@@ -234,7 +278,7 @@ export async function updateService(id: string, formData: Partial<ServiceFormDat
   if (formData.ctaButtonUrl !== undefined) updateData.ctaButtonUrl = formData.ctaButtonUrl || null;
   if (formData.seoTitle !== undefined) updateData.seoTitle = formData.seoTitle || null;
   if (formData.seoDescription !== undefined) updateData.seoDescription = formData.seoDescription || null;
-  if (formData.ogImage !== undefined) updateData.ogImage = formData.ogImage || null;
+  if (formData.ogImage !== undefined) updateData.ogImage = formData.ogImage ? normalizePhotoUrl(formData.ogImage) : null;
   if (formData.status !== undefined) updateData.status = formData.status;
   if (formData.displayOrder !== undefined) updateData.displayOrder = formData.displayOrder;
 
@@ -242,6 +286,11 @@ export async function updateService(id: string, formData: Partial<ServiceFormDat
     where: { id },
     data: updateData,
   });
+
+  await revalidateServiceCache(updated.slug);
+  if (existing.slug !== updated.slug) {
+    await revalidateServiceCache(existing.slug);
+  }
 
   return updated as unknown as ServiceItem;
 }
@@ -254,9 +303,13 @@ export async function deleteService(id: string): Promise<boolean> {
     throw new Error("Database client unavailable: cannot delete service without PostgreSQL connection.");
   }
 
+  const existing = await prisma.service.findUnique({ where: { id } });
+
   await prisma.service.delete({
     where: { id },
   });
+
+  await revalidateServiceCache(existing?.slug);
 
   return true;
 }
@@ -286,6 +339,8 @@ export async function reorderServices(orderedIds: string[]): Promise<void> {
       data: { displayOrder: i + 1 },
     });
   }
+
+  await revalidateServiceCache();
 }
 
 /**
@@ -377,6 +432,8 @@ export async function updateBusinessSettings(
       heroCtaUrl: formData.heroCtaUrl,
     },
   });
+
+  await revalidateBusinessSettingsCache();
 
   return {
     companyName: updated.companyName,

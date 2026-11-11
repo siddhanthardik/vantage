@@ -50,6 +50,18 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
 
   // Media Library Modal state
   const [showMediaModal, setShowMediaModal] = useState(false);
@@ -168,6 +180,7 @@ export default function AdminSettingsPage() {
         type: "success",
         text: "Business settings and Homepage Hero configuration saved authoritatively to PostgreSQL.",
       });
+      setIsDirty(false);
       setTimeout(() => setStatusMessage(null), 4000);
     } catch (e: any) {
       setStatusMessage({ type: "error", text: e.message || "Failed to save settings" });

@@ -62,6 +62,18 @@ export default function TeamMemberEditor({
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaLibrary, setMediaLibrary] = useState<any[]>([]);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
 
   // Auto-generate slug when name changes for new team members
   const handleNameChange = (val: string) => {
@@ -188,6 +200,7 @@ export default function TeamMemberEditor({
         type: "success",
         text: `Profile for "${payload.name}" saved successfully as ${payload.status}.`,
       });
+      setIsDirty(false);
 
       router.refresh();
 
