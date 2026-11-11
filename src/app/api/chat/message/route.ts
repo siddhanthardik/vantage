@@ -116,6 +116,15 @@ export async function POST(request: NextRequest) {
     }));
 
     // 11. Generate Grounded AI Response via Provider Adapter (Google Gemini)
+    const combinedSystemInstruction = [
+      settings.systemInstructions,
+      settings.salesInstructions ? `\nSales & Positioning Guidance:\n${settings.salesInstructions}` : "",
+      settings.qualificationInstructions ? `\nConversational Discovery:\n${settings.qualificationInstructions}` : "",
+      settings.financialSafetyInstructions ? `\nFinancial Safety & Boundaries:\n${settings.financialSafetyInstructions}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
     const aiProvider = getAiProvider();
     const aiResult = await aiProvider.generateResponse({
       messages: contextTurns,
@@ -126,7 +135,7 @@ export async function POST(request: NextRequest) {
         sourceType: c.sourceType,
         slug: c.slug,
       })),
-      systemInstruction: settings.systemInstructions || undefined,
+      systemInstruction: combinedSystemInstruction || undefined,
       language: detectedLanguage,
     });
 

@@ -149,7 +149,7 @@ function renderChatMessage(content: string, isAssistant: boolean) {
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [botName, setBotName] = useState("Vantage Wealth Assistant");
+  const [botName, setBotName] = useState("Soumya");
   const [isEnabled, setIsEnabled] = useState(true);
   const [isHolidayClosed, setIsHolidayClosed] = useState(false);
   const [holidayNotice, setHolidayNotice] = useState<string | null>(null);

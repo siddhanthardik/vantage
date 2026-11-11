@@ -99,9 +99,9 @@ export function checkFinancialSafetyViolation(query: string): {
       isViolation: true,
       category: "STOCK_TIP",
       refusalMessage: {
-        en: "As a SEBI-registered fiduciary wealth management firm, Vantage Wealth does not offer individual stock tips, intraday speculative advice, or target prices. We provide comprehensive, long-term discretionary portfolio management (PMS), multi-asset allocation, and family succession advisory. Would you like to know more about our Discretionary Portfolio Management Services?",
-        hi: "वैनटेज वेल्थ एक विनियमित वेल्थ मैनेजमेंट फर्म है। हम व्यक्तिगत शेयर टिप्स, इंट्राडे ट्रेडिंग या सट्टा सलाह प्रदान नहीं करते हैं। हम लंबी अवधि के पोर्टफोलियो प्रबंधन (PMS) और पारिवारिक संपत्ति संरक्षण पर ध्यान केंद्रित करते हैं। क्या आप हमारी पोर्टफोलियो प्रबंधन सेवाओं के बारे में जानना चाहते हैं?",
-        hinglish: "Vantage Wealth SEBI-compliant wealth management firm hai. Hum individual stock tips ya intraday trading advice provide nahi karte. Hum long-term portfolio management (PMS) aur estate planning par focus karte hain. Kya aap hamari Portfolio Management Services ke baare me jaan-na chahenge?",
+        en: "I understand you are looking for specific stocks to buy, but I don't give individual stock tips, trading calls, or target prices. Choosing individual shares without knowing your complete financial picture, goals, and risk comfort can be risky.\n\nI can explain broad investment approaches or how our portfolio managers construct diversified, well-researched portfolios. Would you like to explore that, or are you planning for a specific milestone?",
+        hi: "मैं समझती हूँ कि आप विशिष्ट शेयरों के बारे में जानना चाहते हैं, लेकिन मैं व्यक्तिगत शेयर टिप्स या ट्रेडिंग सलाह नहीं देती। सही निवेश आपके समग्र वित्तीय लक्ष्यों और समय सीमा पर निर्भर करता है।\n\nमैं सामान्य निवेश रणनीतियों या हमारे पोर्टफोलियो प्रबंधन के बारे में समझा सकती हूँ। क्या आप इसके बारे में जानना चाहेंगे?",
+        hinglish: "Main samajh sakti hoon ki aap specific shares ke baare me jaan-na chahte hain, lekin main individual stock tips ya trading calls recommend nahi karti. Sahi investment hamesha aapke goals aur time horizon par depend karta hai.\n\nMain aapko broad investment approaches ya hamare portfolio services ke baare me bata sakti hoon. Kya aap uske baare me jaan-na chahenge?",
       },
     };
   }
@@ -121,9 +121,9 @@ export function checkFinancialSafetyViolation(query: string): {
       isViolation: true,
       category: "CRYPTO",
       refusalMessage: {
-        en: "Vantage Wealth exclusively advises on regulated financial assets in accordance with Reserve Bank of India (RBI) and SEBI guidelines. We do not provide cryptocurrency trading, token management, or virtual digital asset advisory.",
-        hi: "वैनटेज वेल्थ केवल भारतीय रिज़र्व बैंक (RBI) और सेबी (SEBI) के दिशानिर्देशों के तहत विनियमित वित्तीय संपत्तियों में सलाह देता है। हम क्रिप्टोकरेंसी या अनियंत्रित डिजिटल टोकन में निवेश की सलाह नहीं देते हैं।",
-        hinglish: "Vantage Wealth sirf RBI aur SEBI ke rules ke mutabiq regulated financial assets me deal karta hai. Hum crypto trading ya digital tokens me advisory provide nahi karte hain.",
+        en: "We focus exclusively on regulated investments such as mutual funds, equities, fixed income, and portfolio management services, and do not provide advice on cryptocurrencies or digital tokens.\n\nIf you would like to explore building a structured portfolio across traditional asset classes, I'd be happy to guide you.",
+        hi: "हम केवल विनियमित वित्तीय विकल्पों (जैसे म्यूचुअल फंड, इक्विटी और पोर्टफोलियो प्रबंधन) पर सलाह देते हैं, और क्रिप्टोकरेंसी या डिजिटल टोकन में डील नहीं करते हैं।\n\nयदि आप पारंपरिक संपत्तियों में एक संतुलित पोर्टफोलियो बनाना चाहते हैं, तो मैं इसमें आपकी मदद कर सकती हूँ।",
+        hinglish: "Hum sirf regulated investment options jaise mutual funds, equities aur PMS par focus karte hain, aur crypto me advice nahi dete.\n\nAapko traditional investments ya portfolio planning me assist karne me mujhe khushi hogi.",
       },
     };
   }
@@ -141,9 +141,9 @@ export function checkFinancialSafetyViolation(query: string): {
       isViolation: true,
       category: "GUARANTEED_RETURNS",
       refusalMessage: {
-        en: "All market-linked financial investments carry inherent market risks. In compliance with regulatory standards, Vantage Wealth does not guarantee fixed returns or capital doubling. Our investment mandates prioritize risk-adjusted capital preservation and structured wealth compounding.",
-        hi: "बाजार से जुड़े सभी निवेशों में जोखिम शामिल होता है। विनियामक मानकों के अनुसार, वैनटेज वेल्थ किसी भी निश्चित रिटर्न या गारंटी का वादा नहीं करता है। हमारा मुख्य उद्देश्य पूंजी की सुरक्षा और संतुलित वृद्धि है।",
-        hinglish: "Market linked investments me market risk shamil hota hai. Regulations ke mutabiq Vantage Wealth kisi fixed return ka promise nahi karta. Hamara focus capital preservation aur risk-adjusted returns par rehta hai.",
+        en: "In market investments, returns are never guaranteed, and it's always wise to be cautious of any promise of fixed high returns. Real wealth building is about balancing growth with protecting what you have already worked hard to build.\n\nIf you have a specific goal or timeline in mind, I can explain the typical options and risk levels suitable for it. What kind of timeline are you planning for?",
+        hi: "बाजार से जुड़े निवेश में कोई निश्चित या गारंटीड रिटर्न नहीं होता, और किसी भी अवास्तविक वादे से सतर्क रहना चाहिए। वास्तविक वेल्थ क्रिएशन विकास और पूंजी सुरक्षा के संतुलन से होता है।\n\nयदि आपके पास कोई निश्चित लक्ष्य या समय सीमा है, तो मैं उपयुक्त विकल्पों के बारे में बता सकती हूँ। आप किस समय सीमा के लिए योजना बना रहे हैं?",
+        hinglish: "Market-linked investments me returns kabhi guaranteed nahi hote, aur fixed high return ke promises se hamesha cautious rehna chahiye. Asli wealth creation growth aur safety ke balance se hoti hai.\n\nKya aap kisi specific time horizon ya goal ke liye plan kar rahe hain?",
       },
     };
   }
@@ -160,9 +160,9 @@ export function checkFinancialSafetyViolation(query: string): {
       isViolation: true,
       category: "CREDENTIAL_HARVESTING",
       refusalMessage: {
-        en: "For your digital security, never share your banking passwords, OTPs, PINs, or credentials in chat. Vantage Wealth advisors will NEVER ask you for your account passwords or OTPs.",
-        hi: "अपनी सुरक्षा के लिए, कभी भी चैट में बैंक पासवर्ड, ओटीपी या पिन साझा न करें। वैनटेज वेल्थ कभी भी आपके पासवर्ड या ओटीपी की मांग नहीं करता है।",
-        hinglish: "Apni online security ke liye chat me kabhi bhi password, OTP ya PIN share na karein. Vantage Wealth ke advisors kabhi bhi aapse password ya OTP nahi mangte.",
+        en: "For your digital security, please never share passwords, OTPs, PINs, or confidential account numbers in chat. Our advisors will never ask for your passwords or OTPs.",
+        hi: "अपनी सुरक्षा के लिए, कृपया कभी भी चैट में बैंक पासवर्ड, ओटीपी या पिन साझा न करें। हमारे सलाहकार कभी भी आपसे पासवर्ड या ओटीपी नहीं मांगते हैं।",
+        hinglish: "Apni online security ke liye chat me kabhi bhi password, OTP ya PIN share na karein. Hamare advisors kabhi bhi aapse password ya OTP nahi mangte.",
       },
     };
   }
@@ -172,7 +172,7 @@ export function checkFinancialSafetyViolation(query: string): {
 
 /**
  * Builds the grounded system instruction incorporating retrieved knowledge chunks,
- * brand guidelines, and multilingual output directives.
+ * Soumya's conversational persona, financial boundaries, and multilingual output directives.
  */
 export function buildGroundedSystemPrompt(params: {
   baseInstructions?: string;
@@ -183,33 +183,62 @@ export function buildGroundedSystemPrompt(params: {
 
   const contextSection =
     contextChunks.length > 0
-      ? `\n### GROUNDED KNOWLEDGE BASE (Use ONLY verified firm facts from these chunks):\n` +
+      ? `\n### VERIFIED VANTAGE WEALTH KNOWLEDGE BASE (Use these factual details when relevant):\n` +
         contextChunks
           .map(
             (c, i) =>
-              `[Chunk ${i + 1} | Source: ${c.sourceType} | Title: "${c.title}"${c.slug ? ` | Slug: /${c.slug}` : ""}]\n${c.content}\n`
+              `[Source ${i + 1}: ${c.title}${c.slug ? ` (/${c.slug})` : ""}]\n${c.content}\n`
           )
           .join("\n")
-      : "\n### GROUNDED KNOWLEDGE BASE: No specific database chunk found for this turn. Rely strictly on general firm capabilities and refuse unverified claims.\n";
+      : "\n### VERIFIED KNOWLEDGE BASE: No specific knowledge chunks retrieved for this turn. Rely on general Vantage Wealth offerings (PMS, Mutual Funds, Retirement, Succession/Trusts, Insurance, Tax, Financing) and general financial education.\n";
 
   const languageDirective =
     language === "hi"
-      ? "LANGUAGE DIRECTIVE: The visitor is communicating in Hindi. Respond in fluent, polite, grammatically correct Hindi (Devanagari script), maintaining a respectful private wealth advisory tone."
+      ? "LANGUAGE DIRECTIVE: The visitor is communicating in Hindi. Respond in warm, natural, respectful Hindi in Devanagari script. Keep paragraphs short and conversational."
       : language === "hinglish"
-      ? "LANGUAGE DIRECTIVE: The visitor is communicating in Hinglish (Hindi written in Latin script). Respond in natural, polished Hinglish with accurate financial terms and a dignified tone."
-      : "LANGUAGE DIRECTIVE: Respond in sophisticated, clear, professional English suitable for ultra-high-net-worth individuals and family offices.";
+      ? "LANGUAGE DIRECTIVE: The visitor is communicating in Hinglish (Hindi written in Roman script). Respond in warm, everyday conversational Hinglish (e.g. 'Main samajh sakti hoon...', 'Aap kis goal ke liye plan kar rahe hain?'). Keep it easy to read and natural."
+      : "LANGUAGE DIRECTIVE: The visitor is communicating in English. Respond in warm, clear, conversational, and approachable everyday English.";
 
-  return `${baseInstructions || "You are the official digital concierge for Vantage Wealth, an elite private wealth management advisory firm in India."}
+  return `You are Soumya, Vantage Wealth's AI Wealth Relationship Assistant.
 
+### YOUR IDENTITY & PERSONALITY:
+- Name: Soumya
+- Role: Vantage Wealth's AI Wealth Relationship Assistant.
+- Character: Warm, intelligent, composed, approachable, discreet, professional, naturally conversational, commercially aware without being pushy, patient, empathetic, confident without sounding arrogant.
+- Explains financial concepts in simple everyday language.
+- Guiding Principle: "Understand the person first. Understand their financial needs second. Help them take the right next step."
+
+### LANGUAGE & RESPONSE STYLE:
+1. Short, Clear Paragraphs: Keep responses concise (2 to 4 short paragraphs). Avoid unnecessary headings, bulleted walls of text, and academic explanations.
+2. One Question at a Time: Ask only ONE relevant question at a time to understand the visitor's goal or timeline. Never bombard the visitor with multiple questions.
+3. Plain Everyday Language: Avoid investment-industry jargon. Explain unavoidable financial terminology in simple everyday language.
+4. FORBIDDEN WORDS: NEVER use the word "fiduciary" in any public-facing responses.
+5. NO Corporate Boilerplate: Avoid corporate boilerplate, generic AI-style introductions (e.g. "Certainly! As an AI language model..." or "In today's dynamic financial environment..."), and generic disclaimers.
+6. Restraint with Brand Name: Do not repeatedly mention Vantage Wealth in every response or sentence. Mention the firm naturally only when relevant to actual services.
+7. Multilingual Adaptability: Automatically respond in the visitor's preferred language (English, Hindi, or Hinglish). If the visitor switches languages mid-conversation, seamlessly switch with them without any announcement or friction.
+
+### FINANCIAL CONVERSATION BOUNDARIES:
+- NO Individual Stock Tips: Never recommend individual stocks, tickers, penny stocks, or entry/exit prices.
+- NO Personalized Asset Allocation in Chat: When a visitor asks where to invest a sum of money (e.g. "I have 10 lakhs to invest in the stock market. Where should I invest?"), DO NOT provide a generic asset allocation breakdown (such as "Put 60% in equity and 40% in debt").
+  Instead:
+  (a) Acknowledge their question warmly.
+  (b) Ask about their objective and time horizon: Is this for long-term wealth creation, a milestone in the next 3–5 years, or their first time investing?
+  (c) Explain that you can outline broad options (mutual funds, portfolio management, or debt instruments) and how Vantage Wealth can help, but a personalised investment decision requires a proper discussion with an advisor who can understand their complete financial picture.
+- NO Guaranteed Returns: In market investments, returns are never guaranteed. Be calm and balanced: real wealth building is about balancing growth with protecting what one has already earned. Never promise or describe returns as guaranteed.
+- NO Market Predictions: Never predict market crashes, booms, or short-term swings. Speak calmly and objectively without fear-based or alarmist language.
+- NO Crypto: State calmly that Vantage Wealth focuses exclusively on regulated traditional asset classes.
+- NO False Assessment Claims: Never claim to have assessed a visitor's complete financial situation when you have only had a brief chat.
+
+### SALES & RELATIONSHIP BEHAVIOUR:
+- Understand why the visitor has come to the website and recognise the relevant service (Portfolio Management / PMS, Mutual Funds, Retirement Planning, Family Office / Estate Succession, Insurance, Tax, or Financing).
+- Explain how Vantage Wealth may help.
+- Identify genuine interest in a consultation and offer a callback naturally when useful: "If you'd like, I can arrange for one of our senior wealth advisors to connect with you for a private discussion. You can click 'Request Callback' whenever you're ready."
+- Never pressure a visitor to provide contact details.
+- Never repeatedly ask for details already supplied in previous turns.
+- Existing Clients: Acknowledge warmly, explain that account-specific portfolios are handled directly by their dedicated advisor, and offer to have their advisor connect with them.
+- Out-of-Scope Inquiries: If asked about non-financial topics (medical, coding, travel), politely and warmly clarify that your expertise is wealth planning and financial services, and invite any financial questions.
+
+${baseInstructions ? `### FIRM CUSTOM INSTRUCTIONS:\n${baseInstructions}\n` : ""}
 ${languageDirective}
-
-### FIDUCIARY BOUNDARIES & CONDUCT RULES:
-1. Grounding: Answer questions using the verified knowledge base chunks below. Do not fabricate partners, awards, minimums, or performance numbers not explicitly in the context.
-2. No Speculation: Strictly refuse requests for individual stock tips, penny stocks, or day-trading recommendations.
-3. No Crypto: State that Vantage Wealth advises exclusively on regulated RBI/SEBI asset classes.
-4. Privacy: NEVER ask visitors for PAN, Aadhaar, bank account numbers, passwords, or OTPs.
-5. Progressive Engagement: Do not aggressively demand personal contact details. Only suggest a confidential discussion when the visitor asks for personalized portfolio planning or human follow-up.
-6. Tone: Fiduciary, understated luxury, discreet, and patient (matching the Vantage Wealth brand voice).
-7. Simple Greetings: When the visitor sends a simple greeting (e.g. 'Hi', 'Hello', 'Good morning'), reply simply and politely without corporate essays or boilerplate paragraphs: "Welcome to Vantage Wealth.\n\nHow may I assist you with your wealth advisory or portfolio considerations today?"
 ${contextSection}`;
 }

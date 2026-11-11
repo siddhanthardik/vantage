@@ -18,29 +18,30 @@ export function detectLanguage(text: string): DetectedLanguage {
   // 2. Hinglish keyword heuristics (common Hindi conversational tokens written in Latin script)
   const lower = text.toLowerCase();
   const hinglishTokens = [
-    /\b(aap|aapka|aapki|aapke)\b/,
-    /\b(hai|hain|ho|hu|hoon)\b/,
-    /\b(kya|kaise|kaun|kab|kaha|kyun)\b/,
-    /\b(karna|karein|kijiye|chahiye|hoga|hogi)\b/,
-    /\b(nivesh|bachat|sampatti|paisa|paise|dhan)\b/,
+    /\b(aap|aapka|aapki|aapke|tum|tumhara|tumhari)\b/,
+    /\b(hai|hain|ho|hu|hoon|tha|the|thi)\b/,
+    /\b(kya|kaise|kaun|kab|kahan|kaha|kyun|kyon)\b/,
+    /\b(karna|karein|kare|kijiye|chahiye|hoga|hogi|hote|hota|karo)\b/,
+    /\b(nivesh|bachat|sampatti|paisa|paise|rupaye|dhan)\b/,
     /\b(mera|meri|mere|humara|humari|humare)\b/,
-    /\b(mujhe|humein|unko|inhe)\b/,
-    /\b(baat|sampark|call|karo|batao|samjhao)\b/,
+    /\b(mujhe|humein|unko|inhe|usko|maine)\b/,
+    /\b(baat|sampark|karo|batao|bataiye|bataye|samjhao|samjhaiye)\b/,
     /\b(parivar|khandan|wasiyat)\b/,
+    /\b(ke\s+baare\s+me|ke\s+bare\s+me|ke\s+baare\s+mein|ke\s+bare\s+mein)\b/,
   ];
 
   let matchCount = 0;
   for (const regex of hinglishTokens) {
     if (regex.test(lower)) {
       matchCount++;
-      if (matchCount >= 2) {
+      if (matchCount >= 1) {
         return "hinglish";
       }
     }
   }
 
   // Single strong hinglish keyword check
-  if (/\b(kripya|dhanyawaad|namaste|shukriya|namaskar)\b/.test(lower)) {
+  if (/\b(kripya|dhanyawaad|dhanyavad|namaste|namaskar|shukriya|pranam)\b/.test(lower)) {
     return "hinglish";
   }
 
@@ -169,10 +170,10 @@ export function isPureGreeting(text: string): boolean {
  */
 export function getGreetingResponse(language: DetectedLanguage = "en"): string {
   if (language === "hi") {
-    return "वैनटेज वेल्थ में आपका स्वागत है।\n\nआज मैं आपकी वेल्थ एडवाइजरी या पोर्टफोलियो योजना में किस प्रकार सहायता कर सकता हूँ?";
+    return "नमस्ते! मैं सौम्या हूँ, वैनटेज वेल्थ में आपकी एआई वेल्थ रिलेशनशिप असिस्टेंट।\n\nआज मैं आपके वित्तीय लक्ष्यों या निवेश से जुड़े सवालों में कैसे मदद कर सकती हूँ?";
   }
   if (language === "hinglish") {
-    return "Welcome to Vantage Wealth.\n\nAaj main aapki wealth advisory ya portfolio considerations me kaise assist kar sakta hoon?";
+    return "Hello! Main Soumya hoon, Vantage Wealth se aapki AI Wealth Relationship Assistant.\n\nAaj main aapke financial goals ya investment planning me kaise help kar sakti hoon?";
   }
-  return "Welcome to Vantage Wealth.\n\nHow may I assist you with your wealth advisory or portfolio considerations today?";
+  return "Hello! I'm Soumya, your AI Wealth Relationship Assistant at Vantage Wealth.\n\nHow may I help you with your financial goals or questions today?";
 }

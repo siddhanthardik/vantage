@@ -22,7 +22,7 @@ import {
 
 export default function ChatSettingsAndInstructionsPage() {
   const [settings, setSettings] = useState<any>({
-    botName: "Vantage Wealth Assistant",
+    botName: "Soumya",
     isEnabled: true,
     welcomeMessageEn: "",
     welcomeMessageHi: "",
@@ -167,7 +167,7 @@ export default function ChatSettingsAndInstructionsPage() {
                     value={settings.botName || ""}
                     onChange={(e) => setSettings({ ...settings, botName: e.target.value })}
                     className="w-full text-xs p-2.5 rounded-lg border border-stone-300 focus:outline-none focus:border-[#B08D57]"
-                    placeholder="e.g. George, Vantage Wealth Assistant"
+                    placeholder="e.g. Soumya"
                     required
                   />
                   <p className="text-[11px] text-stone-500 mt-1">
@@ -269,12 +269,12 @@ export default function ChatSettingsAndInstructionsPage() {
             <div className="bg-white p-5 rounded-xl border border-stone-200/80 shadow-2xs space-y-4">
               <h3 className="font-sans text-sm font-bold text-[#172B46] flex items-center gap-2 border-b border-stone-100 pb-2">
                 <Sliders className="w-4 h-4 text-[#B08D57]" />
-                Core Fiduciary System Instructions
+                Soumya Persona &amp; Conversational Instructions
               </h3>
 
               <div>
                 <label className="text-xs font-semibold text-stone-700 block mb-1">
-                  Base System Prompt (Persona, Tone, Brand Identity)
+                  Base System Prompt (Persona, Warmth, Tone)
                 </label>
                 <textarea
                   rows={4}
@@ -283,14 +283,14 @@ export default function ChatSettingsAndInstructionsPage() {
                   className="w-full text-xs p-2.5 rounded-lg border border-stone-300 focus:outline-none focus:border-[#B08D57] font-mono leading-relaxed"
                 />
                 <p className="text-[11px] text-stone-500 mt-1">
-                  Internal directive given to Google Gemini. Never exposed directly to public visitors.
+                  Internal persona directive given to Google Gemini. Explains financial concepts in simple everyday language.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-stone-700 block mb-1">
-                    Sales &amp; Fiduciary Positioning
+                    Client Relationship &amp; Sales Guidance
                   </label>
                   <textarea
                     rows={3}
@@ -302,7 +302,7 @@ export default function ChatSettingsAndInstructionsPage() {
 
                 <div>
                   <label className="text-xs font-semibold text-stone-700 block mb-1">
-                    Lead Qualification Strategy
+                    Conversational Discovery Strategy
                   </label>
                   <textarea
                     rows={3}
