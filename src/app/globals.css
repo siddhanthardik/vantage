@@ -482,6 +482,17 @@ h1.article-title-heading,
   margin: 0 !important;
 }
 
+.chatbot-portal strong,
+.chatbot-portal .chat-message-text strong {
+  font-family: var(--font-sans), "Manrope", sans-serif !important;
+  font-weight: 700 !important;
+}
+
+.chatbot-portal em,
+.chatbot-portal .chat-message-text em {
+  font-style: italic !important;
+}
+
 .chatbot-portal .chat-inquiry-btn {
   font-family: var(--font-sans), "Manrope", sans-serif !important;
   font-size: 12px !important;

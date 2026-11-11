@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, ReactNode } from "react";
 import Image from "next/image";
 import {
   MessageSquare,
@@ -25,6 +25,125 @@ interface MessageItem {
   citations?: Array<{ title: string; slug?: string; sourceType?: string }>;
   createdAt?: string;
   feedback?: { rating: number } | null;
+}
+
+/**
+ * Parses inline Markdown: **bold**, *italic*, _italic_, and [label](url).
+ * Strips raw markdown syntax and produces clean, safe React elements.
+ */
+function parseInlineMarkdown(text: string, isAssistant: boolean): ReactNode[] {
+  const tokens: ReactNode[] = [];
+  const regex = /(\[([^\]]+)\]\(([^)]+)\))|(\*\*([^*]+)\*\*)|(\*([^*]+)\*)|(_([^_]+)_)/g;
+
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    const matchIndex = match.index;
+    if (matchIndex > lastIndex) {
+      tokens.push(text.slice(lastIndex, matchIndex));
+    }
+
+    if (match[1]) {
+      // Link: [label](url)
+      const linkText = match[2];
+      const linkUrl = match[3];
+      tokens.push(
+        <a
+          key={`link-${matchIndex}`}
+          href={linkUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#B08D57] hover:underline font-medium transition-colors"
+        >
+          {linkText}
+        </a>
+      );
+    } else if (match[4]) {
+      // Bold: **text**
+      const boldText = match[5];
+      tokens.push(
+        <strong
+          key={`bold-${matchIndex}`}
+          className={`font-bold ${isAssistant ? "text-[#172B46]" : "text-white"}`}
+        >
+          {boldText}
+        </strong>
+      );
+    } else if (match[6] || match[8]) {
+      // Italic: *text* or _text_
+      const italicText = match[7] || match[9];
+      tokens.push(
+        <em key={`em-${matchIndex}`} className="italic">
+          {italicText}
+        </em>
+      );
+    }
+
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    tokens.push(text.slice(lastIndex));
+  }
+
+  return tokens.length > 0 ? tokens : [text];
+}
+
+/**
+ * Formats chat message content with paragraph breaks, bullet lists, and inline bold/italic.
+ */
+function renderChatMessage(content: string, isAssistant: boolean) {
+  if (!content) return null;
+
+  const paragraphs = content.split(/\n\n+/);
+
+  return (
+    <div className="space-y-2">
+      {paragraphs.map((para, pIdx) => {
+        const lines = para.split("\n");
+        return (
+          <div key={pIdx} className="leading-[1.5]">
+            {lines.map((line, lIdx) => {
+              const trimmed = line.trim();
+              const isBullet = /^[-*•]\s+/.test(trimmed);
+              const isNumbered = /^\d+\.\s+/.test(trimmed);
+
+              if (isBullet) {
+                const bulletText = trimmed.replace(/^[-*•]\s+/, "");
+                return (
+                  <div key={lIdx} className="flex items-start gap-1.5 ml-0.5 my-0.5">
+                    <span className="text-[#B08D57] font-bold leading-tight select-none shrink-0">•</span>
+                    <span className="flex-1">{parseInlineMarkdown(bulletText, isAssistant)}</span>
+                  </div>
+                );
+              }
+
+              if (isNumbered) {
+                const numberMatch = trimmed.match(/^(\d+\.)\s+(.*)$/);
+                if (numberMatch) {
+                  return (
+                    <div key={lIdx} className="flex items-start gap-1.5 ml-0.5 my-0.5">
+                      <span className="text-[#B08D57] font-semibold text-[11px] leading-tight select-none shrink-0">
+                        {numberMatch[1]}
+                      </span>
+                      <span className="flex-1">{parseInlineMarkdown(numberMatch[2], isAssistant)}</span>
+                    </div>
+                  );
+                }
+              }
+
+              return (
+                <p key={lIdx} className={lIdx > 0 ? "mt-1" : ""}>
+                  {parseInlineMarkdown(line, isAssistant)}
+                </p>
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function ChatWidget() {
@@ -351,10 +470,10 @@ export default function ChatWidget() {
                         style={{ fontSize: "12.5px", lineHeight: "1.5" }}
                       >
                         <div
-                          className="chat-message-text whitespace-pre-line text-[12.5px] sm:text-[13px] leading-[1.5]"
+                          className="chat-message-text text-[12.5px] sm:text-[13px] leading-[1.5]"
                           style={{ fontSize: "12.5px", lineHeight: "1.5" }}
                         >
-                          {m.content}
+                          {renderChatMessage(m.content, isAssistant)}
                         </div>
 
                         {/* Citations / Source Badges */}
