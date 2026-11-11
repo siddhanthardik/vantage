@@ -454,3 +454,68 @@ h1.article-title-heading,
   text-align: center;
 }
 
+/* ==========================================================================
+   Vantage Wealth Assistant Chatbot Scoped Typography & Layout Isolation
+   Prevents global h1-h6 and p typography tokens from overriding widget sizing.
+   ========================================================================== */
+.chatbot-portal,
+.chatbot-portal * {
+  box-sizing: border-box;
+}
+
+.chatbot-portal .chat-header-title {
+  font-family: var(--font-sans), "Manrope", sans-serif !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.01em !important;
+  color: #FFFFFF !important;
+}
+
+.chatbot-portal p,
+.chatbot-portal .chat-message-text {
+  font-family: var(--font-sans), "Manrope", sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+  font-weight: 400 !important;
+  margin: 0 !important;
+}
+
+.chatbot-portal .chat-inquiry-btn {
+  font-family: var(--font-sans), "Manrope", sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+  font-weight: 500 !important;
+}
+
+.chatbot-portal .chat-inquiry-heading {
+  font-family: var(--font-sans), "Manrope", sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+}
+
+.chatbot-portal .chat-timestamp {
+  font-family: var(--font-sans), "Manrope", sans-serif !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+}
+
+.chatbot-portal input,
+.chatbot-portal .chat-input {
+  font-family: var(--font-sans), "Manrope", sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+.chatbot-portal .chat-callback-bar {
+  font-size: 11px !important;
+}
+
+.chatbot-portal .chat-callback-link {
+  font-family: var(--font-sans), "Manrope", sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+}
+
+

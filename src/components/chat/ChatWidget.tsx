@@ -77,7 +77,7 @@ export default function ChatWidget() {
                 role: "assistant",
                 content:
                   data.config?.welcomeMessage ||
-                  "Hello! Welcome to Vantage Wealth. I'm your Vantage Wealth Assistant. I can help you understand our wealth advisory services, explore relevant information and arrange a callback from our team. How may I assist you today?",
+                  "Welcome to Vantage Wealth.\n\nHow may I assist you with your wealth advisory or portfolio considerations today?",
                 createdAt: new Date().toISOString(),
               },
             ]);
@@ -273,15 +273,19 @@ export default function ChatWidget() {
           {/* Header */}
           <div className="relative bg-[#172B46] text-white px-3.5 py-2.5 sm:px-4 sm:py-2.5 flex items-center justify-between border-b border-[#B08D57]/30 shrink-0">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#B08D57] to-transparent" />
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
               <div className="relative w-7 h-7 rounded-full bg-gradient-to-br from-[#C9A975] via-[#B08D57] to-[#91703E] flex items-center justify-center shadow-xs shrink-0">
                 <Headset className="w-3.5 h-3.5 text-[#172B46] stroke-[2.2]" />
                 <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-400 ring-1 ring-[#172B46] rounded-full" />
               </div>
-              <div className="min-w-0">
-                <h3 className="font-sans text-[16px] font-semibold tracking-tight text-white flex items-center gap-1.5 truncate leading-tight">
+              <div className="min-w-0 flex-1">
+                <span
+                  className="chat-header-title block font-sans text-[13.5px] font-semibold tracking-tight text-white truncate leading-tight"
+                  style={{ fontSize: "13.5px", lineHeight: "1.25" }}
+                  title="Vantage Wealth Assistant"
+                >
                   Vantage Wealth Assistant
-                </h3>
+                </span>
               </div>
             </div>
 
@@ -324,8 +328,14 @@ export default function ChatWidget() {
                             ? "bg-white text-[#172B46] border-l-2 border-l-[#B08D57] shadow-2xs border border-stone-200/70"
                             : "bg-[#172B46] text-white shadow-2xs"
                         }`}
+                        style={{ fontSize: "13px", lineHeight: "1.55" }}
                       >
-                        <p className="whitespace-pre-line text-[13px] leading-[1.55]">{m.content}</p>
+                        <div
+                          className="chat-message-text whitespace-pre-line text-[13px] leading-[1.55]"
+                          style={{ fontSize: "13px", lineHeight: "1.55" }}
+                        >
+                          {m.content}
+                        </div>
 
                         {/* Citations / Source Badges */}
                         {isAssistant && m.citations && m.citations.length > 0 && (
@@ -345,7 +355,10 @@ export default function ChatWidget() {
 
                       {/* Timestamp & Feedback for Assistant */}
                       <div className="flex items-center gap-1.5 mt-0.5 px-1">
-                        <span className="text-[10px] text-stone-500">
+                        <span
+                          className="chat-timestamp text-[10px] text-stone-500"
+                          style={{ fontSize: "10px" }}
+                        >
                           {m.createdAt
                             ? new Date(m.createdAt).toLocaleTimeString([], {
                                 hour: "2-digit",
@@ -400,7 +413,10 @@ export default function ChatWidget() {
                 {/* Suggested Questions Pills (Initial) */}
                 {messages.length <= 1 && suggestedQuestions.length > 0 && !isLoading && (
                   <div className="pt-1.5">
-                    <p className="text-[11px] font-semibold text-stone-600 uppercase tracking-wider mb-1.5">
+                    <p
+                      className="chat-inquiry-heading text-[11px] font-semibold text-stone-600 uppercase tracking-wider mb-1.5"
+                      style={{ fontSize: "11px" }}
+                    >
                       Suggested Inquiries
                     </p>
                     <div className="flex flex-col gap-1.5">
@@ -408,7 +424,8 @@ export default function ChatWidget() {
                         <button
                           key={idx}
                           onClick={() => handleSendMessage(q)}
-                          className="text-left text-[12px] leading-snug bg-white hover:bg-[#F0EDE6] text-[#172B46] px-2.5 py-1.5 rounded-md border border-stone-200 transition-colors shadow-2xs cursor-pointer"
+                          className="chat-inquiry-btn text-left text-[12px] leading-snug bg-white hover:bg-[#F0EDE6] text-[#172B46] px-2.5 py-1.5 rounded-md border border-stone-200 transition-colors shadow-2xs cursor-pointer"
+                          style={{ fontSize: "12px", lineHeight: "1.35" }}
                         >
                           {q}
                         </button>
@@ -558,13 +575,17 @@ export default function ChatWidget() {
 
               {/* Bottom Quick Action Bar (Request Callback button) */}
               {!showCallbackCard && !callbackSubmitted && (
-                <div className="px-3 py-1 bg-stone-100/80 border-t border-stone-200/80 flex justify-between items-center text-[11px] shrink-0">
-                  <span className="text-stone-500 flex items-center gap-1 text-[11px]">
+                <div
+                  className="chat-callback-bar px-3 py-1 bg-stone-100/80 border-t border-stone-200/80 flex justify-between items-center text-[11px] shrink-0"
+                  style={{ fontSize: "11px" }}
+                >
+                  <span className="text-stone-500 flex items-center gap-1 text-[11px]" style={{ fontSize: "11px" }}>
                     <Clock className="w-3 h-3 text-[#B08D57]" /> Mon–Fri 9:30–18:30
                   </span>
                   <button
                     onClick={() => setShowCallbackCard(true)}
-                    className="text-[#B08D57] hover:text-[#172B46] font-medium flex items-center gap-1 hover:underline text-[11px] cursor-pointer"
+                    className="chat-callback-link text-[#B08D57] hover:text-[#172B46] font-medium flex items-center gap-1 hover:underline text-[11px] cursor-pointer"
+                    style={{ fontSize: "11px" }}
                   >
                     <Phone className="w-2.5 h-2.5" /> Request Callback
                   </button>
@@ -587,7 +608,8 @@ export default function ChatWidget() {
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder="Ask about wealth planning, PMS, family trust..."
                     disabled={isLoading}
-                    className="flex-1 text-[13px] px-3 py-1.5 bg-[#F7F5F0] rounded-lg border border-stone-200 focus:outline-none focus:border-[#B08D57] text-[#172B46] placeholder:text-stone-400 disabled:opacity-50"
+                    className="chat-input flex-1 text-[13px] px-3 py-1.5 bg-[#F7F5F0] rounded-lg border border-stone-200 focus:outline-none focus:border-[#B08D57] text-[#172B46] placeholder:text-stone-400 disabled:opacity-50"
+                    style={{ fontSize: "13px" }}
                   />
                   <button
                     type="submit"
