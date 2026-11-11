@@ -71,10 +71,9 @@ const navigationSections: NavSection[] = [
       { name: "Overview", href: "/admin/chat", icon: Bot },
       { name: "Conversations", href: "/admin/chat/conversations", icon: MessageSquare },
       { name: "Chat Leads", href: "/admin/chat/leads", icon: UserCheck },
-      { name: "Custom Instructions", href: "/admin/chat/instructions", icon: Sliders },
+      { name: "Bot Settings & Instructions", href: "/admin/chat/instructions", icon: Sliders },
       { name: "Knowledge Base", href: "/admin/chat/knowledge", icon: Database },
       { name: "AI Diagnostics", href: "/admin/chat/ai", icon: Cpu },
-      { name: "Appearance", href: "/admin/chat/appearance", icon: Palette },
       { name: "Analytics", href: "/admin/chat/analytics", icon: BarChart3 },
     ],
   },
@@ -118,10 +117,9 @@ function getBreadcrumb(pathname: string): { section: string; title: string } {
   if (pathname.startsWith("/admin/chat")) {
     if (pathname.includes("/conversations")) return { section: "Vantage Assistant", title: "Conversation History" };
     if (pathname.includes("/leads")) return { section: "Vantage Assistant", title: "Chat Lead Management" };
-    if (pathname.includes("/instructions")) return { section: "Vantage Assistant", title: "Custom Instructions & Prompt" };
-    if (pathname.includes("/knowledge")) return { section: "Vantage Assistant", title: "Knowledge Base Synchronization" };
-    if (pathname.includes("/ai")) return { section: "Vantage Assistant", title: "AI Configuration & Diagnostics" };
-    if (pathname.includes("/appearance")) return { section: "Vantage Assistant", title: "Chatbot Appearance & Behaviour" };
+    if (pathname.includes("/instructions") || pathname.includes("/appearance")) {
+      return { section: "Vantage Assistant", title: "Bot Settings & Instructions" };
+    }
     if (pathname.includes("/analytics")) return { section: "Vantage Assistant", title: "Assistant Analytics" };
     return { section: "Vantage Assistant", title: "Assistant Overview" };
   }

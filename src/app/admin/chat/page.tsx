@@ -180,9 +180,9 @@ export default function ChatOverviewPage() {
             </div>
             <div>
               <h4 className="text-[16px] lg:text-[17px] font-semibold text-[#172B46] group-hover:text-[#B08D57] transition-colors">
-                System Instructions &amp; Tone
+                Bot Settings &amp; Instructions
               </h4>
-              <p className="text-[13px] text-stone-600">Configure prompt, welcome text and questions</p>
+              <p className="text-[13px] text-stone-600">Configure identity, holidays, welcome prompt &amp; safety</p>
             </div>
           </div>
           <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-[#B08D57] transition-colors" />

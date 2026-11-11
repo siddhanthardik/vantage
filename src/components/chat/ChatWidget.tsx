@@ -30,6 +30,10 @@ interface MessageItem {
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [botName, setBotName] = useState("Vantage Wealth Assistant");
+  const [isEnabled, setIsEnabled] = useState(true);
+  const [isHolidayClosed, setIsHolidayClosed] = useState(false);
+  const [holidayNotice, setHolidayNotice] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputText, setInputText] = useState("");
@@ -59,6 +63,19 @@ export default function ChatWidget() {
         const data = await res.json();
         if (mounted && data.success) {
           setConversationId(data.conversationId);
+          if (data.config?.botName?.trim()) {
+            setBotName(data.config.botName.trim());
+          }
+          if (data.config && typeof data.config.isEnabled === "boolean") {
+            setIsEnabled(data.config.isEnabled);
+          }
+          if (data.config?.temporaryUnavailable) {
+            setIsHolidayClosed(true);
+            setHolidayNotice(
+              data.config.unavailabilityReason ||
+                "Our advisory desk is currently observing a scheduled holiday. You can still submit a callback request and our team will get in touch promptly when operations resume."
+            );
+          }
           if (data.config?.suggestedQuestions) {
             setSuggestedQuestions(data.config.suggestedQuestions);
           }
@@ -231,6 +248,10 @@ export default function ChatWidget() {
     }
   };
 
+  if (!isEnabled) {
+    return null;
+  }
+
   return (
     <div className="chatbot-portal fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-50 font-sans max-w-[calc(100vw-24px)] sm:max-w-none">
       {/* 1. Floating Launcher Button (Icon Only with Premium High-Contrast Gold Badge) */}
@@ -241,7 +262,7 @@ export default function ChatWidget() {
             setIsMinimized(false);
           }}
           className="group relative flex items-center justify-center w-12 h-12 sm:w-13 sm:h-13 bg-[#172B46] hover:bg-[#1C3455] text-white rounded-full shadow-[0_10px_30px_rgba(23,43,70,0.35)] border-2 border-[#B08D57] transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#B08D57] cursor-pointer"
-          aria-label="Open Vantage Wealth Assistant"
+          aria-label={`Open ${botName}`}
         >
           <div className="relative flex items-center justify-center">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-[#C9A975] via-[#B08D57] to-[#91703E] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
@@ -273,9 +294,9 @@ export default function ChatWidget() {
                 <span
                   className="chat-header-title block font-sans text-[13px] sm:text-[13.5px] font-semibold tracking-tight text-white whitespace-nowrap leading-tight"
                   style={{ fontSize: "13px", lineHeight: "1.25", whiteSpace: "nowrap" }}
-                  title="Vantage Wealth Assistant"
+                  title={botName}
                 >
-                  Vantage Wealth Assistant
+                  {botName}
                 </span>
               </div>
             </div>
@@ -299,6 +320,14 @@ export default function ChatWidget() {
               </button>
             </div>
           </div>
+
+          {/* Holiday / Temporary Closure Notice Banner */}
+          {isHolidayClosed && holidayNotice && !isMinimized && (
+            <div className="bg-amber-50 border-b border-amber-200/80 px-3 py-1.5 text-[11px] text-amber-900 flex items-start gap-1.5 shrink-0">
+              <span className="font-semibold text-amber-800 shrink-0">Notice:</span>
+              <span className="leading-tight text-amber-900/90">{holidayNotice}</span>
+            </div>
+          )}
 
           {!isMinimized && (
             <>
