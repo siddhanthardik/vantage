@@ -12,6 +12,30 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+    ],
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/Uploads/:path*",
+        destination: "/uploads/:path*",
+      },
+      {
+        source: "/UPLOADS/:path*",
+        destination: "/uploads/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

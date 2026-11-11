@@ -102,19 +102,30 @@ export async function uploadMediaFile(
     }
   }
 
-  // Local Storage Handler: public/uploads/
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+  // Local Storage Handler: Persistent public/uploads/
+  const uploadsDir = process.env.UPLOADS_DIR
+    ? path.resolve(process.env.UPLOADS_DIR)
+    : path.join(process.cwd(), "public", "uploads");
+
   if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
+    fs.mkdirSync(uploadsDir, { recursive: true, mode: 0o755 });
   }
 
   const filePath = path.join(uploadsDir, uniqueFilename);
   fs.writeFileSync(filePath, buffer);
 
+  // Set explicit world-readable permissions (0644) so Linux web servers & Next.js workers can read
+  try {
+    fs.chmodSync(filePath, 0o644);
+  } catch {}
+
+  // Canonical canonical URL format: always lowercase /uploads/[filename]
+  const canonicalUrl = `/uploads/${uniqueFilename}`;
+
   return {
     filename: uniqueFilename,
     originalName: originalFilename,
-    url: `/uploads/${uniqueFilename}`,
+    url: canonicalUrl,
     mimeType,
     sizeBytes: buffer.length,
     storageType: "LOCAL",

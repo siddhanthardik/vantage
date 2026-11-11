@@ -50,6 +50,15 @@ function syncLocalStoreFromDb(dbMembers: any[]): void {
   }
 }
 
+export function normalizePhotoUrl(url?: string | null): string {
+  if (!url) return "/images/about/founder-vineet-gupta.png";
+  const trimmed = url.trim();
+  if (/^\/?uploads\//i.test(trimmed)) {
+    return trimmed.replace(/^\/?uploads\//i, "/uploads/");
+  }
+  return trimmed;
+}
+
 /**
  * Fetch Founder Profile for Public About Page and Admin CMS.
  * Prioritizes PostgreSQL as the primary source of truth.
@@ -67,6 +76,7 @@ export async function getFounderProfile(): Promise<TeamMemberItem | null> {
       if (dbFounder) {
         return {
           ...dbFounder,
+          photoUrl: normalizePhotoUrl(dbFounder.photoUrl),
           createdAt: dbFounder.createdAt.toISOString(),
           updatedAt: dbFounder.updatedAt.toISOString(),
         } as unknown as TeamMemberItem;
@@ -80,7 +90,7 @@ export async function getFounderProfile(): Promise<TeamMemberItem | null> {
 
   const data = readDataStore();
   const founder = data.members.find((m) => m.roleType === "FOUNDER");
-  return founder || null;
+  return founder ? { ...founder, photoUrl: normalizePhotoUrl(founder.photoUrl) } : null;
 }
 
 /**
@@ -99,6 +109,7 @@ export async function getPublishedTeamMembers(): Promise<TeamMemberItem[]> {
       });
       return dbMembers.map((m: any) => ({
         ...m,
+        photoUrl: normalizePhotoUrl(m.photoUrl),
         createdAt: m.createdAt.toISOString(),
         updatedAt: m.updatedAt.toISOString(),
       })) as unknown as TeamMemberItem[];
@@ -111,6 +122,7 @@ export async function getPublishedTeamMembers(): Promise<TeamMemberItem[]> {
   const data = readDataStore();
   return data.members
     .filter((m) => m.roleType === "TEAM" && m.status === "PUBLISHED")
+    .map((m) => ({ ...m, photoUrl: normalizePhotoUrl(m.photoUrl) }))
     .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 }
 
@@ -130,6 +142,7 @@ export async function getAllTeamMembers(): Promise<TeamMemberItem[]> {
       syncLocalStoreFromDb(dbMembers);
       return dbMembers.map((m: any) => ({
         ...m,
+        photoUrl: normalizePhotoUrl(m.photoUrl),
         createdAt: m.createdAt.toISOString(),
         updatedAt: m.updatedAt.toISOString(),
       })) as unknown as TeamMemberItem[];
@@ -159,6 +172,7 @@ export async function getTeamMemberById(id: string): Promise<TeamMemberItem | nu
       if (dbMember) {
         return {
           ...dbMember,
+          photoUrl: normalizePhotoUrl(dbMember.photoUrl),
           createdAt: dbMember.createdAt.toISOString(),
           updatedAt: dbMember.updatedAt.toISOString(),
         } as unknown as TeamMemberItem;
@@ -171,7 +185,8 @@ export async function getTeamMemberById(id: string): Promise<TeamMemberItem | nu
   }
 
   const data = readDataStore();
-  return data.members.find((m) => m.id === id) || null;
+  const member = data.members.find((m) => m.id === id);
+  return member ? { ...member, photoUrl: normalizePhotoUrl(member.photoUrl) } : null;
 }
 
 /**
@@ -186,6 +201,7 @@ export async function getTeamMemberBySlug(slug: string): Promise<TeamMemberItem 
       if (dbMember) {
         return {
           ...dbMember,
+          photoUrl: normalizePhotoUrl(dbMember.photoUrl),
           createdAt: dbMember.createdAt.toISOString(),
           updatedAt: dbMember.updatedAt.toISOString(),
         } as unknown as TeamMemberItem;
@@ -198,7 +214,8 @@ export async function getTeamMemberBySlug(slug: string): Promise<TeamMemberItem 
   }
 
   const data = readDataStore();
-  return data.members.find((m) => m.slug === slug) || null;
+  const member = data.members.find((m) => m.slug === slug);
+  return member ? { ...member, photoUrl: normalizePhotoUrl(member.photoUrl) } : null;
 }
 
 /**
@@ -211,6 +228,8 @@ export async function createTeamMember(formData: Partial<TeamMemberFormData>): P
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+
+  const canonicalPhotoUrl = normalizePhotoUrl(formData.photoUrl);
 
   if (prisma) {
     const existing = await prisma.teamMember.findUnique({ where: { slug } });
@@ -227,7 +246,7 @@ export async function createTeamMember(formData: Partial<TeamMemberFormData>): P
           roleType: formData.roleType || "TEAM",
           designation: formData.designation ? formData.designation.trim() : "Advisory Specialist",
           bio: formData.bio ? formData.bio.trim() : "",
-          photoUrl: formData.photoUrl || "/images/about/founder-vineet-gupta.png",
+          photoUrl: canonicalPhotoUrl,
           experienceYears: formData.experienceYears?.trim() || null,
           credentials: formData.credentials?.trim() || null,
           linkedInUrl: formData.linkedInUrl?.trim() || null,
@@ -239,6 +258,7 @@ export async function createTeamMember(formData: Partial<TeamMemberFormData>): P
 
       const formatted: TeamMemberItem = {
         ...createdDb,
+        photoUrl: normalizePhotoUrl(createdDb.photoUrl),
         createdAt: createdDb.createdAt.toISOString(),
         updatedAt: createdDb.updatedAt.toISOString(),
       } as unknown as TeamMemberItem;
@@ -289,6 +309,10 @@ export async function updateTeamMember(
       finalSlug = checkSlug;
     }
 
+    const updatedPhotoUrl = formData.photoUrl !== undefined
+      ? normalizePhotoUrl(formData.photoUrl)
+      : normalizePhotoUrl(existingDb.photoUrl);
+
     try {
       const updatedDb = await prisma.teamMember.update({
         where: { id },
@@ -297,7 +321,7 @@ export async function updateTeamMember(
           slug: finalSlug,
           designation: formData.designation !== undefined ? formData.designation.trim() : existingDb.designation,
           bio: formData.bio !== undefined ? formData.bio.trim() : existingDb.bio,
-          photoUrl: formData.photoUrl !== undefined ? formData.photoUrl : existingDb.photoUrl,
+          photoUrl: updatedPhotoUrl,
           experienceYears: formData.experienceYears !== undefined ? (formData.experienceYears?.trim() || null) : existingDb.experienceYears,
           credentials: formData.credentials !== undefined ? (formData.credentials?.trim() || null) : existingDb.credentials,
           linkedInUrl: formData.linkedInUrl !== undefined ? (formData.linkedInUrl?.trim() || null) : existingDb.linkedInUrl,

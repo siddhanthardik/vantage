@@ -45,6 +45,15 @@ function writeDataStore(data: MediaDataStore): void {
   }
 }
 
+export function normalizeMediaUrl(url?: string | null): string {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (/^\/?uploads\//i.test(trimmed)) {
+    return trimmed.replace(/^\/?uploads\//i, "/uploads/");
+  }
+  return trimmed;
+}
+
 export async function getAllMedia(): Promise<MediaItemRecord[]> {
   if (prisma) {
     try {
@@ -53,6 +62,7 @@ export async function getAllMedia(): Promise<MediaItemRecord[]> {
       });
       return items.map((item: any) => ({
         ...item,
+        url: normalizeMediaUrl(item.url),
         createdAt: item.createdAt.toISOString(),
       }));
     } catch (e) {
@@ -62,7 +72,7 @@ export async function getAllMedia(): Promise<MediaItemRecord[]> {
   }
 
   const store = readDataStore();
-  return store.media;
+  return store.media.map((m) => ({ ...m, url: normalizeMediaUrl(m.url) }));
 }
 
 export async function getMediaById(id: string): Promise<MediaItemRecord | null> {
@@ -72,6 +82,7 @@ export async function getMediaById(id: string): Promise<MediaItemRecord | null> 
       if (!item) return null;
       return {
         ...item,
+        url: normalizeMediaUrl(item.url),
         createdAt: item.createdAt.toISOString(),
       };
     } catch (e) {
@@ -81,7 +92,8 @@ export async function getMediaById(id: string): Promise<MediaItemRecord | null> 
   }
 
   const store = readDataStore();
-  return store.media.find((m) => m.id === id) || null;
+  const found = store.media.find((m) => m.id === id) || null;
+  return found ? { ...found, url: normalizeMediaUrl(found.url) } : null;
 }
 
 export async function saveMediaItem(
@@ -89,6 +101,7 @@ export async function saveMediaItem(
 ): Promise<MediaItemRecord> {
   const id = `med_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
   const now = new Date();
+  const canonicalUrl = normalizeMediaUrl(data.url);
 
   if (prisma) {
     try {
@@ -97,7 +110,7 @@ export async function saveMediaItem(
           id,
           filename: data.filename,
           originalName: data.originalName,
-          url: data.url,
+          url: canonicalUrl,
           mimeType: data.mimeType,
           sizeBytes: data.sizeBytes,
           storageType: data.storageType,
@@ -136,9 +149,19 @@ export async function deleteMediaItem(id: string): Promise<boolean> {
     // Remove local file if stored locally
     if (existing.storageType === "LOCAL") {
       try {
-        const localPath = path.join(process.cwd(), "public", "uploads", existing.filename);
-        if (fs.existsSync(localPath)) {
-          fs.unlinkSync(localPath);
+        const candidatePaths = [
+          path.join(process.cwd(), "public", "uploads", existing.filename),
+          path.join(process.cwd(), "public", "Uploads", existing.filename),
+        ];
+        if (process.env.UPLOADS_DIR) {
+          candidatePaths.unshift(path.join(path.resolve(process.env.UPLOADS_DIR), existing.filename));
+        }
+
+        for (const p of candidatePaths) {
+          if (fs.existsSync(p)) {
+            fs.unlinkSync(p);
+            break;
+          }
         }
       } catch (e) {
         console.warn("Failed to remove local media file:", e);

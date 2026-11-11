@@ -158,8 +158,13 @@ export default function TeamMemberEditor({
     }
 
     setSaving(true);
+    const normalizedPhotoUrl = formData.photoUrl
+      ? formData.photoUrl.trim().replace(/^\/?uploads\//i, "/uploads/")
+      : formData.photoUrl;
+
     const payload = {
       ...formData,
+      photoUrl: normalizedPhotoUrl,
       status: targetStatus || formData.status,
     };
 
@@ -549,7 +554,13 @@ export default function TeamMemberEditor({
                   type="text"
                   placeholder="/images/about/portrait.png"
                   value={formData.photoUrl}
-                  onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })}
+                  onChange={(e) => {
+                    let val = e.target.value.trim();
+                    if (/^\/?uploads\//i.test(val)) {
+                      val = val.replace(/^\/?uploads\//i, "/uploads/");
+                    }
+                    setFormData({ ...formData, photoUrl: val });
+                  }}
                   className="w-full px-3 py-2 bg-[#F7F5F0]/60 border border-[#E5DFD5] text-xs text-[#172B46] font-mono focus:outline-none focus:border-[#B08D57] rounded-sm"
                 />
 
