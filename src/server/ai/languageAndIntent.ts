@@ -170,10 +170,10 @@ export function isPureGreeting(text: string): boolean {
  */
 export function getGreetingResponse(language: DetectedLanguage = "en"): string {
   if (language === "hi") {
-    return "नमस्ते! मैं सौम्या हूँ, वैनटेज वेल्थ में आपकी एआई वेल्थ रिलेशनशिप असिस्टेंट।\n\nआज मैं आपके वित्तीय लक्ष्यों या निवेश से जुड़े सवालों में कैसे मदद कर सकती हूँ?";
+    return "नमस्ते! मैं सौम्या हूँ। आज मैं आपकी वित्तीय योजना या निवेश से जुड़े सवालों में कैसे मदद कर सकती हूँ?";
   }
   if (language === "hinglish") {
-    return "Hello! Main Soumya hoon, Vantage Wealth se aapki AI Wealth Relationship Assistant.\n\nAaj main aapke financial goals ya investment planning me kaise help kar sakti hoon?";
+    return "Hello! Main Soumya hoon. Aaj main aapke financial planning ya investments se jude sawalon me kaise help kar sakti hoon?";
   }
-  return "Hello! I'm Soumya, your AI Wealth Relationship Assistant at Vantage Wealth.\n\nHow may I help you with your financial goals or questions today?";
+  return "Hello! I'm Soumya with Vantage Wealth. How can I help you with your wealth planning or investment questions today?";
 }

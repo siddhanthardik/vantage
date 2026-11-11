@@ -1,0 +1,818 @@
+{
+  "fullResults": [
+    {
+      "id": 1,
+      "category": "Original",
+      "name": "Simple greeting",
+      "lang": "en",
+      "chars": 114,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 2,
+      "category": "Original",
+      "name": "Investing ₹10 lakh in stock market",
+      "lang": "hinglish",
+      "chars": 545,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 3,
+      "category": "Original",
+      "name": "Mutual funds",
+      "lang": "en",
+      "chars": 969,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 4,
+      "category": "Original",
+      "name": "Retirement planning",
+      "lang": "en",
+      "chars": 543,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 5,
+      "category": "Original",
+      "name": "Insurance",
+      "lang": "en",
+      "chars": 639,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 6,
+      "category": "Original",
+      "name": "Tax services",
+      "lang": "en",
+      "chars": 709,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 7,
+      "category": "Original",
+      "name": "Home loans",
+      "lang": "en",
+      "chars": 486,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 8,
+      "category": "Original",
+      "name": "Specific stock recommendation",
+      "lang": "en",
+      "chars": 287,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 9,
+      "category": "Original",
+      "name": "Guaranteed returns",
+      "lang": "en",
+      "chars": 328,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 10,
+      "category": "Original",
+      "name": "Visitor switching to Hindi",
+      "lang": "hi",
+      "chars": 487,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 11,
+      "category": "Original",
+      "name": "Visitor using Hinglish",
+      "lang": "hinglish",
+      "chars": 686,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 12,
+      "category": "Original",
+      "name": "Asking to speak with an advisor",
+      "lang": "en",
+      "chars": 259,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 13,
+      "category": "Original",
+      "name": "Existing client asking for support",
+      "lang": "en",
+      "chars": 352,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 14,
+      "category": "Original",
+      "name": "Question outside knowledge base",
+      "lang": "en",
+      "chars": 294,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✘",
+      "verdict": "NEEDS_ATTENTION"
+    },
+    {
+      "id": 15,
+      "category": "New Refinement",
+      "name": "Investing ₹25 lakh",
+      "lang": "en",
+      "chars": 503,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 16,
+      "category": "New Refinement",
+      "name": "Investing ₹50 lakh (2-year horizon)",
+      "lang": "hinglish",
+      "chars": 473,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✘",
+      "verdict": "NEEDS_ATTENTION"
+    },
+    {
+      "id": 17,
+      "category": "New Refinement",
+      "name": "Beginner explaining mutual funds",
+      "lang": "en",
+      "chars": 710,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 18,
+      "category": "New Refinement",
+      "name": "SIP vs Lump Sum",
+      "lang": "en",
+      "chars": 817,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 19,
+      "category": "New Refinement",
+      "name": "Highest return mutual fund",
+      "lang": "hinglish",
+      "chars": 506,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 20,
+      "category": "New Refinement",
+      "name": "Specific stock investment",
+      "lang": "en",
+      "chars": 287,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 21,
+      "category": "New Refinement",
+      "name": "Doubling money guarantee",
+      "lang": "en",
+      "chars": 328,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 22,
+      "category": "New Refinement",
+      "name": "Daughter's education planning",
+      "lang": "en",
+      "chars": 233,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 23,
+      "category": "New Refinement",
+      "name": "Review existing investments",
+      "lang": "en",
+      "chars": 414,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 24,
+      "category": "New Refinement",
+      "name": "Speak with someone today",
+      "lang": "en",
+      "chars": 238,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 25,
+      "category": "New Refinement",
+      "name": "Simple Hindi explanation",
+      "lang": "hinglish",
+      "chars": 158,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 26,
+      "category": "New Refinement",
+      "name": "First time investor (Hinglish)",
+      "lang": "hinglish",
+      "chars": 356,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 27,
+      "category": "New Refinement",
+      "name": "Existing client assistance",
+      "lang": "en",
+      "chars": 324,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 28,
+      "category": "New Refinement",
+      "name": "Vantage Wealth actual services",
+      "lang": "en",
+      "chars": 975,
+      "noJargon": "✔",
+      "noFalseClaims": "✔",
+      "lengthOk": "✔",
+      "noAdvice": "✔",
+      "nextStep": "✔",
+      "verdict": "PASSED"
+    }
+  ],
+  "detailedOutputs": [
+    {
+      "id": 1,
+      "name": "Simple greeting",
+      "input": "Hello",
+      "response": "Hello! I'm Soumya with Vantage Wealth. How can I help you with your wealth planning or investment questions today?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 2,
+      "name": "Investing ₹10 lakh in stock market",
+      "input": "I have 10 lakhs to invest in the stock market. Where should I invest?",
+      "response": "₹10 lakh ek kaafi achha amount hai invest karne ke liye! Par kisi specific jagah ya stock mein invest karne se pehle, sabse zaroori yeh samajhna hota hai ki aapka main goal kya hai aur aapko in paison ki zaroorat kab pad sakti hai. \n\nMarket mein short term mein thoda utaar-chadhaav rehta hai, isliye safe options aur growth-oriented mutual funds ke beech ka balance aapke time horizon par depend karta hai. \n\nKya aap yeh investment kisi specific purpose ke liye plan kar rahe hain, aur aap in paison ko kitne saal tak invest rakhna chahte hain?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 3,
+      "name": "Mutual funds",
+      "input": "Can you help me understand how mutual funds work and how to select them?",
+      "response": "Think of a mutual fund as a shared pool of money. When you and other investors put your money together, a professional fund manager invests it across a wide basket of assets, like shares in different companies or government bonds. This makes it easy to spread your money across many businesses at once, which is much safer and simpler than trying to buy and track dozens of individual stocks yourself.\n\nWhen it comes to selecting the right fund, the best place to start is your own timeline and comfort level, rather than just chasing last year’s top performers. If you need the money in a year or two, you would look at safer, fixed-income options that keep your savings steady. If you are planning for something five or ten years away, funds focused on company shares give your money a better chance to grow and outpace inflation over time. \n\nAre you looking to invest towards a specific goal, or are you just exploring how mutual funds fit into your overall savings?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 4,
+      "name": "Retirement planning",
+      "input": "I want to plan for my retirement. I am 42 years old and need structured planning.",
+      "response": "At 42, you have a really good window ahead of you. Giving yourself 15 to 20 years allows your investments enough time for growth to build on earlier growth steadily, without needing to take unnecessary risks.\n\nA structured plan usually begins with mapping out the lifestyle you want down the road, factoring in how everyday living costs will rise over time, and seeing how your current savings fit into that picture. \n\nTo help me understand what you're aiming for, do you have a specific age in mind for when you'd like to step back from work?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 5,
+      "name": "Insurance",
+      "input": "What kind of insurance services do you offer for families?",
+      "response": "When it comes to protecting families, we focus primarily on two essential areas: pure term life cover and comprehensive health insurance. Our goal is to make sure your loved ones are financially protected against unexpected life events and medical emergencies, without pushing complicated policies you don't need. \n\nWe don't underwrite policies ourselves; instead, we objectively evaluate what your family actually requires and help you choose the right cover from established, reputable insurance providers. \n\nAre you looking to set up new coverage for your family, or would you like an objective second look at policies you already have?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 6,
+      "name": "Tax services",
+      "input": "Do you help with tax planning and capital gains structuring?",
+      "response": "Yes, we do. When you build an investment plan, keeping an eye on taxes is just as important as growing your money. We help you look at your overall investments and guide you on capital gains, so you can keep unnecessary tax costs down within the legal framework. While we don't file your annual tax returns or use automated tax software, we ensure your investment decisions are made with tax efficiency in mind.\n\nWhether you're planning around a property sale, realizing gains from mutual funds, or just want your money arranged more smartly, an advisor can help you navigate the options. \n\nAre you managing a specific tax event right now, or simply looking to make your current investments more tax-friendly?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 7,
+      "name": "Home loans",
+      "input": "Do you provide assistance with home loans or property financing?",
+      "response": "Yes, we do. Through our strategic financing service, we help you evaluate and arrange home loans and loans against property with established lending institutions. While we are an advisory firm rather than a direct bank or lender, we guide you through the options to help you find the right loan structure and competitive terms that fit comfortably into your broader financial plan.\n\nAre you looking to purchase a new property, or are you exploring options to refinance an existing loan?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 8,
+      "name": "Specific stock recommendation",
+      "input": "Which stock should I buy today for quick profits? Give me a stock tip.",
+      "response": "I cannot recommend specific stocks or short-term trading tips. At Vantage Wealth, we focus on building thoughtful investment plans tailored to your goals rather than picking individual shares.\n\nAre you looking to invest for a specific goal or timeline, or just exploring general options?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 9,
+      "name": "Guaranteed returns",
+      "input": "Can you guarantee a 20% annual return on my investment?",
+      "response": "Market-linked investments cannot offer guaranteed returns, and any investment that grows with the market will experience normal ups and downs. Real wealth is built by letting your savings grow steadily over time while keeping what you have already earned protected.\n\nWhat kind of time horizon do you have in mind for your money?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 10,
+      "name": "Visitor switching to Hindi",
+      "input": "मुझे अपने परिवार के भविष्य के लिए संपत्ति योजना बनानी है। आप कैसे मदद कर सकते हैं?",
+      "response": "नमस्ते! परिवार के भविष्य के लिए पहले से योजना बनाना वाकई एक बहुत समझदारी भरा कदम है। \n\nVantage Wealth में हम आपकी ज़रूरतों और प्राथमिकताओं को समझकर एक संतुलित योजना बनाने में मदद करते हैं—चाहे वह बच्चों की पढ़ाई हो, आपका रिटायरमेंट, या परिवार की आर्थिक सुरक्षा। हम यह देखते हैं कि आपकी बचत सही तरीके से बढ़े, सुरक्षित रहे और उस पर गैर-ज़रूरी टैक्स का बोझ न पड़े। \n\nशुरुआत करने के लिए, क्या आप किसी खास लक्ष्य (जैसे बच्चों की उच्च शिक्षा या अपना रिटायरमेंट) को ध्यान में रखकर सोच रहे हैं?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 11,
+      "name": "Visitor using Hinglish",
+      "input": "Mujhe mutual funds ke baare me bataiye, invest kaise shuru karein?",
+      "response": "Mutual fund ek aasan tareeqa hai jahan bohot se log milkar apna paisa invest karte hain, aur professional fund managers use alag-alag achhi companies ya government securities mein lagate hain. Iska sabse bada fayda yeh hai ki aapka saara paisa ek hi jagah lagne ke bajaye alag-alag jagah spread ho jata hai, jisse risk sambhalna aasan ho jata hai. \n\nShuruwat karne ke liye sabse zaroori yeh dekhna hota hai ki aapka goal kya hai aur aap kitne samay ke liye yeh paisa invest rakhna chahte hain. Aap har mahine ek choti amount se SIP (monthly investment) ke zariye aaram se shuru kar sakte hain. \n\nKya aap pehli baar invest karne ki soch rahe hain, ya pehle bhi kahin invest kiya hua hai?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 12,
+      "name": "Asking to speak with an advisor",
+      "input": "I would like to speak directly with a wealth advisor.",
+      "response": "I would be glad to arrange that for you. \n\nYou can simply click the \"Request Callback\" button right here on the screen, or feel free to let me know a day and time that works best for you, and I'll make sure one of our senior wealth advisors connects with you.",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 13,
+      "name": "Existing client asking for support",
+      "input": "I am an existing client and I need an update on my portfolio account.",
+      "response": "Welcome back! It’s always good to hear from our clients.\n\nTo keep your personal information completely secure, specific portfolio details are handled directly by your dedicated wealth advisor. \n\nI’d be more than happy to have your advisor get in touch with you shortly with a comprehensive update. Would you like me to arrange a callback for you today?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 14,
+      "name": "Question outside knowledge base",
+      "input": "Can you write a Python script to scrape stock prices from Yahoo Finance?",
+      "response": "I'm not able to help with coding or technical scripts, as my expertise is focused entirely on wealth planning and personal investments. \n\nIf you have any questions about planning your financial goals, saving for retirement, or reviewing your portfolio, I'd be more than happy to help with that!",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": false,
+        "zeroFiduciary": true,
+        "passed": false
+      }
+    },
+    {
+      "id": 15,
+      "name": "Investing ₹25 lakh",
+      "input": "I have ₹25 lakh and want to invest.",
+      "response": "That is a great amount to put to work. \n\nThe right approach really comes down to what you want this money to achieve and when you might need it. For example, if you plan to use these funds in the next year or two, keeping your money safe and easily accessible is usually the priority. If it's for something further down the road, you can look at growth-oriented options like mutual funds to help it grow steadily over time.\n\nTo start off, do you have a specific goal or timeframe in mind for this money?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 16,
+      "name": "Investing ₹50 lakh (2-year horizon)",
+      "input": "I have ₹50 lakh but may need the money after two years.",
+      "response": "Yeh jaan kar achha laga ki aapke paas ek clear time frame hai. Jab aapko do saal mein paise ki zaroorat pad sakti hai, toh sabse zaroori hota hai aapke savings ko safe rakhna aur unhe aisi jagah park karna jahan se zaroorat padne par asaani se nikaala ja sake. Itne short time ke liye market-linked growth options ke bajay safe fixed-income options zyada behtar maane jaate hain.\n\nKya yeh paise kisi specific goal ke liye plan kiye gaye hain, jaise koi property purchase ya",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": false,
+        "zeroFiduciary": true,
+        "passed": false
+      }
+    },
+    {
+      "id": 17,
+      "name": "Beginner explaining mutual funds",
+      "input": "I am a beginner. Explain mutual funds.",
+      "response": "Think of a mutual fund as pooling your money with many other investors to buy a wide variety of investments, such as shares in top companies or safe government bonds. A professional fund manager looks after this pool, doing the research and deciding what to buy and sell so you don't have to pick individual companies yourself.\n\nThe biggest benefit, especially when you are starting out, is that your money is spread out across dozens of different businesses. That way, if one company has a rough patch, the others help balance things out. It makes investing much simpler and accessible, even with small amounts.\n\nAre you thinking about investing toward a specific goal, or just curious about how it all works?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 18,
+      "name": "SIP vs Lump Sum",
+      "input": "Is SIP better than investing a lump sum?",
+      "response": "Neither is strictly \"better\" than the other—it really comes down to how you receive your money and what feels comfortable for you. A SIP (Systematic Investment Plan) is ideal if you are saving regularly from your monthly income. It builds great financial discipline and takes away the stress of trying to time the market, because you automatically invest across both the highs and the lows. \n\nA lump sum makes sense when you have a chunk of money ready to invest for the long term, letting all of it start growing right away. That said, if investing a large amount all at once makes you nervous about short-term market dips, you can always park it safely and move it gradually over several months. \n\nAre you looking to invest a one-time amount you have on hand, or are you planning to save regularly from your income?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 19,
+      "name": "Highest return mutual fund",
+      "input": "Can you tell me which mutual fund will give the highest return?",
+      "response": "Honestly, kisi bhi mutual fund ke liye pehle se yeh keh pana possible nahi hota ki kaun sa fund sabse zyada return dega. Returns market ke movement par depend karte hain, aur jin funds mein zyada growth ki possibility hoti hai, wahan short term mein utar-chadhav bhi zyada rehta hai. \n\nIsliye sirf highest return ke peeche jaane se behtar hota hai ki investment aapke time horizon aur comfort level se match kare. \n\nAap yeh investment kitne samay ke liye plan kar rahe hain—short term ya long term ke liye?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 20,
+      "name": "Specific stock investment",
+      "input": "I want to invest in a specific stock.",
+      "response": "I cannot recommend specific stocks or short-term trading tips. At Vantage Wealth, we focus on building thoughtful investment plans tailored to your goals rather than picking individual shares.\n\nAre you looking to invest for a specific goal or timeline, or just exploring general options?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 21,
+      "name": "Doubling money guarantee",
+      "input": "Can you guarantee that my money will double?",
+      "response": "Market-linked investments cannot offer guaranteed returns, and any investment that grows with the market will experience normal ups and downs. Real wealth is built by letting your savings grow steadily over time while keeping what you have already earned protected.\n\nWhat kind of time horizon do you have in mind for your money?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 22,
+      "name": "Daughter's education planning",
+      "input": "I want to plan for my daughter's education.",
+      "response": "That is such a meaningful milestone to plan for, and starting early makes a world of difference. \n\nTo help think through the best way to approach this, roughly how many years do you have before she heads off to college or university?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 23,
+      "name": "Review existing investments",
+      "input": "I already have investments with another advisor. Can you review them?",
+      "response": "Yes, absolutely. Having a fresh pair of eyes on your investments can be very helpful. \n\nWe often review existing portfolios to check for things like overlapping funds, unnecessary costs, or investments that might no longer fit what you're working toward. It’s a great way to see if your money is truly working as hard as it could be.\n\nWhat made you think about getting a second opinion on your portfolio right now?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 24,
+      "name": "Speak with someone today",
+      "input": "I want to speak with someone today.",
+      "response": "I would be glad to help arrange that for you today. \n\nYou can click the **Request Callback** button right here, or simply share a convenient time and your contact number, and I will have one of our senior wealth advisors reach out to you.",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 25,
+      "name": "Simple Hindi explanation",
+      "input": "Mujhe simple Hindi mein samjhaiye.",
+      "response": "Bilkul, hum bilkul aasan bhasha mein hi baat karenge! \n\nAap kis baare mein jaanna chahte hain—paise invest karne ke options, retirement planning, ya kuch aur?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 26,
+      "name": "First time investor (Hinglish)",
+      "input": "Main pehli baar investment kar raha hoon.",
+      "response": "Ye sunkar bohot achha laga! Investment ki shuruaat karna ek bohot zaroori aur sensible step hai. \n\nPehli baar shuru karte waqt sabse pehle ye dekhna chahiye ki aapka goal kya hai. Kya aap kisi specific goal ke liye invest karna chahte hain—jaise agle 1-2 saal mein kisi zaroorat ke liye, ya fir lambe samay (long-term) ke liye paisa grow karna chahte hain?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 27,
+      "name": "Existing client assistance",
+      "input": "I am an existing client and need assistance.",
+      "response": "It’s wonderful to connect with you! \n\nFor anything specific to your personal account, portfolio, or transactions, your dedicated wealth advisor is best equipped to assist you directly. \n\nWould you like me to arrange for your advisor to get in touch with you, or is there a general question I can help answer in the meantime?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    },
+    {
+      "id": 28,
+      "name": "Vantage Wealth actual services",
+      "input": "What services does Vantage Wealth actually provide?",
+      "response": "At Vantage Wealth, we focus on helping you organize and grow your wealth with a clear, thoughtful plan. Our main services include:\n\n* **Investment Planning:** Helping you build a well-diversified portfolio, primarily through mutual funds matched to your timeline.\n* **Retirement Planning:** Working out what you will need down the road and creating a steady approach to get there.\n* **Insurance & Protection:** Assessing term life and health coverage objectively with established providers so your family is protected.\n* **Tax Advisory:** Planning your investments to help you avoid unnecessary tax costs within legal rules.\n* **Strategic Financing:** Helping you evaluate loan options—like home loans or loans against securities—through established lenders.\n* **Portfolio Reviews:** Taking a second look at your existing investments to check for overlap, high costs, or anything that doesn't fit your goals.\n\nIs there a particular area you are looking to focus on right now?",
+      "scoreCard": {
+        "naturalTone": true,
+        "noJargon": true,
+        "appropriateLength": true,
+        "noFalseClaims": true,
+        "noPersonalizedAdvice": true,
+        "hasQuestionOrHandover": true,
+        "zeroFiduciary": true,
+        "passed": true
+      }
+    }
+  ]
+}

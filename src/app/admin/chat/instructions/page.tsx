@@ -110,7 +110,7 @@ export default function ChatSettingsAndInstructionsPage() {
             Chatbot Settings &amp; Custom Instructions
           </h1>
           <p className="text-[13px] text-stone-600 mt-1">
-            Manage assistant identity, holiday &amp; offline mode, welcome messages, fiduciary persona, and live widget presentation.
+            Manage assistant identity, holiday &amp; offline mode, welcome messages, relationship assistant persona, and live widget presentation.
           </p>
         </div>
 
