@@ -12,12 +12,16 @@ import { normalizePhotoUrl } from "@/lib/team/formatters";
 export async function revalidateArticleCache(slug?: string): Promise<void> {
   try {
     const { revalidateTag, revalidatePath } = await import("next/cache");
+    // Next.js 16: { expire: 0 } ensures immediate freshness with zero stale content served
+    revalidateTag("published-articles", { expire: 0 });
     revalidateTag("published-articles", "max");
     if (slug) {
+      revalidateTag(`article-${slug}`, { expire: 0 });
       revalidateTag(`article-${slug}`, "max");
       revalidatePath(`/insights/${slug}`, "page");
       revalidatePath(`/insights/${slug}`);
     }
+    revalidatePath("/insights/[slug]", "page");
     revalidatePath("/insights", "page");
     revalidatePath("/insights");
     revalidatePath("/", "page");

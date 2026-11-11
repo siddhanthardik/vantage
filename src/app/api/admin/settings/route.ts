@@ -29,6 +29,7 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const updated = await updateBusinessSettings(body);
 
+    revalidateTag("business-settings", { expire: 0 });
     revalidateTag("business-settings", "max");
     revalidatePath("/", "layout");
     revalidatePath("/", "page");
