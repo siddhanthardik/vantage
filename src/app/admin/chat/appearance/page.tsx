@@ -253,9 +253,6 @@ export default function ChatAppearancePage() {
                   <span className="text-xs text-stone-400 flex-1">Ask a question...</span>
                   <Send className="w-3.5 h-3.5 text-[#B08D57]" />
                 </div>
-                <p className="text-[8px] text-stone-400 text-center mt-1">
-                  SEBI regulated advisory • Informational Assistant
-                </p>
               </div>
             </div>
           </div>
