@@ -109,6 +109,7 @@ export async function setAdminSession(
   name: string = "Vantage Administrator",
   role: "ADMIN" | "EDITOR" | "VIEWER" = "ADMIN"
 ): Promise<void> {
+  await connection();
   const cookieStore = await cookies();
   const secret = getSessionSecret();
 
@@ -138,6 +139,7 @@ export async function setAdminSession(
  * Destroy session cookie
  */
 export async function clearAdminSession(): Promise<void> {
+  await connection();
   const cookieStore = await cookies();
   cookieStore.delete(ADMIN_COOKIE_NAME);
 }

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { connection, NextRequest, NextResponse } from "next/server";
 import { chatConversationRepository } from "@/server/repositories/chatConversationRepository";
 import { chatMessageRepository } from "@/server/repositories/chatMessageRepository";
 import { chatbotSettingsRepository } from "@/server/repositories/chatbotSettingsRepository";
@@ -10,6 +10,8 @@ import {
 } from "@/lib/security/chatSecurity";
 
 export async function GET(request: NextRequest) {
+  await connection();
+
   try {
     const rawCookie = request.cookies.get("vw_chat_token")?.value;
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
