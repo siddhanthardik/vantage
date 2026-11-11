@@ -85,11 +85,8 @@ export async function revalidateTeamCache(): Promise<void> {
     const { revalidateTag, revalidatePath } = await import("next/cache");
     // Next.js 16: { expire: 0 } ensures immediate freshness with zero stale content served
     revalidateTag("team-founder", { expire: 0 });
-    revalidateTag("team-founder", "max");
     revalidateTag("team-members", { expire: 0 });
-    revalidateTag("team-members", "max");
     revalidateTag("team", { expire: 0 });
-    revalidateTag("team", "max");
 
     // Public and Admin route cache invalidation
     revalidatePath("/about", "page");

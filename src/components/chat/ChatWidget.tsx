@@ -280,8 +280,8 @@ export default function ChatWidget() {
               </div>
               <div className="min-w-0 flex-1">
                 <span
-                  className="chat-header-title block font-sans text-[13.5px] sm:text-[14px] font-semibold tracking-tight text-white whitespace-nowrap leading-tight"
-                  style={{ fontSize: "13.5px", lineHeight: "1.25", whiteSpace: "nowrap" }}
+                  className="chat-header-title block font-sans text-[13px] sm:text-[13.5px] font-semibold tracking-tight text-white whitespace-nowrap leading-tight"
+                  style={{ fontSize: "13px", lineHeight: "1.25", whiteSpace: "nowrap" }}
                   title="Vantage Wealth Assistant"
                 >
                   Vantage Wealth Assistant
@@ -314,7 +314,7 @@ export default function ChatWidget() {
               {/* Message List */}
               <div className="flex-1 min-h-0 p-3 sm:p-3.5 overflow-y-auto space-y-2.5">
                 {messages.map((m) => {
-                  const isAssistant = m.role === "assistant";
+                  const isAssistant = m.role?.toLowerCase() === "assistant";
                   return (
                     <div
                       key={m.id}
@@ -323,16 +323,16 @@ export default function ChatWidget() {
                       }`}
                     >
                       <div
-                        className={`max-w-[88%] rounded-xl px-3 py-2 text-[13px] leading-[1.55] ${
+                        className={`max-w-[88%] rounded-xl px-3 py-2 text-[12.5px] sm:text-[13px] leading-[1.5] ${
                           isAssistant
                             ? "bg-white text-[#172B46] border-l-2 border-l-[#B08D57] shadow-2xs border border-stone-200/70"
                             : "bg-[#172B46] text-white shadow-2xs"
                         }`}
-                        style={{ fontSize: "13px", lineHeight: "1.55" }}
+                        style={{ fontSize: "12.5px", lineHeight: "1.5" }}
                       >
                         <div
-                          className="chat-message-text whitespace-pre-line text-[13px] leading-[1.55]"
-                          style={{ fontSize: "13px", lineHeight: "1.55" }}
+                          className="chat-message-text whitespace-pre-line text-[12.5px] sm:text-[13px] leading-[1.5]"
+                          style={{ fontSize: "12.5px", lineHeight: "1.5" }}
                         >
                           {m.content}
                         </div>

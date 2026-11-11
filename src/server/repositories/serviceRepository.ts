@@ -12,10 +12,8 @@ export async function revalidateServiceCache(slug?: string): Promise<void> {
     const { revalidateTag, revalidatePath } = await import("next/cache");
     // Next.js 16: { expire: 0 } ensures immediate freshness with zero stale content served
     revalidateTag("published-services", { expire: 0 });
-    revalidateTag("published-services", "max");
     if (slug) {
       revalidateTag(`service-${slug}`, { expire: 0 });
-      revalidateTag(`service-${slug}`, "max");
       revalidatePath(`/services/${slug}`, "page");
       revalidatePath(`/services/${slug}`);
     }
@@ -38,7 +36,6 @@ export async function revalidateBusinessSettingsCache(): Promise<void> {
     const { revalidateTag, revalidatePath } = await import("next/cache");
     // Next.js 16: { expire: 0 } guarantees immediate freshness across homepage, header, footer
     revalidateTag("business-settings", { expire: 0 });
-    revalidateTag("business-settings", "max");
     revalidatePath("/", "layout");
     revalidatePath("/", "page");
     revalidatePath("/");

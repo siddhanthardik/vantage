@@ -30,7 +30,6 @@ export async function PUT(req: NextRequest) {
     const updated = await updateBusinessSettings(body);
 
     revalidateTag("business-settings", { expire: 0 });
-    revalidateTag("business-settings", "max");
     revalidatePath("/", "layout");
     revalidatePath("/", "page");
     revalidatePath("/");

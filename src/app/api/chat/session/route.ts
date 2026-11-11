@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
       messageCount: conversation.messageCount,
       messages: messages.map((m: any) => ({
         id: m.id,
-        role: m.role,
+        role: (m.role ? String(m.role).toLowerCase() : "assistant") as "assistant" | "user",
         content: m.content,
         citations: m.citations,
         createdAt: m.createdAt,

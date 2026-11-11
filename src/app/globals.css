@@ -465,7 +465,7 @@ h1.article-title-heading,
 
 .chatbot-portal .chat-header-title {
   font-family: var(--font-sans), "Manrope", sans-serif !important;
-  font-size: 13.5px !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   line-height: 1.25 !important;
   letter-spacing: -0.01em !important;
@@ -476,8 +476,8 @@ h1.article-title-heading,
 .chatbot-portal p,
 .chatbot-portal .chat-message-text {
   font-family: var(--font-sans), "Manrope", sans-serif !important;
-  font-size: 13px !important;
-  line-height: 1.55 !important;
+  font-size: 12.5px !important;
+  line-height: 1.5 !important;
   font-weight: 400 !important;
   margin: 0 !important;
 }
