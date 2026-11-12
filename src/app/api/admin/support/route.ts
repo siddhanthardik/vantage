@@ -4,8 +4,6 @@ import { prisma } from "@/lib/db/prisma";
 import { supportCaseRepository } from "@/server/repositories/supportCaseRepository";
 import { SupportCaseCategory, SupportCasePriority, SupportCaseStatus } from "@prisma/client";
 
-export const dynamic = "force-dynamic";
-
 /**
  * GET /api/admin/support
  * List support cases with filtering, search, and pagination

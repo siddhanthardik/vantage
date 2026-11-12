@@ -5,8 +5,6 @@ import { chatConversationRepository } from "@/server/repositories/chatConversati
 import { chatLeadRepository } from "@/server/repositories/chatLeadRepository";
 import { SupportCaseCategory, SupportCasePriority } from "@prisma/client";
 
-export const dynamic = "force-dynamic";
-
 /**
  * POST /api/chat/support-case
  * Creates a support case from the chatbot conversation (with anti-duplicate protection)

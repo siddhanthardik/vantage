@@ -4,8 +4,6 @@ import { prisma } from "@/lib/db/prisma";
 import { supportCaseRepository } from "@/server/repositories/supportCaseRepository";
 import { SupportCasePriority, SupportCaseStatus } from "@prisma/client";
 
-export const dynamic = "force-dynamic";
-
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
