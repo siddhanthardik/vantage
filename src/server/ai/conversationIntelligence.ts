@@ -215,20 +215,22 @@ export function determineNextBestAction(params: {
 /**
  * Generates dynamic tactical guidance for the Gemini prompt based on the chosen Next Action
  */
-export function formatTacticalActionDirective(action: NextBestAction, memory: ConversationMemoryContext): string {
-  if (memory.confirmedFacts["Registered Support Case"]) {
-    return `TACTICAL DIRECTIVE: You have registered support case ${memory.confirmedFacts["Registered Support Case"]} for the visitor. Express respectful empathy, state this case number clearly, and reassure them that our senior advisory team will review their request and follow up.`;
+export function formatTacticalActionDirective(action: NextBestAction, memory?: ConversationMemoryContext): string {
+  const confirmed = memory?.confirmedFacts || {};
+
+  if (confirmed["Registered Support Case"]) {
+    return `TACTICAL DIRECTIVE: You have registered support case ${confirmed["Registered Support Case"]} for the visitor. Express respectful empathy, state this case number clearly, and reassure them that our senior advisory team will review their request and follow up.`;
   }
 
-  if (memory.confirmedFacts["Existing Support Case"]) {
-    return `TACTICAL DIRECTIVE: Let the visitor know that active case ${memory.confirmedFacts["Existing Support Case"]} is already recorded and under review by our team, so they do not need to open a duplicate case.`;
+  if (confirmed["Existing Support Case"]) {
+    return `TACTICAL DIRECTIVE: Let the visitor know that active case ${confirmed["Existing Support Case"]} is already recorded and under review by our team, so they do not need to open a duplicate case.`;
   }
 
-  if (memory.confirmedFacts["Support Case Verified Status"]) {
-    return `TACTICAL DIRECTIVE: Share the verified case update warmly: ${memory.confirmedFacts["Support Case Verified Status"]}. Ask if there is anything else regarding this case they would like noted for the advisor.`;
+  if (confirmed["Support Case Verified Status"]) {
+    return `TACTICAL DIRECTIVE: Share the verified case update warmly: ${confirmed["Support Case Verified Status"]}. Ask if there is anything else regarding this case they would like noted for the advisor.`;
   }
 
-  if (memory.confirmedFacts["Support Case Verification Notice"]) {
+  if (confirmed["Support Case Verification Notice"]) {
     return `TACTICAL DIRECTIVE: For privacy and account security, explain warmly that detailed case status cannot be displayed without verifying their registered phone or email, and offer to coordinate with human support or take their verified contact details.`;
   }
 
@@ -246,10 +248,10 @@ export function formatTacticalActionDirective(action: NextBestAction, memory: Co
       return `TACTICAL DIRECTIVE: Politely and pleasantly decline non-wealth requests (like coding, medical, travel) and warmly clarify that your expertise is wealth planning and financial services.`;
 
     case "OFFER_CONSULTATION":
-      return `TACTICAL DIRECTIVE: The visitor has shared key details (amount: ${memory.investmentAmount || "volunteered"}, horizon: ${memory.timeHorizon || "noted"}). Acknowledge their situation warmly, explain how general options depend on this timeline without giving stock picks or allocation percentages, and naturally suggest that a private discussion with an advisor would help design a tailored plan.`;
+      return `TACTICAL DIRECTIVE: The visitor has shared key details (amount: ${memory?.investmentAmount || "volunteered"}, horizon: ${memory?.timeHorizon || "noted"}). Acknowledge their situation warmly, explain how general options depend on this timeline without giving stock picks or allocation percentages, and naturally suggest that a private discussion with an advisor would help design a tailored plan.`;
 
     case "ASK_CLARIFYING_QUESTION":
-      return `TACTICAL DIRECTIVE: The visitor mentioned investing ${memory.investmentAmount || "a sum"}, but their time horizon or goal is still unknown. Do NOT recommend investments or asset percentages yet. Acknowledge the amount warmly, explain that the right option depends on when the money is needed, and ask ONE question about their timeframe.`;
+      return `TACTICAL DIRECTIVE: The visitor mentioned investing ${memory?.investmentAmount || "a sum"}, but their time horizon or goal is still unknown. Do NOT recommend investments or asset percentages yet. Acknowledge the amount warmly, explain that the right option depends on when the money is needed, and ask ONE question about their timeframe.`;
 
     case "CONTINUE_QUALIFICATION":
       return `TACTICAL DIRECTIVE: Continue conversational discovery gently. Ask one relevant question to understand their milestone or current situation. Do NOT interrogate or ask multiple questions.`;

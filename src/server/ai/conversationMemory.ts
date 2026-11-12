@@ -258,9 +258,10 @@ export function updateConversationMemory(
   userMessage: string,
   language: string = "en"
 ): ConversationMemoryContext {
-  const memory: ConversationMemoryContext = currentMemory || {
-    confirmedFacts: {},
-    unresolvedRequests: [],
+  const memory: ConversationMemoryContext = {
+    ...(currentMemory || {}),
+    confirmedFacts: { ...(currentMemory?.confirmedFacts || {}) },
+    unresolvedRequests: [...(currentMemory?.unresolvedRequests || [])],
   };
 
   const lower = userMessage.toLowerCase();

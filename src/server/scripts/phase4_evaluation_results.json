@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-12T02:03:47.301Z",
+  "timestamp": "2026-11-12T04:14:17.040Z",
   "totalTests": 20,
   "passedCount": 20,
   "results": [
@@ -67,19 +67,19 @@
       "id": 11,
       "name": "Follow-up creation",
       "verdict": "PASSED",
-      "details": "Follow-up set to: 2026-11-13T02:03:46.936Z"
+      "details": "Follow-up set to: 2026-11-13T04:14:16.608Z"
     },
     {
       "id": 12,
       "name": "Follow-up rescheduling",
       "verdict": "PASSED",
-      "details": "Rescheduled to: 2026-11-14T02:03:47.143Z"
+      "details": "Rescheduled to: 2026-11-14T04:14:16.807Z"
     },
     {
       "id": 13,
       "name": "Follow-up completion",
       "verdict": "PASSED",
-      "details": "Follow-up cleared, last contact at: 2026-11-12T02:03:47.159Z"
+      "details": "Follow-up cleared, last contact at: 2026-11-12T04:14:16.821Z"
     },
     {
       "id": 14,
@@ -91,7 +91,7 @@
       "id": 15,
       "name": "Lead conversion",
       "verdict": "PASSED",
-      "details": "Stage: CONVERTED, Conversion date: 2026-11-12T02:03:47.222Z"
+      "details": "Stage: CONVERTED, Conversion date: 2026-11-12T04:14:16.878Z"
     },
     {
       "id": 16,
@@ -103,7 +103,7 @@
       "id": 17,
       "name": "Returning visitor with existing lead",
       "verdict": "PASSED",
-      "details": "Recognized existing lead record ID: cmwcwmakg0002vh70v3wloyy1"
+      "details": "Recognized existing lead record ID: cmwd1a3zl0002vhu43gf4gq66"
     },
     {
       "id": 18,

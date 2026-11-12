@@ -89,11 +89,18 @@ export async function POST(request: NextRequest) {
     const intentResult = classifyVisitorIntent(trimmedContent, conversation.primaryIntent as any);
 
     // 7. Phase 2: Multi-Turn Conversation Memory (Entity extraction, anaphora resolution & corrections)
-    const currentMemory = ((conversation as any).contextMemory as ConversationMemoryContext) || {
-      confirmedFacts: {},
-      unresolvedRequests: [],
+    const rawContextMemory = (conversation as any).contextMemory;
+    const currentMemory: ConversationMemoryContext = {
+      ...(typeof rawContextMemory === "object" && rawContextMemory ? rawContextMemory : {}),
+      confirmedFacts: (typeof rawContextMemory === "object" && rawContextMemory?.confirmedFacts) || {},
+      unresolvedRequests: (typeof rawContextMemory === "object" && Array.isArray(rawContextMemory?.unresolvedRequests))
+        ? rawContextMemory.unresolvedRequests
+        : [],
     };
     const updatedMemory = updateConversationMemory(currentMemory, trimmedContent, detectedLanguage);
+    if (!updatedMemory.confirmedFacts) {
+      updatedMemory.confirmedFacts = {};
+    }
     const memoryPrompt = formatMemoryForPrompt(updatedMemory);
 
     // 8. Phase 2: Visitor Classification (NEW_PROSPECT, RETURNING_VISITOR, EXISTING_CLIENT, etc.)
@@ -144,7 +151,7 @@ export async function POST(request: NextRequest) {
       (intentResult.primaryIntent === "EXISTING_CLIENT_SUPPORT" &&
         /problem|issue|delay|not received|unresolved|complaint|waiting/i.test(trimmedContent))
     ) {
-      const custName = updatedMemory.customerName || updatedMemory.confirmedFacts["Visitor Name"];
+      const custName = updatedMemory.customerName || updatedMemory.confirmedFacts?.["Visitor Name"];
       const custContact = updatedMemory.contactPhone || updatedMemory.contactEmail;
 
       if (custName && custContact) {
@@ -172,8 +179,10 @@ export async function POST(request: NextRequest) {
             status: isUrgent ? "ESCALATED" : "OPEN",
             advisorSummary: `Support Case auto-created for ${custName} (${custContact}): ${trimmedContent}`,
           });
+          if (!updatedMemory.confirmedFacts) updatedMemory.confirmedFacts = {};
           updatedMemory.confirmedFacts["Registered Support Case"] = newCase.caseNumber;
         } else {
+          if (!updatedMemory.confirmedFacts) updatedMemory.confirmedFacts = {};
           updatedMemory.confirmedFacts["Existing Support Case"] = openCase.caseNumber;
         }
       }
