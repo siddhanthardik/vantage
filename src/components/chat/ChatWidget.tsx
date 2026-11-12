@@ -382,7 +382,7 @@ export default function ChatWidget() {
   }
 
   return (
-    <div className="chatbot-portal fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-50 font-sans max-w-[calc(100vw-24px)] sm:max-w-none">
+    <div className="chatbot-portal fixed bottom-2.5 right-2.5 sm:bottom-5 sm:right-5 z-50 font-sans max-w-[calc(100vw-16px)] sm:max-w-none">
       {/* 1. Floating Launcher Button (Icon Only with Premium High-Contrast Gold Badge) */}
       {!isOpen && (
         <button
@@ -390,14 +390,14 @@ export default function ChatWidget() {
             setIsOpen(true);
             setIsMinimized(false);
           }}
-          className="group relative flex items-center justify-center w-12 h-12 sm:w-13 sm:h-13 bg-[#172B46] hover:bg-[#1C3455] text-white rounded-full shadow-[0_10px_30px_rgba(23,43,70,0.35)] border-2 border-[#B08D57] transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#B08D57] cursor-pointer"
+          className="group relative flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 bg-[#172B46] hover:bg-[#1C3455] text-white rounded-full shadow-[0_8px_24px_rgba(23,43,70,0.3)] sm:shadow-[0_10px_30px_rgba(23,43,70,0.35)] border-2 border-[#B08D57] transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#B08D57] cursor-pointer"
           aria-label={`Open ${botName}`}
         >
           <div className="relative flex items-center justify-center">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-[#C9A975] via-[#B08D57] to-[#91703E] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-              <Headset className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#172B46] stroke-[2.2]" />
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-[#C9A975] via-[#B08D57] to-[#91703E] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+              <Headset className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 text-[#172B46] stroke-[2.2]" />
             </div>
-            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-[#172B46] animate-pulse" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-emerald-500 rounded-full ring-2 ring-[#172B46] animate-pulse" />
           </div>
         </button>
       )}
@@ -405,24 +405,24 @@ export default function ChatWidget() {
       {/* 2. Main Chat Drawer Window */}
       {isOpen && (
         <div
-          className={`flex flex-col bg-[#F7F5F0] rounded-xl sm:rounded-2xl shadow-[0_16px_48px_rgba(23,43,70,0.25)] border border-[#B08D57]/40 transition-all duration-300 overflow-hidden ${
+          className={`flex flex-col bg-[#F7F5F0] rounded-xl sm:rounded-2xl shadow-[0_12px_36px_rgba(23,43,70,0.22)] sm:shadow-[0_16px_48px_rgba(23,43,70,0.25)] border border-[#B08D57]/40 transition-all duration-300 overflow-hidden ${
             isMinimized
-              ? "w-72 sm:w-80 h-12"
-              : "w-[calc(100vw-24px)] sm:w-[360px] h-[70vh] sm:h-[500px] max-h-[70vh] sm:max-h-[500px]"
+              ? "w-60 sm:w-80 h-10 sm:h-12"
+              : "w-[310px] max-w-[calc(100vw-20px)] sm:w-[360px] sm:max-w-none h-[48vh] min-h-[300px] max-h-[400px] sm:h-[500px] sm:max-h-[500px]"
           }`}
         >
           {/* Header */}
-          <div className="relative bg-[#172B46] text-white px-3.5 py-2.5 sm:px-4 sm:py-2.5 flex items-center justify-between border-b border-[#B08D57]/30 shrink-0">
+          <div className="relative bg-[#172B46] text-white px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between border-b border-[#B08D57]/30 shrink-0">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#B08D57] to-transparent" />
             <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
-              <div className="relative w-7 h-7 rounded-full bg-gradient-to-br from-[#C9A975] via-[#B08D57] to-[#91703E] flex items-center justify-center shadow-xs shrink-0">
-                <Headset className="w-3.5 h-3.5 text-[#172B46] stroke-[2.2]" />
-                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-400 ring-1 ring-[#172B46] rounded-full" />
+              <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-[#C9A975] via-[#B08D57] to-[#91703E] flex items-center justify-center shadow-xs shrink-0">
+                <Headset className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#172B46] stroke-[2.2]" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-400 ring-1 ring-[#172B46] rounded-full" />
               </div>
               <div className="min-w-0 flex-1">
                 <span
-                  className="chat-header-title block font-sans text-[13px] sm:text-[13.5px] font-semibold tracking-tight text-white whitespace-nowrap leading-tight"
-                  style={{ fontSize: "13px", lineHeight: "1.25", whiteSpace: "nowrap" }}
+                  className="chat-header-title block font-sans text-[12.5px] sm:text-[13.5px] font-semibold tracking-tight text-white whitespace-nowrap leading-tight"
+                  style={{ fontSize: "12.5px", lineHeight: "1.25", whiteSpace: "nowrap" }}
                   title={botName}
                 >
                   {botName}
@@ -452,7 +452,7 @@ export default function ChatWidget() {
 
           {/* Holiday / Temporary Closure Notice Banner */}
           {isHolidayClosed && holidayNotice && !isMinimized && (
-            <div className="bg-amber-50 border-b border-amber-200/80 px-3 py-1.5 text-[11px] text-amber-900 flex items-start gap-1.5 shrink-0">
+            <div className="bg-amber-50 border-b border-amber-200/80 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[10px] sm:text-[11px] text-amber-900 flex items-start gap-1.5 shrink-0">
               <span className="font-semibold text-amber-800 shrink-0">Notice:</span>
               <span className="leading-tight text-amber-900/90">{holidayNotice}</span>
             </div>
@@ -461,7 +461,7 @@ export default function ChatWidget() {
           {!isMinimized && (
             <>
               {/* Message List */}
-              <div className="flex-1 min-h-0 p-3 sm:p-3.5 overflow-y-auto space-y-2.5">
+              <div className="flex-1 min-h-0 p-2.5 sm:p-3.5 overflow-y-auto space-y-2 sm:space-y-2.5">
                 {messages.map((m) => {
                   const isAssistant = m.role?.toLowerCase() === "assistant";
                   return (
@@ -701,7 +701,7 @@ export default function ChatWidget() {
               )}
 
               {/* Input Area */}
-              <div className="p-2.5 bg-white border-t border-stone-200/80 shrink-0">
+              <div className="p-2 sm:p-2.5 bg-white border-t border-stone-200/80 shrink-0">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -714,10 +714,10 @@ export default function ChatWidget() {
                     type="text"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Ask about wealth planning, PMS, family trust..."
+                    placeholder="Ask about wealth planning, PMS, advisory..."
                     disabled={isLoading}
-                    className="chat-input flex-1 text-[13px] px-3 py-1.5 bg-[#F7F5F0] rounded-lg border border-stone-200 focus:outline-none focus:border-[#B08D57] text-[#172B46] placeholder:text-stone-400 disabled:opacity-50"
-                    style={{ fontSize: "13px" }}
+                    className="chat-input flex-1 text-[12px] sm:text-[13px] px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-[#F7F5F0] rounded-lg border border-stone-200 focus:outline-none focus:border-[#B08D57] text-[#172B46] placeholder:text-stone-400 disabled:opacity-50"
+                    style={{ fontSize: "12.5px" }}
                   />
                   <button
                     type="submit"
