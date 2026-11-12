@@ -192,7 +192,6 @@ export async function deleteMediaItem(id: string): Promise<boolean> {
       try {
         const candidatePaths = [
           path.join(process.cwd(), "public", "uploads", existing.filename),
-          path.join(process.cwd(), "public", "Uploads", existing.filename),
         ];
         if (process.env.UPLOADS_DIR) {
           candidatePaths.unshift(path.join(path.resolve(process.env.UPLOADS_DIR), existing.filename));

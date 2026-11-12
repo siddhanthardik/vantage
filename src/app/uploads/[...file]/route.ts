@@ -56,7 +56,6 @@ export async function GET(
 
     candidateDirs.push(
       path.join(process.cwd(), "public", "uploads"),
-      path.join(process.cwd(), "public", "Uploads"),
       path.join(process.cwd(), "uploads")
     );
 
