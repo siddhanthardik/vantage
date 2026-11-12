@@ -1,7 +1,7 @@
-import { connection, NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { chatConversationRepository } from "@/server/repositories/chatConversationRepository";
 import { chatMessageRepository } from "@/server/repositories/chatMessageRepository";
-import { chatbotSettingsRepository } from "@/server/repositories/chatbotSettingsRepository";
+import { chatbotSettingsRepository, DEFAULT_CHATBOT_SETTINGS } from "@/server/repositories/chatbotSettingsRepository";
 import { chatLeadRepository } from "@/server/repositories/chatLeadRepository";
 import {
   generateAnonymousSessionToken,
@@ -10,8 +10,6 @@ import {
 } from "@/lib/security/chatSecurity";
 
 export async function GET(request: NextRequest) {
-  await connection();
-
   try {
     const rawCookie = request.cookies.get("vw_chat_token")?.value;
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
@@ -27,8 +25,13 @@ export async function GET(request: NextRequest) {
       sessionId = verification.sessionId;
     }
 
-    // Load global settings for welcome message and suggested questions
-    const settings = await chatbotSettingsRepository.getSettings();
+    // Load global settings with resilient fallback
+    let settings = DEFAULT_CHATBOT_SETTINGS as any;
+    try {
+      settings = await chatbotSettingsRepository.getSettings();
+    } catch (settingsError) {
+      console.warn("Failed to load chatbot settings from database, using defaults:", settingsError);
+    }
 
     const defaultSuggestedQuestions = [
       "What wealth advisory services do you offer?",
@@ -63,8 +66,19 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch conversation messages
-    const messages = await chatMessageRepository.getMessagesByConversationId(conversation.id);
-    const lead = await chatLeadRepository.getLeadByConversationId(conversation.id);
+    let messages: any[] = [];
+    try {
+      messages = await chatMessageRepository.getMessagesByConversationId(conversation.id);
+    } catch (msgErr) {
+      console.warn("Could not retrieve messages for conversation:", msgErr);
+    }
+
+    let lead: any = null;
+    try {
+      lead = await chatLeadRepository.getLeadByConversationId(conversation.id);
+    } catch (leadErr) {
+      console.warn("Could not retrieve lead for conversation:", leadErr);
+    }
 
     const response = NextResponse.json({
       success: true,

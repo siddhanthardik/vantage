@@ -214,9 +214,14 @@ export default function ChatWidget() {
               },
             ]);
           }
+        } else if (mounted) {
+          setErrorMsg(data.error || "Unable to initialize chat session. Please refresh the page.");
         }
       } catch (e) {
         console.error("Failed to initialize chat session:", e);
+        if (mounted) {
+          setErrorMsg("Unable to connect to advisory service. Please check connection and refresh.");
+        }
       }
     }
 
@@ -242,7 +247,12 @@ export default function ChatWidget() {
 
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputText).trim();
-    if (!text || !conversationId || isLoading) return;
+    if (!text || isLoading) return;
+
+    if (!conversationId) {
+      setErrorMsg("Connecting to advisory concierge. Please wait a moment and try again.");
+      return;
+    }
 
     setInputText("");
     setErrorMsg(null);

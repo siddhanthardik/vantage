@@ -1,8 +1,7 @@
-import { connection, NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { unsubscribeNewsletterByToken } from "@/server/repositories/newsletterRepository";
 
 export async function GET(req: NextRequest) {
-  await connection();
   const token = req.nextUrl.searchParams.get("token");
 
   if (!token) {
