@@ -11,6 +11,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status") as ConversationStatus | null;
     const language = searchParams.get("language");
+    const primaryIntent = searchParams.get("primaryIntent");
+    const visitorClass = searchParams.get("visitorClass");
+    const matchedService = searchParams.get("matchedService");
     const query = searchParams.get("q")?.trim();
     const limit = Math.min(Number(searchParams.get("limit")) || 25, 100);
     const page = Math.max(Number(searchParams.get("page")) || 1, 1);
@@ -22,6 +25,15 @@ export async function GET(request: NextRequest) {
     }
     if (language) {
       where.language = language;
+    }
+    if (primaryIntent) {
+      where.primaryIntent = primaryIntent;
+    }
+    if (visitorClass) {
+      where.visitorClass = visitorClass;
+    }
+    if (matchedService) {
+      where.matchedServiceSlug = matchedService;
     }
     if (query) {
       where.OR = [

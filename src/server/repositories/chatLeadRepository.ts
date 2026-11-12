@@ -10,6 +10,7 @@ import {
 
 export interface UpsertLeadInput {
   conversationId: string;
+  status?: LeadQualificationStatus;
   fullName?: string;
   email?: string;
   phone?: string;
@@ -18,6 +19,9 @@ export interface UpsertLeadInput {
   financialObjective?: string;
   portfolioSize?: string;
   notes?: string;
+  qualificationScore?: number;
+  urgency?: string;
+  advisorSummary?: string;
   consentGiven?: boolean;
   consentTimestamp?: Date;
   consentIpHash?: string;
@@ -46,6 +50,10 @@ export const chatLeadRepository = {
     if (input.preferredTimeWindow !== undefined) dataToSet.preferredTimeWindow = input.preferredTimeWindow;
     if (input.financialObjective !== undefined) dataToSet.financialObjective = input.financialObjective;
     if (input.portfolioSize !== undefined) dataToSet.portfolioSize = input.portfolioSize;
+    if (input.status !== undefined) dataToSet.status = input.status;
+    if (input.qualificationScore !== undefined) dataToSet.qualificationScore = input.qualificationScore;
+    if (input.urgency !== undefined) dataToSet.urgency = input.urgency;
+    if (input.advisorSummary !== undefined) dataToSet.advisorSummary = input.advisorSummary;
     if (input.notes !== undefined) dataToSet.notes = input.notes;
     if (input.consentGiven !== undefined) dataToSet.consentGiven = input.consentGiven;
     if (input.consentTimestamp !== undefined) dataToSet.consentTimestamp = input.consentTimestamp;

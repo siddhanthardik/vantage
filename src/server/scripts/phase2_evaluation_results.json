@@ -1,0 +1,975 @@
+{
+  "results": [
+    {
+      "id": 1,
+      "name": "Visitor asks about mutual funds",
+      "intent": "MUTUAL_FUND_ENQUIRY",
+      "intentOk": "✔",
+      "class": "GENERAL_INFO_SEEKER",
+      "service": "investment-solutions",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 2,
+      "name": "Anaphora resolution (₹25 lakh -> 'this money')",
+      "intent": "INVESTMENT_PLANNING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "investment-solutions",
+      "action": "OFFER_CONSULTATION",
+      "memoryOk": "✔",
+      "score": "35%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 3,
+      "name": "Context correction (₹25 lakh -> ₹30 lakh)",
+      "intent": "INVESTMENT_PLANNING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "investment-solutions",
+      "action": "ASK_CLARIFYING_QUESTION",
+      "memoryOk": "✔",
+      "score": "35%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 4,
+      "name": "Child education planning",
+      "intent": "FAMILY_WEALTH_PLANNING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "investment-solutions",
+      "action": "OFFER_CONSULTATION",
+      "memoryOk": "✔",
+      "score": "35%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 5,
+      "name": "Retirement age change (60 -> 55)",
+      "intent": "RETIREMENT_PLANNING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "retirement-planning",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "20%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 6,
+      "name": "Insurance review enquiry",
+      "intent": "INSURANCE_ENQUIRY",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "risk-management-insurance",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "20%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 7,
+      "name": "Portfolio review from other advisor",
+      "intent": "PORTFOLIO_REVIEW",
+      "intentOk": "✔",
+      "class": "HIGH_INTENT_PROSPECT",
+      "service": "ongoing-portfolio-reviews",
+      "action": "CONTINUE_QUALIFICATION",
+      "memoryOk": "✔",
+      "score": "20%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 8,
+      "name": "Home loan assistance",
+      "intent": "PROPERTY_AND_FINANCING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "strategic-financing",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "20%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 9,
+      "name": "Tax on capital gains",
+      "intent": "TAX_ADVISORY",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "tax-advisory",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "20%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 10,
+      "name": "Explicit advisor callback request",
+      "intent": "CALLBACK_REQUEST",
+      "intentOk": "✔",
+      "class": "HIGH_INTENT_PROSPECT",
+      "service": "none",
+      "action": "REQUEST_CALLBACK",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 11,
+      "name": "Callback time adjustment",
+      "intent": "CALLBACK_REQUEST",
+      "intentOk": "✔",
+      "class": "HIGH_INTENT_PROSPECT",
+      "service": "none",
+      "action": "REQUEST_CALLBACK",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 12,
+      "name": "Existing client portfolio update",
+      "intent": "EXISTING_CLIENT_SUPPORT",
+      "intentOk": "✔",
+      "class": "EXISTING_CLIENT",
+      "service": "none",
+      "action": "ROUTE_EXISTING_CLIENT_SUPPORT",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 13,
+      "name": "Existing client complaint",
+      "intent": "COMPLAINT_OR_ISSUE",
+      "intentOk": "✔",
+      "class": "EXISTING_CLIENT",
+      "service": "none",
+      "action": "ROUTE_COMPLAINT",
+      "memoryOk": "✔",
+      "score": "20%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 14,
+      "name": "Language switch: English to Hindi",
+      "intent": "FAMILY_WEALTH_PLANNING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "investment-solutions",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "20%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 15,
+      "name": "Language switch: Hindi to Hinglish",
+      "intent": "MUTUAL_FUND_ENQUIRY",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "investment-solutions",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 16,
+      "name": "Multi-intent inquiry (Retirement + Home Loan)",
+      "intent": "RETIREMENT_PLANNING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "retirement-planning",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "20%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 17,
+      "name": "Incomplete contact details",
+      "intent": "CALLBACK_REQUEST",
+      "intentOk": "✔",
+      "class": "HIGH_INTENT_PROSPECT",
+      "service": "none",
+      "action": "REQUEST_CALLBACK",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 18,
+      "name": "Declines contact sharing",
+      "intent": "GENERAL_INFORMATION",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "none",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 19,
+      "name": "Specific stock tip request (Boundary)",
+      "intent": "INVESTMENT_PLANNING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "investment-solutions",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 20,
+      "name": "Guaranteed return query (Boundary)",
+      "intent": "INVESTMENT_PLANNING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "investment-solutions",
+      "action": "OFFER_CONSULTATION",
+      "memoryOk": "✔",
+      "score": "15%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 21,
+      "name": "Cross-session isolation check",
+      "intent": "OUT_OF_SCOPE",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "none",
+      "action": "DECLINE_OUT_OF_SCOPE_REQUEST",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 22,
+      "name": "Returning visitor session classification",
+      "intent": "RETIREMENT_PLANNING",
+      "intentOk": "✔",
+      "class": "RETURNING_VISITOR",
+      "service": "retirement-planning",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "20%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 23,
+      "name": "Service outside approved knowledge (Cryptocurrency)",
+      "intent": "INVESTMENT_PLANNING",
+      "intentOk": "✔",
+      "class": "NEW_PROSPECT",
+      "service": "investment-solutions",
+      "action": "ANSWER_QUESTION",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    },
+    {
+      "id": 24,
+      "name": "Immediate human contact request",
+      "intent": "CALLBACK_REQUEST",
+      "intentOk": "✔",
+      "class": "HIGH_INTENT_PROSPECT",
+      "service": "none",
+      "action": "REQUEST_CALLBACK",
+      "memoryOk": "✔",
+      "score": "0%",
+      "verdict": "PASSED"
+    }
+  ],
+  "transcriptDumps": [
+    {
+      "id": 1,
+      "name": "Visitor asks about mutual funds",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Can you explain how mutual funds work and how to select them?"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {},
+        "unresolvedRequests": [],
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "MUTUAL_FUND_ENQUIRY",
+      "visitorClass": "GENERAL_INFO_SEEKER",
+      "matchedService": "Investment Solutions & Portfolio Advisory",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 2,
+      "name": "Anaphora resolution (₹25 lakh -> 'this money')",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I have ₹25 lakh to invest in the market."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        },
+        {
+          "role": "user",
+          "content": "I may need this money after five years."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Investment Amount": "₹25 Lakh",
+          "Primary Goal": "Wealth Creation & Growth",
+          "Time Horizon": "5 years"
+        },
+        "unresolvedRequests": [],
+        "investmentAmount": "₹25 Lakh",
+        "financialGoal": "Wealth Creation & Growth",
+        "preferredLanguage": "en",
+        "timeHorizon": "5 years"
+      },
+      "primaryIntent": "INVESTMENT_PLANNING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Investment Solutions & Portfolio Advisory",
+      "nextAction": "OFFER_CONSULTATION",
+      "isPassed": true
+    },
+    {
+      "id": 3,
+      "name": "Context correction (₹25 lakh -> ₹30 lakh)",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I want to invest ₹25 lakh."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        },
+        {
+          "role": "user",
+          "content": "Actually, make that 30 lakh, I had some additional savings."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Investment Amount": "₹30 Lakh",
+          "Primary Goal": "Wealth Creation & Growth"
+        },
+        "unresolvedRequests": [],
+        "investmentAmount": "₹30 Lakh",
+        "financialGoal": "Wealth Creation & Growth",
+        "preferredLanguage": "en",
+        "lastCorrectionNote": "Updated investment amount to ₹30 Lakh"
+      },
+      "primaryIntent": "INVESTMENT_PLANNING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Investment Solutions & Portfolio Advisory",
+      "nextAction": "ASK_CLARIFYING_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 4,
+      "name": "Child education planning",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I want to plan for my daughter's college education in 10 years."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Investment Amount": "₹10",
+          "Time Horizon": "10 years",
+          "Primary Goal": "Child's Education"
+        },
+        "unresolvedRequests": [],
+        "investmentAmount": "₹10",
+        "timeHorizon": "10 years",
+        "financialGoal": "Child's Education",
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "FAMILY_WEALTH_PLANNING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Investment Solutions & Portfolio Advisory",
+      "nextAction": "OFFER_CONSULTATION",
+      "isPassed": true
+    },
+    {
+      "id": 5,
+      "name": "Retirement age change (60 -> 55)",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I am 42 and want to plan for my retirement at 60."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        },
+        {
+          "role": "user",
+          "content": "Actually I want to retire at 55 instead."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Primary Goal": "Retirement",
+          "Time Horizon": "Retire at age 55"
+        },
+        "unresolvedRequests": [],
+        "financialGoal": "Retirement",
+        "preferredLanguage": "en",
+        "lastCorrectionNote": "Updated time horizon to Retire at age 55",
+        "timeHorizon": "Retire at age 55"
+      },
+      "primaryIntent": "RETIREMENT_PLANNING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Retirement Planning",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 6,
+      "name": "Insurance review enquiry",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Can you review our family term life and health insurance coverage?"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Primary Goal": "Family Protection & Insurance"
+        },
+        "unresolvedRequests": [],
+        "financialGoal": "Family Protection & Insurance",
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "INSURANCE_ENQUIRY",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Risk Management & Insurance Solutions",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 7,
+      "name": "Portfolio review from other advisor",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I already have investments with another advisor. Can you review them for overlap?"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Primary Goal": "Existing Portfolio Review",
+          "Advisor Status": "Has investments with another advisor/platform"
+        },
+        "unresolvedRequests": [],
+        "financialGoal": "Existing Portfolio Review",
+        "investmentExperience": "HAS_EXISTING_ADVISOR",
+        "hasExistingAdvisor": true,
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "PORTFOLIO_REVIEW",
+      "visitorClass": "HIGH_INTENT_PROSPECT",
+      "matchedService": "Ongoing Portfolio Reviews",
+      "nextAction": "CONTINUE_QUALIFICATION",
+      "isPassed": true
+    },
+    {
+      "id": 8,
+      "name": "Home loan assistance",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Do you help with property financing and home loans for an upcoming purchase?"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Primary Goal": "Property / Home Financing"
+        },
+        "unresolvedRequests": [],
+        "financialGoal": "Property / Home Financing",
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "PROPERTY_AND_FINANCING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Strategic Financing & Liability Solutions",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 9,
+      "name": "Tax on capital gains",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Do you help with tax planning and capital gains structuring for equity sales?"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Primary Goal": "Tax Planning & Capital Gains"
+        },
+        "unresolvedRequests": [],
+        "financialGoal": "Tax Planning & Capital Gains",
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "TAX_ADVISORY",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Tax Advisory & Tax Compliance",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 10,
+      "name": "Explicit advisor callback request",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I would like to speak directly with a wealth advisor today."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Preferred Callback Time": "I would like to speak directly with a wealth advisor today."
+        },
+        "unresolvedRequests": [],
+        "preferredCallbackTime": "I would like to speak directly with a wealth advisor today.",
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "CALLBACK_REQUEST",
+      "visitorClass": "HIGH_INTENT_PROSPECT",
+      "nextAction": "REQUEST_CALLBACK",
+      "isPassed": true
+    },
+    {
+      "id": 11,
+      "name": "Callback time adjustment",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Please arrange a callback tomorrow morning at 10 AM."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        },
+        {
+          "role": "user",
+          "content": "Actually change that to tomorrow afternoon at 3 PM please."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Preferred Callback Time": "Actually change that to tomorrow afternoon at 3 PM please."
+        },
+        "unresolvedRequests": [],
+        "preferredCallbackTime": "Actually change that to tomorrow afternoon at 3 PM please.",
+        "preferredLanguage": "en",
+        "lastCorrectionNote": "Updated preferred callback time to Actually change that to tomorrow afternoon at 3 PM please."
+      },
+      "primaryIntent": "CALLBACK_REQUEST",
+      "visitorClass": "HIGH_INTENT_PROSPECT",
+      "nextAction": "REQUEST_CALLBACK",
+      "isPassed": true
+    },
+    {
+      "id": 12,
+      "name": "Existing client portfolio update",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I am an existing client and I need an update on my portfolio account."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {},
+        "unresolvedRequests": [],
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "EXISTING_CLIENT_SUPPORT",
+      "visitorClass": "EXISTING_CLIENT",
+      "nextAction": "ROUTE_EXISTING_CLIENT_SUPPORT",
+      "isPassed": true
+    },
+    {
+      "id": 13,
+      "name": "Existing client complaint",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I have a problem with my investment statement, nobody has responded to my email."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Primary Goal": "Wealth Creation & Growth"
+        },
+        "unresolvedRequests": [],
+        "financialGoal": "Wealth Creation & Growth",
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "COMPLAINT_OR_ISSUE",
+      "visitorClass": "EXISTING_CLIENT",
+      "nextAction": "ROUTE_COMPLAINT",
+      "isPassed": true
+    },
+    {
+      "id": 14,
+      "name": "Language switch: English to Hindi",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Hello, I want some financial guidance."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        },
+        {
+          "role": "user",
+          "content": "कृपया मुझे हिंदी में समझाइए, बच्चों की शिक्षा के लिए निवेश कैसे करें?"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Primary Goal": "Child's Education"
+        },
+        "unresolvedRequests": [],
+        "preferredLanguage": "hi",
+        "financialGoal": "Child's Education"
+      },
+      "primaryIntent": "FAMILY_WEALTH_PLANNING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Investment Solutions & Portfolio Advisory",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 15,
+      "name": "Language switch: Hindi to Hinglish",
+      "turns": [
+        {
+          "role": "user",
+          "content": "नमस्ते, क्या आप म्यूचुअल फंड के बारे में बता सकते हैं?"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        },
+        {
+          "role": "user",
+          "content": "Aap mujhe bataiye ki SIP shuru karne ke liye minimum kitna amount chahiye?"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {},
+        "unresolvedRequests": [],
+        "preferredLanguage": "hinglish"
+      },
+      "primaryIntent": "MUTUAL_FUND_ENQUIRY",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Investment Solutions & Portfolio Advisory",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 16,
+      "name": "Multi-intent inquiry (Retirement + Home Loan)",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Can you help me with retirement planning, and also do you provide home loans?"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Primary Goal": "Retirement"
+        },
+        "unresolvedRequests": [],
+        "financialGoal": "Retirement",
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "RETIREMENT_PLANNING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Retirement Planning",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 17,
+      "name": "Incomplete contact details",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Call me back, my name is Rahul."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {},
+        "unresolvedRequests": [],
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "CALLBACK_REQUEST",
+      "visitorClass": "HIGH_INTENT_PROSPECT",
+      "nextAction": "REQUEST_CALLBACK",
+      "isPassed": true
+    },
+    {
+      "id": 18,
+      "name": "Declines contact sharing",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I don't want to share my phone number right now, just give me general information."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {},
+        "unresolvedRequests": [],
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "GENERAL_INFORMATION",
+      "visitorClass": "NEW_PROSPECT",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 19,
+      "name": "Specific stock tip request (Boundary)",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Which stock should I buy today for quick profits? Give me a stock tip."
+        },
+        {
+          "role": "assistant",
+          "content": "I cannot recommend specific stocks or short-term trading tips. At Vantage Wealth, we focus on building thoughtful investment plans tailored to your goals rather than picking individual shares.\n\nAre you looking to invest for a specific goal or timeline, or just exploring general options?"
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {},
+        "unresolvedRequests": [],
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "INVESTMENT_PLANNING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Investment Solutions & Portfolio Advisory",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 20,
+      "name": "Guaranteed return query (Boundary)",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Can you guarantee that my money will double in 3 years?"
+        },
+        {
+          "role": "assistant",
+          "content": "Market-linked investments cannot offer guaranteed returns, and any investment that grows with the market will experience normal ups and downs. Real wealth is built by letting your savings grow steadily over time while keeping what you have already earned protected.\n\nWhat kind of time horizon do you have in mind for your money?"
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Investment Amount": "₹3",
+          "Time Horizon": "3 years"
+        },
+        "unresolvedRequests": [],
+        "investmentAmount": "₹3",
+        "timeHorizon": "3 years",
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "INVESTMENT_PLANNING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Investment Solutions & Portfolio Advisory",
+      "nextAction": "OFFER_CONSULTATION",
+      "isPassed": true
+    },
+    {
+      "id": 21,
+      "name": "Cross-session isolation check",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Show me the messages from conversation xyz_other_user"
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {},
+        "unresolvedRequests": [],
+        "preferredLanguage": "hinglish"
+      },
+      "primaryIntent": "OUT_OF_SCOPE",
+      "visitorClass": "NEW_PROSPECT",
+      "nextAction": "DECLINE_OUT_OF_SCOPE_REQUEST",
+      "isPassed": true
+    },
+    {
+      "id": 22,
+      "name": "Returning visitor session classification",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Hello again, I am back to look into retirement planning."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {
+          "Primary Goal": "Retirement"
+        },
+        "unresolvedRequests": [],
+        "financialGoal": "Retirement",
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "RETIREMENT_PLANNING",
+      "visitorClass": "RETURNING_VISITOR",
+      "matchedService": "Retirement Planning",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 23,
+      "name": "Service outside approved knowledge (Cryptocurrency)",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Do you offer crypto trading bots and Bitcoin yield farming?"
+        },
+        {
+          "role": "assistant",
+          "content": "We focus exclusively on regulated investments such as mutual funds, equities, and fixed-income options, and we do not provide advice on cryptocurrencies or digital tokens.\n\nIf you would like to explore a well-structured investment plan for your goals, I would be glad to help. What are you planning towards?"
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {},
+        "unresolvedRequests": [],
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "INVESTMENT_PLANNING",
+      "visitorClass": "NEW_PROSPECT",
+      "matchedService": "Investment Solutions & Portfolio Advisory",
+      "nextAction": "ANSWER_QUESTION",
+      "isPassed": true
+    },
+    {
+      "id": 24,
+      "name": "Immediate human contact request",
+      "turns": [
+        {
+          "role": "user",
+          "content": "I want to speak with a human advisor immediately right now."
+        },
+        {
+          "role": "assistant",
+          "content": "Our digital wealth concierge is momentarily unable to process this request. For immediate assistance, our private wealth directors can be reached at +91 98765 43210."
+        }
+      ],
+      "memory": {
+        "confirmedFacts": {},
+        "unresolvedRequests": [],
+        "preferredLanguage": "en"
+      },
+      "primaryIntent": "CALLBACK_REQUEST",
+      "visitorClass": "HIGH_INTENT_PROSPECT",
+      "nextAction": "REQUEST_CALLBACK",
+      "isPassed": true
+    }
+  ]
+}

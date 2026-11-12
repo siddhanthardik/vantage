@@ -83,9 +83,12 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 5. Upsert Lead in PostgreSQL
+    // 5. Upsert Lead in PostgreSQL with Phase 2 Qualification & Advisor Summary
     const methodEnum =
       preferredMethod === "EMAIL" ? CallbackPreferredMethod.EMAIL : CallbackPreferredMethod.PHONE;
+
+    const memory = ((conversation as any).contextMemory as any) || {};
+    const primaryIntent = (conversation as any).primaryIntent || "CALLBACK_REQUEST";
 
     const lead = await chatLeadRepository.upsertLead({
       conversationId,
@@ -94,11 +97,27 @@ export async function POST(request: NextRequest) {
       email: cleanEmail || undefined,
       preferredMethod: methodEnum,
       preferredTimeWindow: preferredTimeWindow || "Standard Business Hours (9:30 AM - 6:30 PM IST)",
-      financialObjective: financialObjective || undefined,
+      financialObjective: financialObjective || memory.financialGoal || undefined,
+      portfolioSize: memory.investmentAmount || undefined,
       notes: notes || undefined,
+      qualificationScore: 85, // Direct callback with verified contact details
+      urgency: "HIGH",
+      advisorSummary: `### ADVISOR DISCOVERY BRIEFING (DIRECT CALLBACK REQUEST)
+**Visitor Name:** ${cleanName}
+**Contact Info:** ${cleanPhone ? `Phone: ${cleanPhone}` : ""} | ${cleanEmail ? `Email: ${cleanEmail}` : ""}
+**Preferred Callback Time:** ${preferredTimeWindow || "Standard Business Hours"}
+**Preferred Channel:** ${methodEnum}
+**Primary Intent:** ${primaryIntent}
+**Matched Service:** ${(conversation as any).matchedServiceSlug || "General Wealth Advisory"}
+**Volunteered Amount:** ${memory.investmentAmount || "Not specified"}
+**Target Horizon:** ${memory.timeHorizon || "Not specified"}
+**Goal / Requirement:** ${financialObjective || memory.financialGoal || "General Advisory Discussion"}
+**Handover Reason:** Visitor completed callback form with consent.
+`,
       consentGiven: true,
       consentTimestamp: new Date(),
       consentIpHash: ipHash,
+      status: LeadQualificationStatus.CALLBACK_REQUESTED,
     });
 
     // 6. Update status to CALLBACK_REQUESTED

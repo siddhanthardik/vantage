@@ -155,11 +155,13 @@ export class GeminiAdapter implements AiProviderAdapter {
       return m;
     });
 
-    // 5. Construct grounded system prompt with retrieved context
+    // 5. Construct grounded system prompt with retrieved context and Phase 2 memory & tactical guidance
     const systemInstruction = buildGroundedSystemPrompt({
       baseInstructions: request.systemInstruction,
       contextChunks: request.contextChunks,
       language,
+      conversationMemoryPrompt: request.conversationMemoryPrompt,
+      tacticalActionPrompt: request.tacticalActionPrompt,
     });
 
     // 6. Format contents array for Gemini API (user / model turns)

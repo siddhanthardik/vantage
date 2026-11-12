@@ -20,6 +20,8 @@ export interface GenerateAiResponseRequest {
   messages: ChatMessageTurn[];
   contextChunks?: GroundedContextChunk[];
   systemInstruction?: string;
+  conversationMemoryPrompt?: string;
+  tacticalActionPrompt?: string;
   temperature?: number;
   maxOutputTokens?: number;
   language?: "en" | "hi" | "hinglish";

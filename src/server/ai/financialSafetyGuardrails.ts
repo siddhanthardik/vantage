@@ -184,8 +184,16 @@ export function buildGroundedSystemPrompt(params: {
   baseInstructions?: string;
   contextChunks?: GroundedContextChunk[];
   language?: "en" | "hi" | "hinglish";
+  conversationMemoryPrompt?: string;
+  tacticalActionPrompt?: string;
 }): string {
-  const { baseInstructions, contextChunks = [], language = "en" } = params;
+  const {
+    baseInstructions,
+    contextChunks = [],
+    language = "en",
+    conversationMemoryPrompt,
+    tacticalActionPrompt,
+  } = params;
 
   const contextSection =
     contextChunks.length > 0
@@ -265,6 +273,8 @@ Only describe capabilities and arrangements supported by approved Vantage Wealth
 - Existing Clients: Acknowledge warmly, explain that account-specific portfolios are handled directly by their dedicated advisor, and offer to have their advisor connect with them.
 - Out-of-Scope Queries: If asked about non-financial topics (e.g., programming, medical advice, travel), politely clarify that your expertise is wealth planning and financial services, and warmly invite any financial questions.
 
+${conversationMemoryPrompt || ""}
+${tacticalActionPrompt ? `\n### CURRENT TURN TACTICAL OBJECTIVE:\n${tacticalActionPrompt}\n` : ""}
 ${baseInstructions ? `### FIRM CUSTOM INSTRUCTIONS:\n${baseInstructions}\n` : ""}
 ${languageDirective}
 ${contextSection}`;

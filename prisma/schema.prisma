@@ -327,6 +327,11 @@ enum LeadQualificationStatus {
   CALLBACK_REQUESTED
   CONVERTED_TO_ENQUIRY
   DISQUALIFIED
+  NEW
+  QUALIFYING
+  CONTACT_PENDING
+  CONVERTED
+  CLOSED
 }
 
 enum CallbackPreferredMethod {
@@ -356,11 +361,22 @@ model ChatConversation {
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
+  // Phase 2 Conversational Intelligence fields
+  primaryIntent      String?            @db.VarChar(64)
+  secondaryIntent    String?            @db.VarChar(64)
+  visitorClass       String?            @default("NEW_PROSPECT") @db.VarChar(64)
+  matchedServiceSlug String?            @db.VarChar(128)
+  nextAction         String?            @db.VarChar(64)
+  contextMemory      Json?              @default("{}")
+
   messages           ChatMessage[]
   lead               ChatLead?
 
   @@index([anonymousSessionId, status, createdAt])
   @@index([status, updatedAt])
+  @@index([primaryIntent])
+  @@index([visitorClass])
+  @@index([matchedServiceSlug])
   @@map("chat_conversations")
 }
 
@@ -417,6 +433,11 @@ model ChatLead {
 
   // Link to operational Enquiry table (onDelete: SetNull so lead survives Enquiry deletion)
   enquiryId           String?                 @unique
+
+  // Phase 2 Conversational Intelligence fields
+  qualificationScore  Int                     @default(0)
+  urgency             String?                 @default("MEDIUM") @db.VarChar(32)
+  advisorSummary      String?                 @db.Text
 
   createdAt           DateTime                @default(now())
   updatedAt           DateTime                @updatedAt

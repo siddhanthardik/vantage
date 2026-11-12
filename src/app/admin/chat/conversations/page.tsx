@@ -162,7 +162,8 @@ export default function ConversationsManagementPage() {
               <thead className="bg-[#F7F5F0] text-stone-600 uppercase tracking-wider text-[10px] border-b border-stone-200">
                 <tr>
                   <th className="py-2.5 px-4">Session / ID</th>
-                  <th className="py-2.5 px-4">Language</th>
+                  <th className="py-2.5 px-4">Intent</th>
+                  <th className="py-2.5 px-4">Classification</th>
                   <th className="py-2.5 px-4">Turns</th>
                   <th className="py-2.5 px-4">Status</th>
                   <th className="py-2.5 px-4">Date</th>
@@ -172,7 +173,7 @@ export default function ConversationsManagementPage() {
               <tbody className="divide-y divide-stone-100 text-[#172B46]">
                 {conversations.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-stone-500 text-xs">
+                    <td colSpan={7} className="py-8 text-center text-stone-500 text-xs">
                       No conversations found matching filters.
                     </td>
                   </tr>
@@ -191,8 +192,13 @@ export default function ConversationsManagementPage() {
                           {c.id.slice(0, 8)}...
                         </td>
                         <td className="py-3 px-4">
-                          <span className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-stone-100 text-stone-700 uppercase">
-                            {c.language}
+                          <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-900 border border-amber-200/60">
+                            {c.primaryIntent ? c.primaryIntent.replace(/_/g, " ") : "GENERAL"}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold bg-stone-100 text-stone-700">
+                            {c.visitorClass ? c.visitorClass.replace(/_/g, " ") : "NEW PROSPECT"}
                           </span>
                         </td>
                         <td className="py-3 px-4">{c._count?.messages ?? c.messageCount ?? 0}</td>
@@ -284,6 +290,50 @@ export default function ConversationsManagementPage() {
                     <option value="CONVERTED">CONVERTED</option>
                   </select>
                 </div>
+              </div>
+
+              {/* Phase 2 Conversation Intelligence & Context Memory */}
+              <div className="my-2.5 p-2.5 bg-amber-50/70 border border-amber-200/80 rounded-lg text-xs shrink-0 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-[#172B46] text-[11px] uppercase tracking-wider">
+                    Conversational Intelligence
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded font-semibold bg-white border border-amber-200 text-stone-700">
+                    {selectedConversation.visitorClass ? selectedConversation.visitorClass.replace(/_/g, " ") : "NEW PROSPECT"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 text-[11px] text-stone-700">
+                  <div>
+                    <span className="text-stone-500 block text-[10px]">Primary Intent:</span>
+                    <span className="font-semibold text-amber-950">
+                      {selectedConversation.primaryIntent ? selectedConversation.primaryIntent.replace(/_/g, " ") : "General Enquiry"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-stone-500 block text-[10px]">Matched Service:</span>
+                    <span className="font-semibold text-[#172B46]">
+                      {selectedConversation.matchedServiceSlug || "General Advisory"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Confirmed Facts in Memory */}
+                {selectedConversation.contextMemory?.confirmedFacts &&
+                  Object.keys(selectedConversation.contextMemory.confirmedFacts).length > 0 && (
+                    <div className="mt-1.5 pt-1.5 border-t border-amber-200/60">
+                      <p className="text-[10px] font-semibold text-stone-600 mb-1">Confirmed Context Memory:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {Object.entries(selectedConversation.contextMemory.confirmedFacts).map(([k, v]: any) => (
+                          <span
+                            key={k}
+                            className="inline-block px-1.5 py-0.5 rounded bg-white text-[10px] border border-amber-200 text-stone-800"
+                          >
+                            <strong>{k}:</strong> {v}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
               </div>
 
               {/* Associated Lead Summary Card */}

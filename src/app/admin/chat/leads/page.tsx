@@ -206,11 +206,13 @@ export default function LeadsManagementPage() {
           className="text-xs bg-white px-3 py-2 rounded-lg border border-stone-300 text-stone-700"
         >
           <option value="">All Qualification Statuses</option>
-          <option value="COLLECTING">COLLECTING</option>
-          <option value="CALLBACK_REQUESTED">CALLBACK_REQUESTED</option>
+          <option value="NEW">NEW</option>
+          <option value="QUALIFYING">QUALIFYING</option>
           <option value="QUALIFIED">QUALIFIED</option>
-          <option value="CONVERTED_TO_ENQUIRY">CONVERTED_TO_ENQUIRY</option>
-          <option value="DISQUALIFIED">DISQUALIFIED</option>
+          <option value="CALLBACK_REQUESTED">CALLBACK_REQUESTED</option>
+          <option value="CONTACT_PENDING">CONTACT_PENDING</option>
+          <option value="CONVERTED">CONVERTED</option>
+          <option value="CLOSED">CLOSED</option>
         </select>
       </div>
 
@@ -347,11 +349,13 @@ export default function LeadsManagementPage() {
                     disabled={actionLoading}
                     className="text-xs border border-stone-300 rounded px-2 py-1 text-stone-700 bg-white"
                   >
-                    <option value="COLLECTING">COLLECTING</option>
-                    <option value="CALLBACK_REQUESTED">CALLBACK_REQUESTED</option>
+                    <option value="NEW">NEW</option>
+                    <option value="QUALIFYING">QUALIFYING</option>
                     <option value="QUALIFIED">QUALIFIED</option>
-                    <option value="CONVERTED_TO_ENQUIRY">CONVERTED_TO_ENQUIRY</option>
-                    <option value="DISQUALIFIED">DISQUALIFIED</option>
+                    <option value="CALLBACK_REQUESTED">CALLBACK_REQUESTED</option>
+                    <option value="CONTACT_PENDING">CONTACT_PENDING</option>
+                    <option value="CONVERTED">CONVERTED</option>
+                    <option value="CLOSED">CLOSED</option>
                   </select>
                 </div>
 
@@ -368,6 +372,44 @@ export default function LeadsManagementPage() {
 
               {/* Lead Details Scroll View */}
               <div className="flex-1 overflow-y-auto space-y-4 py-3 text-xs">
+                {/* Advisor Discovery Briefing Card (Phase 2 Intelligence) */}
+                {selectedLead.advisorSummary && (
+                  <div className="bg-amber-50/70 p-3 rounded-lg border border-amber-200/80 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-amber-900 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
+                        <FileCheck className="w-3.5 h-3.5 text-[#B08D57]" />
+                        Advisor Discovery Briefing
+                      </p>
+                      {selectedLead.urgency && (
+                        <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                          selectedLead.urgency === "HIGH" ? "bg-red-100 text-red-800" : "bg-amber-100 text-amber-800"
+                        }`}>
+                          {selectedLead.urgency} Urgency
+                        </span>
+                      )}
+                    </div>
+                    <pre className="text-[11px] text-stone-800 whitespace-pre-wrap font-sans bg-white/70 p-2.5 rounded border border-amber-200/60 leading-relaxed">
+                      {selectedLead.advisorSummary}
+                    </pre>
+                  </div>
+                )}
+
+                {/* Qualification Completeness Score */}
+                {selectedLead.qualificationScore !== undefined && selectedLead.qualificationScore > 0 && (
+                  <div className="p-3 bg-stone-50 rounded-lg border border-stone-200">
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="font-semibold text-[#172B46]">Qualification Completeness:</span>
+                      <span className="font-bold text-[#B08D57]">{selectedLead.qualificationScore}%</span>
+                    </div>
+                    <div className="w-full bg-stone-200 rounded-full h-1.5">
+                      <div
+                        className="bg-[#B08D57] h-1.5 rounded-full transition-all"
+                        style={{ width: `${selectedLead.qualificationScore}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {/* Contact Card */}
                 <div className="bg-[#F7F5F0] p-3 rounded-lg border border-stone-200 space-y-1.5">
                   <p className="font-semibold text-stone-700 uppercase tracking-wider text-[10px]">

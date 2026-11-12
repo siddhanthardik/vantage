@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { MessageRole } from "@prisma/client";
+import { MessageRole, LeadQualificationStatus } from "@prisma/client";
 import { chatConversationRepository } from "@/server/repositories/chatConversationRepository";
 import { chatMessageRepository } from "@/server/repositories/chatMessageRepository";
 import { chatKnowledgeRepository } from "@/server/repositories/chatKnowledgeRepository";
@@ -9,6 +9,20 @@ import { chatLeadRepository } from "@/server/repositories/chatLeadRepository";
 import { verifyAnonymousSessionToken, hashClientIp } from "@/lib/security/chatSecurity";
 import { detectLanguage, extractLeadIntent, isPureGreeting } from "@/server/ai/languageAndIntent";
 import { getAiProvider } from "@/server/ai/aiProviderFactory";
+import { classifyVisitorIntent } from "@/server/ai/intentClassification";
+import {
+  updateConversationMemory,
+  formatMemoryForPrompt,
+  ConversationMemoryContext,
+} from "@/server/ai/conversationMemory";
+import {
+  classifyVisitor,
+  matchApprovedService,
+  determineNextBestAction,
+  formatTacticalActionDirective,
+  computeLeadQualificationScore,
+  generateAdvisorBriefing,
+} from "@/server/ai/conversationIntelligence";
 
 export async function POST(request: NextRequest) {
   try {
@@ -69,14 +83,40 @@ export async function POST(request: NextRequest) {
 
     // 5. Automatic Language Recognition (NO toggle screen)
     const detectedLanguage = detectLanguage(trimmedContent);
-    if (detectedLanguage !== conversation.language) {
-      // Update detected conversation language in PostgreSQL
-      await chatConversationRepository.touchConversation(conversationId, {
-        language: detectedLanguage,
-      });
-    }
 
-    // 6. Persist User Message Turn in PostgreSQL
+    // 6. Phase 2: Intent Recognition (14 Primary Categories + Urgency + Inquirer Mode)
+    const intentResult = classifyVisitorIntent(trimmedContent, conversation.primaryIntent as any);
+
+    // 7. Phase 2: Multi-Turn Conversation Memory (Entity extraction, anaphora resolution & corrections)
+    const currentMemory = ((conversation as any).contextMemory as ConversationMemoryContext) || {
+      confirmedFacts: {},
+      unresolvedRequests: [],
+    };
+    const updatedMemory = updateConversationMemory(currentMemory, trimmedContent, detectedLanguage);
+    const memoryPrompt = formatMemoryForPrompt(updatedMemory);
+
+    // 8. Phase 2: Visitor Classification (NEW_PROSPECT, RETURNING_VISITOR, EXISTING_CLIENT, etc.)
+    const isReturning = await chatConversationRepository.hasPriorConversations(sessionAuth.sessionId, conversationId);
+    const visitorClass = classifyVisitor({
+      userMessage: trimmedContent,
+      intentResult,
+      isReturningSession: isReturning,
+      previousClass: (conversation as any).visitorClass as any,
+    });
+
+    // 9. Phase 2: Service Matching Engine (6 Vantage Wealth approved services)
+    const matchedService = matchApprovedService(intentResult.primaryIntent, updatedMemory);
+
+    // 10. Phase 2: Next Best Action Decision Engine
+    const nextAction = determineNextBestAction({
+      intentResult,
+      visitorClass,
+      memory: updatedMemory,
+      matchedService,
+    });
+    const tacticalPrompt = formatTacticalActionDirective(nextAction, updatedMemory);
+
+    // 11. Persist User Message Turn in PostgreSQL
     const userMessage = await chatMessageRepository.createMessage({
       conversationId,
       role: MessageRole.USER,
@@ -84,19 +124,7 @@ export async function POST(request: NextRequest) {
       language: detectedLanguage,
     });
 
-    // 7. Progressive Lead Intent Extraction
-    const leadIntent = extractLeadIntent(trimmedContent);
-    if (leadIntent.fullName || leadIntent.email || leadIntent.phone || leadIntent.financialObjective) {
-      await chatLeadRepository.upsertLead({
-        conversationId,
-        fullName: leadIntent.fullName,
-        email: leadIntent.email,
-        phone: leadIntent.phone,
-        financialObjective: leadIntent.financialObjective,
-      });
-    }
-
-    // 8. Knowledge Base Retrieval (skip for simple greetings to maximize efficiency)
+    // 12. Knowledge Base Retrieval (skip for simple greetings to maximize efficiency)
     const isGreeting = isPureGreeting(trimmedContent);
     const relevantChunks = isGreeting
       ? []
@@ -105,17 +133,17 @@ export async function POST(request: NextRequest) {
           limit: 4,
         });
 
-    // 9. Load Chatbot Settings
+    // 13. Load Chatbot Settings
     const settings = await chatbotSettingsRepository.getSettings();
 
-    // 10. Fetch Conversation History for multi-turn context
+    // 14. Fetch Conversation History for multi-turn context
     const previousMessages = await chatMessageRepository.getMessagesByConversationId(conversationId, 10);
     const contextTurns = previousMessages.map((m) => ({
       role: m.role === MessageRole.ASSISTANT ? ("assistant" as const) : ("user" as const),
       content: m.content,
     }));
 
-    // 11. Generate Grounded AI Response via Provider Adapter (Google Gemini)
+    // 15. Generate Grounded AI Response via Provider Adapter (Google Gemini with Phase 2 Memory & Tactical Guidance)
     const combinedSystemInstruction = [
       settings.systemInstructions,
       settings.salesInstructions ? `\nSales & Positioning Guidance:\n${settings.salesInstructions}` : "",
@@ -136,10 +164,12 @@ export async function POST(request: NextRequest) {
         slug: c.slug,
       })),
       systemInstruction: combinedSystemInstruction || undefined,
+      conversationMemoryPrompt: memoryPrompt || undefined,
+      tacticalActionPrompt: tacticalPrompt || undefined,
       language: detectedLanguage,
     });
 
-    // 12. Persist Assistant Response in PostgreSQL
+    // 16. Persist Assistant Response in PostgreSQL
     const assistantMessage = await chatMessageRepository.createMessage({
       conversationId,
       role: MessageRole.ASSISTANT,
@@ -153,14 +183,93 @@ export async function POST(request: NextRequest) {
       await chatMessageRepository.flagMessage(assistantMessage.id, aiResult.flagReason);
     }
 
-    // 13. Determine if callback CTA should be offered
+    // 17. Phase 2: Progressive Lead Qualification, Scoring & Advisor Briefing
+    const leadIntent = extractLeadIntent(trimmedContent);
+    const existingLead = await chatLeadRepository.getLeadByConversationId(conversationId);
+
+    const mergedName = leadIntent.fullName || existingLead?.fullName || null;
+    const mergedPhone = leadIntent.phone || existingLead?.phone || null;
+    const mergedEmail = leadIntent.email || existingLead?.email || null;
+    const mergedObjective = leadIntent.financialObjective || updatedMemory.financialGoal || existingLead?.financialObjective || null;
+    const mergedPortfolioSize = updatedMemory.investmentAmount || existingLead?.portfolioSize || null;
+
+    const qualificationScore = computeLeadQualificationScore({
+      fullName: mergedName,
+      phone: mergedPhone,
+      email: mergedEmail,
+      financialObjective: mergedObjective,
+      portfolioSize: mergedPortfolioSize,
+      consentGiven: existingLead?.consentGiven,
+    });
+
+    // Determine lead status
+    let leadStatus: LeadQualificationStatus = existingLead?.status || LeadQualificationStatus.NEW;
+    if (intentResult.primaryIntent === "CALLBACK_REQUEST" || leadIntent.wantsCallback) {
+      leadStatus = LeadQualificationStatus.CALLBACK_REQUESTED;
+    } else if (qualificationScore >= 60) {
+      leadStatus = LeadQualificationStatus.QUALIFIED;
+    } else if (qualificationScore > 0 || updatedMemory.investmentAmount || updatedMemory.financialGoal) {
+      leadStatus = LeadQualificationStatus.QUALIFYING;
+    }
+
+    let advisorSummary: string | undefined = undefined;
+    if (
+      intentResult.primaryIntent === "CALLBACK_REQUEST" ||
+      visitorClass === "HIGH_INTENT_PROSPECT" ||
+      qualificationScore >= 35
+    ) {
+      advisorSummary = generateAdvisorBriefing({
+        leadName: mergedName,
+        phone: mergedPhone,
+        email: mergedEmail,
+        preferredTime: updatedMemory.preferredCallbackTime || existingLead?.preferredTimeWindow,
+        preferredMethod: existingLead?.preferredMethod,
+        intent: intentResult.primaryIntent,
+        matchedService,
+        memory: updatedMemory,
+        conversationSnippet: trimmedContent,
+        reasonForHandover:
+          intentResult.primaryIntent === "CALLBACK_REQUEST"
+            ? "Visitor explicitly requested direct callback"
+            : visitorClass === "HIGH_INTENT_PROSPECT"
+            ? "High-intent prospect qualified during conversation"
+            : "Progressive lead qualification threshold met",
+      });
+    }
+
+    if (mergedName || mergedPhone || mergedEmail || mergedObjective || mergedPortfolioSize || qualificationScore > 0) {
+      await chatLeadRepository.upsertLead({
+        conversationId,
+        fullName: mergedName || undefined,
+        email: mergedEmail || undefined,
+        phone: mergedPhone || undefined,
+        financialObjective: mergedObjective || undefined,
+        portfolioSize: mergedPortfolioSize || undefined,
+        qualificationScore,
+        urgency: intentResult.urgency,
+        advisorSummary,
+        status: leadStatus,
+      });
+    }
+
+    // 18. Update Conversation Intelligence State in PostgreSQL
+    await chatConversationRepository.touchConversation(conversationId, {
+      lastUserMessageAt: new Date(),
+      language: detectedLanguage,
+      primaryIntent: intentResult.primaryIntent,
+      secondaryIntent: intentResult.secondaryIntent,
+      visitorClass,
+      matchedServiceSlug: matchedService?.slug,
+      nextAction,
+      contextMemory: updatedMemory as any,
+    });
+
+    // 19. Determine if callback CTA should be offered
     const shouldSuggestCallback =
       leadIntent.wantsCallback ||
-      trimmedContent.toLowerCase().includes("contact") ||
-      trimmedContent.toLowerCase().includes("consultation") ||
-      trimmedContent.toLowerCase().includes("pricing") ||
-      trimmedContent.toLowerCase().includes("fees") ||
-      aiResult.citations?.length === 0;
+      intentResult.primaryIntent === "CALLBACK_REQUEST" ||
+      nextAction === "REQUEST_CALLBACK" ||
+      nextAction === "OFFER_CONSULTATION";
 
     return NextResponse.json({
       success: true,

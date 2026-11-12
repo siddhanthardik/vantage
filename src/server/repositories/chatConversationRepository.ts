@@ -12,6 +12,9 @@ export interface CreateConversationInput {
 
 export interface ListConversationsOptions {
   status?: ConversationStatus;
+  primaryIntent?: string;
+  visitorClass?: string;
+  matchedServiceSlug?: string;
   limit?: number;
   offset?: number;
 }
@@ -71,11 +74,21 @@ export const chatConversationRepository = {
   },
 
   /**
-   * Atomically touch a conversation to update activity timestamps
+   * Atomically touch a conversation to update activity timestamps and intelligence fields
    */
   async touchConversation(
     id: string,
-    updates?: { lastUserMessageAt?: Date; expiresAt?: Date; language?: string }
+    updates?: {
+      lastUserMessageAt?: Date;
+      expiresAt?: Date;
+      language?: string;
+      primaryIntent?: string;
+      secondaryIntent?: string;
+      visitorClass?: string;
+      matchedServiceSlug?: string;
+      nextAction?: string;
+      contextMemory?: Record<string, any>;
+    }
   ): Promise<ChatConversation> {
     return prisma.chatConversation.update({
       where: { id },
@@ -83,8 +96,27 @@ export const chatConversationRepository = {
         ...(updates?.lastUserMessageAt ? { lastUserMessageAt: updates.lastUserMessageAt } : {}),
         ...(updates?.expiresAt ? { expiresAt: updates.expiresAt } : {}),
         ...(updates?.language ? { language: updates.language } : {}),
+        ...(updates?.primaryIntent !== undefined ? { primaryIntent: updates.primaryIntent } : {}),
+        ...(updates?.secondaryIntent !== undefined ? { secondaryIntent: updates.secondaryIntent } : {}),
+        ...(updates?.visitorClass !== undefined ? { visitorClass: updates.visitorClass } : {}),
+        ...(updates?.matchedServiceSlug !== undefined ? { matchedServiceSlug: updates.matchedServiceSlug } : {}),
+        ...(updates?.nextAction !== undefined ? { nextAction: updates.nextAction } : {}),
+        ...(updates?.contextMemory !== undefined ? { contextMemory: updates.contextMemory } : {}),
       },
     });
+  },
+
+  /**
+   * Checks if an anonymousSessionId has prior conversation history
+   */
+  async hasPriorConversations(anonymousSessionId: string, currentConversationId?: string): Promise<boolean> {
+    const count = await prisma.chatConversation.count({
+      where: {
+        anonymousSessionId,
+        ...(currentConversationId ? { id: { not: currentConversationId } } : {}),
+      },
+    });
+    return count > 0;
   },
 
   /**
@@ -136,11 +168,15 @@ export const chatConversationRepository = {
   },
 
   /**
-   * List conversations with pagination for admin inspection
+   * List conversations with pagination and filtering for admin inspection
    */
   async listConversations(options: ListConversationsOptions = {}) {
-    const { status, limit = 50, offset = 0 } = options;
-    const where = status ? { status } : {};
+    const { status, primaryIntent, visitorClass, matchedServiceSlug, limit = 50, offset = 0 } = options;
+    const where: Record<string, any> = {};
+    if (status) where.status = status;
+    if (primaryIntent) where.primaryIntent = primaryIntent;
+    if (visitorClass) where.visitorClass = visitorClass;
+    if (matchedServiceSlug) where.matchedServiceSlug = matchedServiceSlug;
 
     const [total, items] = await prisma.$transaction([
       prisma.chatConversation.count({ where }),
