@@ -474,6 +474,20 @@ model ChatLead {
   urgency             String?                 @default("MEDIUM") @db.VarChar(32)
   advisorSummary      String?                 @db.Text
 
+  // Phase 4 Sales Pipeline & Relationship Intelligence fields
+  salesStage          String?                 @default("NEW_ENQUIRY") @db.VarChar(64)
+  serviceInterest     String?                 @db.VarChar(128)
+  assignedAdvisor     String?                 @db.VarChar(120)
+  nextFollowUpAt      DateTime?
+  lastContactAt       DateTime?
+  consultationStatus  String?                 @default("NONE") @db.VarChar(64)
+  consultationAt      DateTime?
+  conversionDate      DateTime?
+  closureReason       String?                 @db.VarChar(255)
+  source              String?                 @default("CHAT_ASSISTANT") @db.VarChar(64)
+  campaign            String?                 @db.VarChar(64)
+  advisorNotes        String?                 @db.Text
+
   createdAt           DateTime                @default(now())
   updatedAt           DateTime                @updatedAt
 
@@ -483,6 +497,9 @@ model ChatLead {
   supportCases        SupportCase[]
 
   @@index([status, createdAt])
+  @@index([salesStage])
+  @@index([nextFollowUpAt])
+  @@index([assignedAdvisor])
   @@index([email])
   @@index([phone])
   @@map("chat_leads")
@@ -492,7 +509,8 @@ model ChatLeadEvent {
   id          String     @id @default(cuid())
   leadId      String
   adminUserId String?
-  eventType   String     @db.VarChar(64) // e.g. "STATUS_CHANGE", "NOTE_ADDED", "ENQUIRY_LINKED"
+  eventType   String     @db.VarChar(64) // e.g. "STATUS_CHANGE", "NOTE_ADDED", "ENQUIRY_LINKED", "STAGE_CHANGE", "FOLLOW_UP_SET"
+  note        String?    @db.Text
   metadata    Json?      @default("{}")
   createdAt   DateTime   @default(now())
 

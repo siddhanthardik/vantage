@@ -1,0 +1,127 @@
+{
+  "timestamp": "2026-11-12T02:03:47.301Z",
+  "totalTests": 20,
+  "passedCount": 20,
+  "results": [
+    {
+      "id": 1,
+      "name": "New investment enquiry",
+      "verdict": "PASSED",
+      "details": "Intent: INVESTMENT_PLANNING, Mode: EXPLORING_SERVICE"
+    },
+    {
+      "id": 2,
+      "name": "Visitor exploring mutual funds without sales pressure",
+      "verdict": "PASSED",
+      "details": "Intent: MUTUAL_FUND_ENQUIRY, Directive encourages natural education"
+    },
+    {
+      "id": 3,
+      "name": "Retirement planning enquiry",
+      "verdict": "PASSED",
+      "details": "Intent: RETIREMENT_PLANNING, Goal: Retirement, Horizon: 45 years"
+    },
+    {
+      "id": 4,
+      "name": "Insurance enquiry",
+      "verdict": "PASSED",
+      "details": "Intent: INSURANCE_ENQUIRY"
+    },
+    {
+      "id": 5,
+      "name": "Portfolio review request",
+      "verdict": "PASSED",
+      "details": "Intent: PORTFOLIO_REVIEW, Extracted amount: ₹3 Crore"
+    },
+    {
+      "id": 6,
+      "name": "Visitor requesting a consultation",
+      "verdict": "PASSED",
+      "details": "Intent: GENERAL_INFORMATION, VisitorClass: NEW_PROSPECT, NextAction: REQUEST_CALLBACK"
+    },
+    {
+      "id": 7,
+      "name": "Visitor declining contact sharing",
+      "verdict": "PASSED",
+      "details": "Next action gently falls back to: ANSWER_QUESTION"
+    },
+    {
+      "id": 8,
+      "name": "Consultation request without an available booking slot (no fake slot)",
+      "verdict": "PASSED",
+      "details": "System instructions coordinate personally via callback and forbid automated slot fabrication"
+    },
+    {
+      "id": 9,
+      "name": "Advisor briefing generation",
+      "verdict": "PASSED",
+      "details": "Briefing formatted with comprehensive Part 10 structure"
+    },
+    {
+      "id": 10,
+      "name": "Lead assignment",
+      "verdict": "PASSED",
+      "details": "Assigned advisor: Vineet Gupta"
+    },
+    {
+      "id": 11,
+      "name": "Follow-up creation",
+      "verdict": "PASSED",
+      "details": "Follow-up set to: 2026-11-13T02:03:46.936Z"
+    },
+    {
+      "id": 12,
+      "name": "Follow-up rescheduling",
+      "verdict": "PASSED",
+      "details": "Rescheduled to: 2026-11-14T02:03:47.143Z"
+    },
+    {
+      "id": 13,
+      "name": "Follow-up completion",
+      "verdict": "PASSED",
+      "details": "Follow-up cleared, last contact at: 2026-11-12T02:03:47.159Z"
+    },
+    {
+      "id": 14,
+      "name": "Lead stage transitions",
+      "verdict": "PASSED",
+      "details": "Successfully transitioned through sales pipeline stages"
+    },
+    {
+      "id": 15,
+      "name": "Lead conversion",
+      "verdict": "PASSED",
+      "details": "Stage: CONVERTED, Conversion date: 2026-11-12T02:03:47.222Z"
+    },
+    {
+      "id": 16,
+      "name": "Lead closure",
+      "verdict": "PASSED",
+      "details": "Stage: NOT_PROCEEDING, Closure Reason: Prospect decided to retain internal corporate trust"
+    },
+    {
+      "id": 17,
+      "name": "Returning visitor with existing lead",
+      "verdict": "PASSED",
+      "details": "Recognized existing lead record ID: cmwcwmakg0002vh70v3wloyy1"
+    },
+    {
+      "id": 18,
+      "name": "Existing client not incorrectly classified as a new prospect",
+      "verdict": "PASSED",
+      "details": "Visitor classification: EXISTING_CLIENT"
+    },
+    {
+      "id": 19,
+      "name": "No invented appointment confirmation",
+      "verdict": "PASSED",
+      "details": "Prompt establishes callback coordination without fabricating appointment bookings"
+    },
+    {
+      "id": 20,
+      "name": "No personalised investment advice",
+      "verdict": "PASSED",
+      "details": "Financial safety boundaries intercept stock tips: STOCK_TIP"
+    }
+  ]
+}

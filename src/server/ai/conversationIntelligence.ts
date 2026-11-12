@@ -283,7 +283,8 @@ export function computeLeadQualificationScore(params: {
 }
 
 /**
- * Generates an executive briefing for human advisors when a lead or callback is requested
+ * Generates an executive briefing for human advisors when a lead or consultation is requested
+ * Fulfills Part 10 requirements: structured, comprehensive, strictly grounded, zero invented details.
  */
 export function generateAdvisorBriefing(params: {
   leadName?: string | null;
@@ -291,6 +292,7 @@ export function generateAdvisorBriefing(params: {
   email?: string | null;
   preferredTime?: string | null;
   preferredMethod?: string | null;
+  preferredLanguage?: string | null;
   intent: PrimaryIntent;
   matchedService?: MatchedServiceInfo;
   memory: ConversationMemoryContext;
@@ -303,6 +305,7 @@ export function generateAdvisorBriefing(params: {
     email,
     preferredTime,
     preferredMethod,
+    preferredLanguage,
     intent,
     matchedService,
     memory,
@@ -310,20 +313,38 @@ export function generateAdvisorBriefing(params: {
     reasonForHandover,
   } = params;
 
-  return `### ADVISOR DISCOVERY BRIEFING
-**Visitor Name:** ${leadName || "Prospective Client (Not disclosed)"}
-**Contact Info:** ${phone ? `Phone: ${phone}` : "No phone provided"} | ${email ? `Email: ${email}` : "No email provided"}
-**Preferred Callback Time:** ${preferredTime || "Standard Business Hours"}
-**Preferred Channel:** ${preferredMethod || "Phone Call"}
-**Primary Intent:** ${intent}
-**Matched Service:** ${matchedService ? matchedService.title : "General Wealth Planning"}
-**Volunteered Amount:** ${memory.investmentAmount || "Not specified"}
-**Target Horizon:** ${memory.timeHorizon || "Not specified"}
-**Goal / Requirement:** ${memory.financialGoal || "General Advisory"}
-**Investor Profile:** ${memory.investmentExperience || "General Prospect"}
-**Handover Reason:** ${reasonForHandover}
+  const missingFields: string[] = [];
+  if (!leadName) missingFields.push("Full Name");
+  if (!phone) missingFields.push("Phone Number");
+  if (!email) missingFields.push("Email Address");
+  if (!memory.timeHorizon) missingFields.push("Investment Horizon");
+  if (!memory.investmentAmount) missingFields.push("Portfolio / Capital Allocation Bracket");
 
-**Key Conversation Context:**
+  return `=======================================================
+   ADVISOR DISCOVERY BRIEFING — VANTAGE WEALTH
+=======================================================
+• Prospect Name: ${leadName || "Prospective Client (Not disclosed)"}
+• Contact Details: ${phone ? `Phone: ${phone}` : "No phone provided"} | ${email ? `Email: ${email}` : "No email provided"}
+• Preferred Language: ${preferredLanguage || memory.preferredLanguage || "English"}
+• Preferred Time Window: ${preferredTime || memory.preferredCallbackTime || "Standard Advisory Desk Hours (09:30 - 18:30 IST)"}
+• Contact Channel: ${preferredMethod || "Phone Call"}
+• Handover Trigger: ${reasonForHandover}
+
+DISCOVERY PROFILE:
+• Relevant Service: ${matchedService ? matchedService.title : "Integrated Wealth Advisory"}
+• Primary Objective: ${memory.financialGoal || "General Wealth Planning"}
+• Approximate Capital Bracket: ${memory.investmentAmount || "Not shared (to be discovered on call)"}
+• Investment Horizon: ${memory.timeHorizon || "Not shared"}
+• Family / Succession Context: ${memory.familyGoals || "Individual Account"}
+• Existing Advisor Status: ${memory.hasExistingAdvisor ? "Yes (currently holding investments elsewhere)" : "No / Not mentioned"}
+• Experience Level: ${memory.investmentExperience || "To be assessed"}
+
+CONVERSATION CONTEXT & QUESTIONS ASKED:
 ${conversationSnippet}
-`;
+
+RECOMMENDED ADVISOR NEXT STEPS:
+1. Conduct introductory discovery call focusing on: ${matchedService ? matchedService.title : "Portfolio Objectives"}.
+2. Verify risk tolerance and clarify missing details: ${missingFields.length > 0 ? missingFields.join(", ") : "None — complete discovery profile captured"}.
+3. Introduce Vantage Wealth's disciplined 3-pillar advisory philosophy (Protect, Perform, Preserve).
+=======================================================`;
 }

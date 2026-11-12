@@ -21,13 +21,28 @@ import {
 
 export default function LeadsManagementPage() {
   const [leads, setLeads] = useState<any[]>([]);
+  const [pipelineMetrics, setPipelineMetrics] = useState<any>({
+    total: 0,
+    newEnquiries: 0,
+    qualification: 0,
+    consultationRequested: 0,
+    consultationScheduled: 0,
+    converted: 0,
+    closed: 0,
+    pendingFollowUps: 0,
+  });
   const [selectedLead, setSelectedLead] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [salesStageFilter, setSalesStageFilter] = useState("");
+  const [hasFollowUpFilter, setHasFollowUpFilter] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [adminNote, setAdminNote] = useState("");
+  const [assignedAdvisorInput, setAssignedAdvisorInput] = useState("");
+  const [followUpDateInput, setFollowUpDateInput] = useState("");
+  const [closureReasonInput, setClosureReasonInput] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [notification, setNotification] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -37,12 +52,15 @@ export default function LeadsManagementPage() {
       const params = new URLSearchParams();
       if (searchQuery) params.set("q", searchQuery);
       if (statusFilter) params.set("status", statusFilter);
+      if (salesStageFilter) params.set("salesStage", salesStageFilter);
+      if (hasFollowUpFilter) params.set("hasPendingFollowUp", "true");
       params.set("page", page.toString());
 
       const res = await fetch(`/api/admin/chat/leads?${params.toString()}`);
       const data = await res.json();
       if (data.success) {
         setLeads(data.leads);
+        if (data.pipelineMetrics) setPipelineMetrics(data.pipelineMetrics);
         setTotalPages(data.pagination.totalPages || 1);
       }
     } catch (e) {
@@ -58,56 +76,74 @@ export default function LeadsManagementPage() {
       const data = await res.json();
       if (data.success) {
         setSelectedLead(data.lead);
+        setAssignedAdvisorInput(data.lead.assignedAdvisor || "");
       }
     } catch (e) {
       console.error("Error opening lead:", e);
     }
   }
 
-  async function updateStatus(newStatus: string) {
+  async function handlePatchLead(payload: any) {
     if (!selectedLead) return;
     setActionLoading(true);
     try {
       const res = await fetch(`/api/admin/chat/leads/${selectedLead.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (data.success) {
         setSelectedLead(data.lead);
         fetchLeads();
-        setNotification({ type: "success", text: `Status updated to ${newStatus}` });
+        setNotification({ type: "success", text: "Lead updated successfully." });
+      } else {
+        setNotification({ type: "error", text: data.error || "Update failed." });
       }
-    } catch (e) {
-      setNotification({ type: "error", text: "Failed to update status." });
+    } catch (e: any) {
+      setNotification({ type: "error", text: e.message || "Failed to update lead." });
     } finally {
       setActionLoading(false);
     }
   }
 
+  async function updateStatus(newStatus: string) {
+    await handlePatchLead({ status: newStatus });
+  }
+
+  async function updateStage(newStage: string) {
+    await handlePatchLead({ salesStage: newStage });
+  }
+
+  async function handleAssignAdvisor() {
+    if (!assignedAdvisorInput.trim()) return;
+    await handlePatchLead({ assignedAdvisor: assignedAdvisorInput.trim() });
+  }
+
+  async function handleSetFollowUp() {
+    if (!followUpDateInput) return;
+    await handlePatchLead({ followUpDate: followUpDateInput });
+    setFollowUpDateInput("");
+  }
+
+  async function handleCompleteFollowUp() {
+    await handlePatchLead({ action: "COMPLETE_FOLLOW_UP" });
+  }
+
+  async function handleCloseLead() {
+    if (!closureReasonInput.trim()) {
+      alert("Please provide a reason for marking the lead as not proceeding.");
+      return;
+    }
+    await handlePatchLead({ reason: closureReasonInput.trim() });
+    setClosureReasonInput("");
+  }
+
   async function handleAddNote(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedLead || !adminNote.trim()) return;
-    setActionLoading(true);
-
-    try {
-      const res = await fetch(`/api/admin/chat/leads/${selectedLead.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ note: adminNote.trim() }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setSelectedLead(data.lead);
-        setAdminNote("");
-        setNotification({ type: "success", text: "Internal note saved to timeline." });
-      }
-    } catch (e) {
-      setNotification({ type: "error", text: "Failed to save note." });
-    } finally {
-      setActionLoading(false);
-    }
+    await handlePatchLead({ note: adminNote.trim() });
+    setAdminNote("");
   }
 
   async function handleConvertToEnquiry() {
@@ -145,17 +181,17 @@ export default function LeadsManagementPage() {
 
   useEffect(() => {
     fetchLeads();
-  }, [page, statusFilter]);
+  }, [page, statusFilter, salesStageFilter, hasFollowUpFilter]);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-stone-200">
         <div>
           <h1 className="text-[24px] sm:text-[28px] lg:text-[30px] font-semibold text-[#172B46] tracking-tight leading-tight">
-            Advisory Leads &amp; Callbacks
+            Sales Pipeline &amp; Relationship Management
           </h1>
           <p className="text-[13px] text-stone-600 mt-1">
-            Qualify, follow up, and manage prospective clients captured through the Vantage Wealth Assistant.
+            Qualify, track pipeline stages, schedule advisor follow-ups, and convert prospective clients captured via Soumya.
           </p>
         </div>
 
@@ -166,6 +202,34 @@ export default function LeadsManagementPage() {
           <RefreshCw className={`w-3.5 h-3.5 text-[#B08D57] ${isLoading ? "animate-spin" : ""}`} />
           Refresh
         </button>
+      </div>
+
+      {/* Sales Pipeline Metrics Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+        <div className="bg-white border border-stone-200 p-3 rounded-lg shadow-2xs">
+          <p className="text-[10px] uppercase font-bold text-stone-500">Total Enquiries</p>
+          <p className="text-xl font-bold text-[#172B46] mt-0.5">{pipelineMetrics.total || 0}</p>
+        </div>
+        <div className="bg-white border border-stone-200 p-3 rounded-lg shadow-2xs">
+          <p className="text-[10px] uppercase font-bold text-amber-700">Qualifying</p>
+          <p className="text-xl font-bold text-amber-900 mt-0.5">{pipelineMetrics.qualification || 0}</p>
+        </div>
+        <div className="bg-white border border-blue-200 p-3 rounded-lg shadow-2xs bg-blue-50/20">
+          <p className="text-[10px] uppercase font-bold text-blue-700">Consultation Reqs</p>
+          <p className="text-xl font-bold text-blue-900 mt-0.5">{pipelineMetrics.consultationRequested || 0}</p>
+        </div>
+        <div className="bg-white border border-indigo-200 p-3 rounded-lg shadow-2xs bg-indigo-50/20">
+          <p className="text-[10px] uppercase font-bold text-indigo-700">Scheduled</p>
+          <p className="text-xl font-bold text-indigo-900 mt-0.5">{pipelineMetrics.consultationScheduled || 0}</p>
+        </div>
+        <div className="bg-white border border-emerald-200 p-3 rounded-lg shadow-2xs bg-emerald-50/20">
+          <p className="text-[10px] uppercase font-bold text-emerald-700">Converted Clients</p>
+          <p className="text-xl font-bold text-emerald-900 mt-0.5">{pipelineMetrics.converted || 0}</p>
+        </div>
+        <div className="bg-white border border-rose-200 p-3 rounded-lg shadow-2xs bg-rose-50/20">
+          <p className="text-[10px] uppercase font-bold text-rose-700">Pending Follow-Ups</p>
+          <p className="text-xl font-bold text-rose-900 mt-0.5">{pipelineMetrics.pendingFollowUps || 0}</p>
+        </div>
       </div>
 
       {notification && (
@@ -198,6 +262,26 @@ export default function LeadsManagementPage() {
         </div>
 
         <select
+          value={salesStageFilter}
+          onChange={(e) => {
+            setSalesStageFilter(e.target.value);
+            setPage(1);
+          }}
+          className="text-xs bg-white px-3 py-2 rounded-lg border border-stone-300 text-stone-700"
+        >
+          <option value="">All Sales Stages</option>
+          <option value="NEW_ENQUIRY">NEW_ENQUIRY</option>
+          <option value="INITIAL_DISCOVERY">INITIAL_DISCOVERY</option>
+          <option value="QUALIFICATION">QUALIFICATION</option>
+          <option value="CONSULTATION_REQUESTED">CONSULTATION_REQUESTED</option>
+          <option value="CONSULTATION_SCHEDULED">CONSULTATION_SCHEDULED</option>
+          <option value="PROPOSAL_OR_NEXT_STEPS">PROPOSAL_OR_NEXT_STEPS</option>
+          <option value="CONVERTED">CONVERTED</option>
+          <option value="NOT_PROCEEDING">NOT_PROCEEDING</option>
+          <option value="NURTURE">NURTURE</option>
+        </select>
+
+        <select
           value={statusFilter}
           onChange={(e) => {
             setStatusFilter(e.target.value);
@@ -225,16 +309,17 @@ export default function LeadsManagementPage() {
                 <tr>
                   <th className="py-2.5 px-4">Visitor / Name</th>
                   <th className="py-2.5 px-4">Contact</th>
-                  <th className="py-2.5 px-4">Objective</th>
-                  <th className="py-2.5 px-4">Status</th>
-                  <th className="py-2.5 px-4">Date</th>
+                  <th className="py-2.5 px-4">Stage</th>
+                  <th className="py-2.5 px-4">Score</th>
+                  <th className="py-2.5 px-4">Advisor</th>
+                  <th className="py-2.5 px-4">Next Follow-Up</th>
                   <th className="py-2.5 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100 text-[#172B46]">
                 {leads.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-stone-500 text-xs">
+                    <td colSpan={7} className="py-8 text-center text-stone-500 text-xs">
                       No advisory leads found matching criteria.
                     </td>
                   </tr>
@@ -260,29 +345,38 @@ export default function LeadsManagementPage() {
                         <td className="py-3 px-4 text-stone-600">
                           {l.phone || l.email || <span className="text-stone-400">—</span>}
                         </td>
-                        <td className="py-3 px-4 text-stone-700">
-                          {l.financialObjective || "General Wealth"}
-                        </td>
                         <td className="py-3 px-4">
-                          <span
-                            className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${
-                              l.status === "CALLBACK_REQUESTED"
-                                ? "bg-amber-50 text-amber-800 border border-amber-200"
-                                : l.status === "QUALIFIED"
-                                ? "bg-blue-50 text-blue-700"
-                                : l.status === "CONVERTED_TO_ENQUIRY"
-                                ? "bg-emerald-50 text-emerald-700"
-                                : "bg-stone-100 text-stone-600"
-                            }`}
-                          >
-                            {l.status}
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-[#172B46]">
+                            {l.salesStage || "NEW_ENQUIRY"}
                           </span>
                         </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-12 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-[#B08D57]"
+                                style={{ width: `${l.qualificationScore || 0}%` }}
+                              />
+                            </div>
+                            <span className="text-[10px] font-mono text-stone-500">
+                              {l.qualificationScore || 0}%
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 text-stone-600">
+                          {l.assignedAdvisor || <span className="text-stone-400 italic">Unassigned</span>}
+                        </td>
                         <td className="py-3 px-4 text-stone-500 text-[11px]">
-                          {new Date(l.createdAt).toLocaleDateString([], {
-                            month: "short",
-                            day: "numeric",
-                          })}
+                          {l.nextFollowUpAt ? (
+                            <span className="text-rose-700 font-semibold">
+                              {new Date(l.nextFollowUpAt).toLocaleDateString([], {
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </span>
+                          ) : (
+                            <span className="text-stone-400">—</span>
+                          )}
                         </td>
                         <td className="py-3 px-4 text-right">
                           <ChevronRight className="w-4 h-4 text-stone-400 inline" />
@@ -340,38 +434,159 @@ export default function LeadsManagementPage() {
               </div>
 
               {/* Status Action Bar */}
-              <div className="py-2.5 flex items-center justify-between gap-2 border-b border-stone-100 shrink-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-medium text-stone-600">Qualification:</span>
-                  <select
-                    value={selectedLead.status}
-                    onChange={(e) => updateStatus(e.target.value)}
-                    disabled={actionLoading}
-                    className="text-xs border border-stone-300 rounded px-2 py-1 text-stone-700 bg-white"
-                  >
-                    <option value="NEW">NEW</option>
-                    <option value="QUALIFYING">QUALIFYING</option>
-                    <option value="QUALIFIED">QUALIFIED</option>
-                    <option value="CALLBACK_REQUESTED">CALLBACK_REQUESTED</option>
-                    <option value="CONTACT_PENDING">CONTACT_PENDING</option>
-                    <option value="CONVERTED">CONVERTED</option>
-                    <option value="CLOSED">CLOSED</option>
-                  </select>
-                </div>
+              <div className="py-2.5 space-y-2 border-b border-stone-100 shrink-0">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] font-semibold text-stone-600">Sales Stage:</span>
+                    <select
+                      value={selectedLead.salesStage || "NEW_ENQUIRY"}
+                      onChange={(e) => updateStage(e.target.value)}
+                      disabled={actionLoading}
+                      className="text-xs font-semibold border border-stone-300 rounded px-2 py-1 text-[#172B46] bg-amber-50/50"
+                    >
+                      <option value="NEW_ENQUIRY">NEW_ENQUIRY</option>
+                      <option value="INITIAL_DISCOVERY">INITIAL_DISCOVERY</option>
+                      <option value="QUALIFICATION">QUALIFICATION</option>
+                      <option value="CONSULTATION_OFFERED">CONSULTATION_OFFERED</option>
+                      <option value="CONSULTATION_REQUESTED">CONSULTATION_REQUESTED</option>
+                      <option value="CONSULTATION_SCHEDULED">CONSULTATION_SCHEDULED</option>
+                      <option value="CONSULTATION_COMPLETED">CONSULTATION_COMPLETED</option>
+                      <option value="PROPOSAL_OR_NEXT_STEPS">PROPOSAL_OR_NEXT_STEPS</option>
+                      <option value="CONVERTED">CONVERTED</option>
+                      <option value="NOT_PROCEEDING">NOT_PROCEEDING</option>
+                      <option value="NURTURE">NURTURE</option>
+                    </select>
+                  </div>
 
-                {!selectedLead.enquiryId && (
-                  <button
-                    onClick={handleConvertToEnquiry}
-                    disabled={actionLoading}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-[#172B46] hover:bg-[#253f63] text-white text-xs font-medium rounded transition-colors disabled:opacity-50"
-                  >
-                    <FileCheck className="w-3 h-3 text-[#B08D57]" /> Convert to Enquiry
-                  </button>
-                )}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] font-medium text-stone-500">Qual:</span>
+                    <select
+                      value={selectedLead.status}
+                      onChange={(e) => updateStatus(e.target.value)}
+                      disabled={actionLoading}
+                      className="text-xs border border-stone-300 rounded px-2 py-1 text-stone-700 bg-white"
+                    >
+                      <option value="NEW">NEW</option>
+                      <option value="QUALIFYING">QUALIFYING</option>
+                      <option value="QUALIFIED">QUALIFIED</option>
+                      <option value="CALLBACK_REQUESTED">CALLBACK_REQUESTED</option>
+                      <option value="CONTACT_PENDING">CONTACT_PENDING</option>
+                      <option value="CONVERTED">CONVERTED</option>
+                      <option value="CLOSED">CLOSED</option>
+                    </select>
+                  </div>
+
+                  {!selectedLead.enquiryId && (
+                    <button
+                      onClick={handleConvertToEnquiry}
+                      disabled={actionLoading}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#172B46] hover:bg-[#253f63] text-white text-[11px] font-medium rounded transition-colors disabled:opacity-50"
+                    >
+                      <FileCheck className="w-3 h-3 text-[#B08D57]" /> Convert to Enquiry
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Lead Details Scroll View */}
               <div className="flex-1 overflow-y-auto space-y-4 py-3 text-xs">
+                {/* Advisor Assignment & Follow-Up Management (Phase 4) */}
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-[#172B46] uppercase tracking-wider text-[10px] flex items-center gap-1.5">
+                      <UserCheck className="w-3.5 h-3.5 text-[#B08D57]" />
+                      Advisor Assignment &amp; Follow-Up Schedule
+                    </p>
+                    {selectedLead.consultationStatus && (
+                      <span className="text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-blue-100 text-blue-800">
+                        Consultation: {selectedLead.consultationStatus}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Advisor Assignment Input */}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Assign Lead to Advisor (e.g. Vineet Gupta)..."
+                      value={assignedAdvisorInput}
+                      onChange={(e) => setAssignedAdvisorInput(e.target.value)}
+                      className="flex-1 text-xs px-2.5 py-1.5 bg-white border border-stone-300 rounded focus:outline-none focus:border-[#B08D57]"
+                    />
+                    <button
+                      onClick={handleAssignAdvisor}
+                      disabled={actionLoading || !assignedAdvisorInput.trim()}
+                      className="px-3 py-1.5 bg-[#172B46] hover:bg-[#243f65] text-white rounded text-xs font-medium disabled:opacity-40"
+                    >
+                      Assign
+                    </button>
+                  </div>
+
+                  {/* Follow-up Controls */}
+                  <div className="pt-2 border-t border-slate-200/80 flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-stone-600 font-medium">Scheduled Follow-Up:</span>
+                      {selectedLead.nextFollowUpAt ? (
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+                            {new Date(selectedLead.nextFollowUpAt).toLocaleString()}
+                          </span>
+                          <button
+                            onClick={handleCompleteFollowUp}
+                            disabled={actionLoading}
+                            className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-semibold"
+                          >
+                            Mark Completed
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-stone-400 italic text-[11px]">No pending follow-up</span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="datetime-local"
+                        value={followUpDateInput}
+                        onChange={(e) => setFollowUpDateInput(e.target.value)}
+                        className="flex-1 text-xs px-2 py-1 bg-white border border-stone-300 rounded focus:outline-none focus:border-[#B08D57]"
+                      />
+                      <button
+                        onClick={handleSetFollowUp}
+                        disabled={actionLoading || !followUpDateInput}
+                        className="px-3 py-1 bg-amber-700 hover:bg-amber-800 text-white rounded text-xs font-medium disabled:opacity-40"
+                      >
+                        Set Follow-Up
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Close / Not Proceeding Option */}
+                  {selectedLead.salesStage !== "NOT_PROCEEDING" && selectedLead.salesStage !== "CONVERTED" && (
+                    <div className="pt-2 border-t border-slate-200/80 flex items-center gap-2">
+                      <input
+                        type="text"
+                        placeholder="Reason if closing / not proceeding..."
+                        value={closureReasonInput}
+                        onChange={(e) => setClosureReasonInput(e.target.value)}
+                        className="flex-1 text-xs px-2 py-1 bg-white border border-stone-300 rounded focus:outline-none focus:border-red-500"
+                      />
+                      <button
+                        onClick={handleCloseLead}
+                        disabled={actionLoading || !closureReasonInput.trim()}
+                        className="px-2.5 py-1 bg-rose-700 hover:bg-rose-800 text-white rounded text-xs font-medium disabled:opacity-40"
+                      >
+                        Close Lead
+                      </button>
+                    </div>
+                  )}
+
+                  {selectedLead.closureReason && (
+                    <div className="p-2 bg-red-50 border border-red-200 rounded text-[11px] text-red-800">
+                      <span className="font-bold">Closure Reason:</span> {selectedLead.closureReason}
+                    </div>
+                  )}
+                </div>
                 {/* Advisor Discovery Briefing Card (Phase 2 Intelligence) */}
                 {selectedLead.advisorSummary && (
                   <div className="bg-amber-50/70 p-3 rounded-lg border border-amber-200/80 space-y-2">
@@ -432,6 +647,20 @@ export default function LeadsManagementPage() {
                       <span className="text-stone-500 block">Time Window:</span>
                       <span className="font-medium text-[#172B46]">{selectedLead.preferredTimeWindow || "Standard Hours"}</span>
                     </div>
+                    {selectedLead.serviceInterest && (
+                      <div className="col-span-2">
+                        <span className="text-stone-500 block">Service Interest:</span>
+                        <span className="font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 inline-block mt-0.5">
+                          {selectedLead.serviceInterest}
+                        </span>
+                      </div>
+                    )}
+                    {(selectedLead.source || selectedLead.campaign) && (
+                      <div className="col-span-2 flex items-center gap-3 text-stone-500 text-[10px] pt-1">
+                        {selectedLead.source && <span>Source: <strong className="text-stone-700">{selectedLead.source}</strong></span>}
+                        {selectedLead.campaign && <span>Campaign: <strong className="text-stone-700">{selectedLead.campaign}</strong></span>}
+                      </div>
+                    )}
                   </div>
 
                   {selectedLead.enquiry && (

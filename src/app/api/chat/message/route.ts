@@ -277,6 +277,30 @@ export async function POST(request: NextRequest) {
       leadStatus = LeadQualificationStatus.QUALIFYING;
     }
 
+    // Phase 4: Sales Pipeline Stage & Consultation Status Mapping
+    let salesStage = existingLead?.salesStage || "NEW_ENQUIRY";
+    let consultationStatus = existingLead?.consultationStatus || "NONE";
+
+    if (
+      intentResult.primaryIntent === "CALLBACK_REQUEST" ||
+      leadIntent.wantsCallback ||
+      /consultation|speak with an advisor|arrange a call|schedule/i.test(trimmedContent)
+    ) {
+      salesStage = "CONSULTATION_REQUESTED";
+      consultationStatus = "REQUESTED";
+    } else if (
+      qualificationScore >= 50 ||
+      (updatedMemory.investmentAmount && updatedMemory.timeHorizon)
+    ) {
+      if (salesStage === "NEW_ENQUIRY" || salesStage === "INITIAL_DISCOVERY") {
+        salesStage = "QUALIFICATION";
+      }
+    } else if (updatedMemory.investmentAmount || updatedMemory.financialGoal) {
+      if (salesStage === "NEW_ENQUIRY") {
+        salesStage = "INITIAL_DISCOVERY";
+      }
+    }
+
     let advisorSummary: string | undefined = undefined;
     if (
       intentResult.primaryIntent === "CALLBACK_REQUEST" ||
@@ -313,6 +337,9 @@ export async function POST(request: NextRequest) {
         qualificationScore,
         urgency: intentResult.urgency,
         advisorSummary,
+        salesStage,
+        serviceInterest: matchedService?.title || undefined,
+        consultationStatus,
         status: leadStatus,
       });
     }

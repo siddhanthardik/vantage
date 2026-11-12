@@ -117,6 +117,9 @@ export async function POST(request: NextRequest) {
       consentGiven: true,
       consentTimestamp: new Date(),
       consentIpHash: ipHash,
+      salesStage: "CONSULTATION_REQUESTED",
+      consultationStatus: "REQUESTED",
+      serviceInterest: (conversation as any).matchedServiceSlug || "General Wealth Advisory",
       status: LeadQualificationStatus.CALLBACK_REQUESTED,
     });
 

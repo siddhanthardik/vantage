@@ -55,7 +55,15 @@ export async function PATCH(
 
   try {
     const body = await request.json();
-    const { status, note } = body;
+    const {
+      status,
+      salesStage,
+      assignedAdvisor,
+      followUpDate,
+      action,
+      reason,
+      note,
+    } = body;
 
     const lead = await prisma.chatLead.findUnique({ where: { id } });
     if (!lead) {
@@ -67,7 +75,17 @@ export async function PATCH(
       select: { id: true },
     });
 
-    if (status && Object.values(LeadQualificationStatus).includes(status)) {
+    if (salesStage) {
+      await chatLeadRepository.updateSalesStage(id, salesStage, adminUser?.id, note);
+    } else if (assignedAdvisor) {
+      await chatLeadRepository.assignAdvisor(id, assignedAdvisor, adminUser?.id, note);
+    } else if (followUpDate) {
+      await chatLeadRepository.setFollowUp(id, new Date(followUpDate), adminUser?.id, note);
+    } else if (action === "COMPLETE_FOLLOW_UP") {
+      await chatLeadRepository.completeFollowUp(id, adminUser?.id, note);
+    } else if (reason) {
+      await chatLeadRepository.closeLead(id, reason, adminUser?.id);
+    } else if (status && Object.values(LeadQualificationStatus).includes(status)) {
       await chatLeadRepository.updateQualification(
         id,
         status,
@@ -75,12 +93,7 @@ export async function PATCH(
         note || `Admin status change to ${status}`
       );
     } else if (note) {
-      await chatLeadEventRepository.recordEvent({
-        leadId: id,
-        adminUserId: adminUser?.id,
-        eventType: "ADMIN_NOTE_ADDED",
-        metadata: { note },
-      });
+      await chatLeadRepository.addAdvisorNote(id, note, adminUser?.id);
     }
 
     const updatedLead = await chatLeadRepository.getLeadById(id);

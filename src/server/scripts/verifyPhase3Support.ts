@@ -250,8 +250,8 @@ async function runPhase3Evaluation() {
       const internalView = await supportCaseRepository.findCaseByNumber(createdCaseNumber, true);
 
       const isHiddenFromPublic = !publicView?.events.some((e) => e.id === noteEvent.id);
-      const isVisibleInternally = internalView?.events.some((e) => e.id === noteEvent.id);
-      const passed = noteEvent.isInternal === true && isHiddenFromPublic && isVisibleInternally;
+      const isVisibleInternally = Boolean(internalView?.events.some((e) => e.id === noteEvent.id));
+      const passed = Boolean(noteEvent.isInternal === true && isHiddenFromPublic && isVisibleInternally);
       record(
         12,
         "Internal note privacy",

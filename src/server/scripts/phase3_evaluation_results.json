@@ -21,19 +21,19 @@
     "id": 4,
     "name": "Visitor submits a complaint",
     "verdict": "PASSED",
-    "details": "Generated case number: VW-CASE-261112-1003, status: OPEN"
+    "details": "Generated case number: VW-CASE-261112-1005, status: OPEN"
   },
   {
     "id": 5,
     "name": "Duplicate support case prevention",
     "verdict": "PASSED",
-    "details": "Found existing open case: VW-CASE-261112-1003, prevented duplicate creation"
+    "details": "Found existing open case: VW-CASE-261112-1005, prevented duplicate creation"
   },
   {
     "id": 6,
     "name": "Urgent complaint escalation",
     "verdict": "PASSED",
-    "details": "Urgent case: VW-CASE-261112-1004, status: ESCALATED, escalation logged: true"
+    "details": "Urgent case: VW-CASE-261112-1006, status: ESCALATED, escalation logged: true"
   },
   {
     "id": 7,
@@ -57,7 +57,7 @@
     "id": 10,
     "name": "Case resolution",
     "verdict": "PASSED",
-    "details": "Status: RESOLVED, resolved at: 2026-11-12T01:34:40.873Z"
+    "details": "Status: RESOLVED, resolved at: 2026-11-12T02:04:16.380Z"
   },
   {
     "id": 11,

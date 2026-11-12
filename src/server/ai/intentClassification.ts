@@ -84,7 +84,7 @@ const INTENT_PATTERNS: Array<{
     intent: "PORTFOLIO_REVIEW",
     priority: 85,
     keywords: [
-      /\b(review.*portfolio|portfolio review|review my investments|investments with another advisor|second opinion|overlap|check my mutual funds|existing investments)\b/i,
+      /\b(review.*portfolio|portfolio review|review my investments|investments with another advisor|second opinion|overlap|check my mutual funds|existing investments|comprehensive review|portfolio.*review|review.*holdings|review.*brokers)\b/i,
       /\b(portfolio.*check|investments.*review)\b/i,
     ],
   },
