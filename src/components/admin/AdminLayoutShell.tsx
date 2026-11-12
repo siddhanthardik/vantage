@@ -27,6 +27,7 @@ import {
   Cpu,
   Palette,
   BarChart3,
+  LifeBuoy,
 } from "lucide-react";
 
 interface AdminSessionInfo {
@@ -62,6 +63,7 @@ const navigationSections: NavSection[] = [
       { name: "Team & Founder", href: "/admin/team", icon: Users },
       { name: "Media Library", href: "/admin/media", icon: ImageIcon },
       { name: "Enquiries", href: "/admin/enquiries", icon: Inbox },
+      { name: "Support Desk", href: "/admin/support", icon: LifeBuoy },
       { name: "Audit Logs", href: "/admin/audit-logs", icon: ShieldAlert },
     ],
   },
@@ -110,6 +112,9 @@ function getBreadcrumb(pathname: string): { section: string; title: string } {
   }
   if (pathname.startsWith("/admin/enquiries")) {
     return { section: "Workspace", title: "Client Enquiries & Consultations" };
+  }
+  if (pathname.startsWith("/admin/support")) {
+    return { section: "Workspace", title: "Support Case Management" };
   }
   if (pathname.startsWith("/admin/audit-logs")) {
     return { section: "Workspace", title: "Audit & Security Logs" };

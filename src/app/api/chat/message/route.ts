@@ -6,6 +6,7 @@ import { chatKnowledgeRepository } from "@/server/repositories/chatKnowledgeRepo
 import { chatbotSettingsRepository } from "@/server/repositories/chatbotSettingsRepository";
 import { chatRateLimitRepository } from "@/server/repositories/chatRateLimitRepository";
 import { chatLeadRepository } from "@/server/repositories/chatLeadRepository";
+import { supportCaseRepository } from "@/server/repositories/supportCaseRepository";
 import { verifyAnonymousSessionToken, hashClientIp } from "@/lib/security/chatSecurity";
 import { detectLanguage, extractLeadIntent, isPureGreeting } from "@/server/ai/languageAndIntent";
 import { getAiProvider } from "@/server/ai/aiProviderFactory";
@@ -114,6 +115,70 @@ export async function POST(request: NextRequest) {
       memory: updatedMemory,
       matchedService,
     });
+
+    // Phase 3: Support Case Creation, Duplicate Prevention & Status Check Handling
+    const caseNumMatch = trimmedContent.match(/\b(VW-CASE-[A-Z0-9-]+)\b/i);
+    if (caseNumMatch) {
+      const queriedCase = await supportCaseRepository.findCaseByNumber(caseNumMatch[1]);
+      if (queriedCase) {
+        const clientPhone = updatedMemory.contactPhone || "";
+        const clientEmail = (updatedMemory.contactEmail || "").toLowerCase();
+        const casePhone = queriedCase.contactPhone || "";
+        const caseEmail = (queriedCase.contactEmail || "").toLowerCase();
+
+        const isVerified =
+          (clientPhone && casePhone && clientPhone.slice(-8) === casePhone.slice(-8)) ||
+          (clientEmail && caseEmail && clientEmail === caseEmail);
+
+        if (isVerified) {
+          updatedMemory.confirmedFacts["Support Case Verified Status"] =
+            `Case ${queriedCase.caseNumber} is currently ${queriedCase.status}. Category: ${queriedCase.category.replace(/_/g, " ")}.`;
+        } else {
+          updatedMemory.confirmedFacts["Support Case Verification Notice"] =
+            `Case ${queriedCase.caseNumber} requires registered phone or email verification before status can be disclosed.`;
+        }
+      }
+    } else if (
+      intentResult.primaryIntent === "COMPLAINT_OR_ISSUE" ||
+      nextAction === "ROUTE_COMPLAINT" ||
+      (intentResult.primaryIntent === "EXISTING_CLIENT_SUPPORT" &&
+        /problem|issue|delay|not received|unresolved|complaint|waiting/i.test(trimmedContent))
+    ) {
+      const custName = updatedMemory.customerName || updatedMemory.confirmedFacts["Visitor Name"];
+      const custContact = updatedMemory.contactPhone || updatedMemory.contactEmail;
+
+      if (custName && custContact) {
+        const openCase = await supportCaseRepository.findOpenCaseByContactOrConversation({
+          conversationId,
+          contactPhone: updatedMemory.contactPhone,
+          contactEmail: updatedMemory.contactEmail,
+        });
+
+        if (!openCase) {
+          const isUrgent =
+            intentResult.urgency === "HIGH" || /urgent|loss|delay|fraud|disappointed/i.test(trimmedContent);
+          const newCase = await supportCaseRepository.createCase({
+            conversationId,
+            customerName: custName,
+            contactPhone: updatedMemory.contactPhone,
+            contactEmail: updatedMemory.contactEmail,
+            category:
+              intentResult.primaryIntent === "COMPLAINT_OR_ISSUE"
+                ? "SERVICE_COMPLAINT"
+                : "GENERAL_ENQUIRY",
+            subject: trimmedContent.slice(0, 100),
+            description: trimmedContent,
+            priority: isUrgent ? "URGENT" : "MEDIUM",
+            status: isUrgent ? "ESCALATED" : "OPEN",
+            advisorSummary: `Support Case auto-created for ${custName} (${custContact}): ${trimmedContent}`,
+          });
+          updatedMemory.confirmedFacts["Registered Support Case"] = newCase.caseNumber;
+        } else {
+          updatedMemory.confirmedFacts["Existing Support Case"] = openCase.caseNumber;
+        }
+      }
+    }
+
     const tacticalPrompt = formatTacticalActionDirective(nextAction, updatedMemory);
 
     // 11. Persist User Message Turn in PostgreSQL

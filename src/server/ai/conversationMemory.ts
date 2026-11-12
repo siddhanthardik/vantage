@@ -4,6 +4,9 @@
  */
 
 export interface ConversationMemoryContext {
+  customerName?: string;
+  contactPhone?: string;
+  contactEmail?: string;
   financialGoal?: string;
   investmentAmount?: string;
   timeHorizon?: string;
@@ -16,6 +19,42 @@ export interface ConversationMemoryContext {
   confirmedFacts: Record<string, string>;
   lastCorrectionNote?: string;
   unresolvedRequests: string[];
+}
+
+/**
+ * Extracts phone number if volunteered
+ */
+export function extractPhone(text: string): string | undefined {
+  if (!text) return undefined;
+  const match = text.match(/(?:\+91[\s-]?)?[6-9]\d{9}\b/);
+  return match ? match[0].replace(/[\s-]/g, "") : undefined;
+}
+
+/**
+ * Extracts email address if volunteered
+ */
+export function extractEmail(text: string): string | undefined {
+  if (!text) return undefined;
+  const match = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/);
+  return match ? match[0].toLowerCase() : undefined;
+}
+
+/**
+ * Extracts name if volunteered (e.g. "My name is Rahul Sharma", "I am Rahul")
+ */
+export function extractName(text: string): string | undefined {
+  if (!text) return undefined;
+  const match = text.match(
+    /(?:my name is|i am|this is|naam hai|call me)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/i
+  );
+  if (match && match[1]) {
+    const candidate = match[1].trim();
+    // Exclude common words
+    if (!/^(vantage|investor|interested|looking|calling|here|back|fine)$/i.test(candidate)) {
+      return candidate;
+    }
+  }
+  return undefined;
 }
 
 /**
@@ -298,7 +337,26 @@ export function updateConversationMemory(
     memory.confirmedFacts["Preferred Callback Time"] = userMessage.trim();
   }
 
-  // 5. Language preference
+  // 5. Contact & Profile Info
+  const phone = extractPhone(userMessage);
+  if (phone) {
+    memory.contactPhone = phone;
+    memory.confirmedFacts["Phone"] = phone;
+  }
+
+  const email = extractEmail(userMessage);
+  if (email) {
+    memory.contactEmail = email;
+    memory.confirmedFacts["Email"] = email;
+  }
+
+  const name = extractName(userMessage);
+  if (name && !memory.customerName) {
+    memory.customerName = name;
+    memory.confirmedFacts["Visitor Name"] = name;
+  }
+
+  // 6. Language preference
   memory.preferredLanguage = language;
 
   return memory;

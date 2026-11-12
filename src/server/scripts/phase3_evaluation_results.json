@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "General support enquiry",
+    "verdict": "PASSED",
+    "details": "Intent detected: GENERAL_INFORMATION, mode: EXPLORING_SERVICE"
+  },
+  {
+    "id": 2,
+    "name": "Existing client requests portfolio update",
+    "verdict": "PASSED",
+    "details": "Intent: EXISTING_CLIENT_SUPPORT, Class: EXISTING_CLIENT, Action: ROUTE_EXISTING_CLIENT_SUPPORT"
+  },
+  {
+    "id": 3,
+    "name": "Visitor reports an unresolved issue",
+    "verdict": "PASSED",
+    "details": "Recognized issue with intent: PORTFOLIO_REVIEW, priority: MEDIUM"
+  },
+  {
+    "id": 4,
+    "name": "Visitor submits a complaint",
+    "verdict": "PASSED",
+    "details": "Generated case number: VW-CASE-261112-1003, status: OPEN"
+  },
+  {
+    "id": 5,
+    "name": "Duplicate support case prevention",
+    "verdict": "PASSED",
+    "details": "Found existing open case: VW-CASE-261112-1003, prevented duplicate creation"
+  },
+  {
+    "id": 6,
+    "name": "Urgent complaint escalation",
+    "verdict": "PASSED",
+    "details": "Urgent case: VW-CASE-261112-1004, status: ESCALATED, escalation logged: true"
+  },
+  {
+    "id": 7,
+    "name": "Human callback request",
+    "verdict": "PASSED",
+    "details": "Intent: CALLBACK_REQUEST, Action: REQUEST_CALLBACK"
+  },
+  {
+    "id": 8,
+    "name": "Case assignment",
+    "verdict": "PASSED",
+    "details": "Assigned to: Rohit Kulkarni (Senior RM), new status: ASSIGNED"
+  },
+  {
+    "id": 9,
+    "name": "Case status change",
+    "verdict": "PASSED",
+    "details": "Transitioned status to: IN_PROGRESS"
+  },
+  {
+    "id": 10,
+    "name": "Case resolution",
+    "verdict": "PASSED",
+    "details": "Status: RESOLVED, resolved at: 2026-11-12T01:34:40.873Z"
+  },
+  {
+    "id": 11,
+    "name": "Case reopening",
+    "verdict": "PASSED",
+    "details": "Reopened status: OPEN, resolvedAt reset: true"
+  },
+  {
+    "id": 12,
+    "name": "Internal note privacy",
+    "verdict": "PASSED",
+    "details": "Internal flag: true, Hidden in public view: true, Visible internally: true"
+  },
+  {
+    "id": 13,
+    "name": "Cross-user case access attempt",
+    "verdict": "PASSED",
+    "details": "Cross-user unauthorized access rejected: isAuthorized=false"
+  },
+  {
+    "id": 14,
+    "name": "Unverified case-status request",
+    "verdict": "PASSED",
+    "details": "Directive enforces privacy protection: \"TACTICAL DIRECTIVE: For privacy and account security, explain warmly that detailed ca...\""
+  },
+  {
+    "id": 15,
+    "name": "Missing contact details",
+    "verdict": "PASSED",
+    "details": "Directive prompts for minimum necessary contact: \"TACTICAL DIRECTIVE: The visitor has raised an issue or complaint. Express genuine empathy witho...\""
+  }
+]

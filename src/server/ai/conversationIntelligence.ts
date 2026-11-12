@@ -216,15 +216,31 @@ export function determineNextBestAction(params: {
  * Generates dynamic tactical guidance for the Gemini prompt based on the chosen Next Action
  */
 export function formatTacticalActionDirective(action: NextBestAction, memory: ConversationMemoryContext): string {
+  if (memory.confirmedFacts["Registered Support Case"]) {
+    return `TACTICAL DIRECTIVE: You have registered support case ${memory.confirmedFacts["Registered Support Case"]} for the visitor. Express respectful empathy, state this case number clearly, and reassure them that our senior advisory team will review their request and follow up.`;
+  }
+
+  if (memory.confirmedFacts["Existing Support Case"]) {
+    return `TACTICAL DIRECTIVE: Let the visitor know that active case ${memory.confirmedFacts["Existing Support Case"]} is already recorded and under review by our team, so they do not need to open a duplicate case.`;
+  }
+
+  if (memory.confirmedFacts["Support Case Verified Status"]) {
+    return `TACTICAL DIRECTIVE: Share the verified case update warmly: ${memory.confirmedFacts["Support Case Verified Status"]}. Ask if there is anything else regarding this case they would like noted for the advisor.`;
+  }
+
+  if (memory.confirmedFacts["Support Case Verification Notice"]) {
+    return `TACTICAL DIRECTIVE: For privacy and account security, explain warmly that detailed case status cannot be displayed without verifying their registered phone or email, and offer to coordinate with human support or take their verified contact details.`;
+  }
+
   switch (action) {
     case "REQUEST_CALLBACK":
       return `TACTICAL DIRECTIVE: The visitor wants human contact. Acknowledge warmly, let them know you would be glad to connect them with a senior wealth advisor, and invite them to use the 'Request Callback' option in this chat or share a convenient time. Keep it brief (1–2 sentences).`;
 
     case "ROUTE_EXISTING_CLIENT_SUPPORT":
-      return `TACTICAL DIRECTIVE: The visitor is an existing client. For privacy reasons, explain warmly that live account data is not displayed in this chat, and offer to coordinate directly with their dedicated Relationship Manager or advisory desk.`;
+      return `TACTICAL DIRECTIVE: The visitor is an existing client. For privacy reasons, explain warmly that live account data is not displayed in this chat. If they have a service issue or need an update, ask for their name and registered phone or email so you can open an official support case for their Relationship Manager.`;
 
     case "ROUTE_COMPLAINT":
-      return `TACTICAL DIRECTIVE: The visitor has raised an issue or complaint. Express genuine empathy, take their concern seriously without defensiveness, and offer immediate human escalation via callback so the advisory team can resolve it.`;
+      return `TACTICAL DIRECTIVE: The visitor has raised an issue or complaint. Express genuine empathy without defensiveness or blaming others. Offer to register an official support case and ask for their name and registered phone or email so the advisory team can resolve it.`;
 
     case "DECLINE_OUT_OF_SCOPE_REQUEST":
       return `TACTICAL DIRECTIVE: Politely and pleasantly decline non-wealth requests (like coding, medical, travel) and warmly clarify that your expertise is wealth planning and financial services.`;

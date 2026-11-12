@@ -215,6 +215,8 @@ model AdminUser {
   updatedAt    DateTime   @updatedAt
   auditLogs    AuditLog[]
   leadEvents   ChatLeadEvent[]
+  assignedSupportCases SupportCase[]
+  supportCaseEvents    SupportCaseEvent[]
 }
 
 model AuditLog {
@@ -339,6 +341,38 @@ enum CallbackPreferredMethod {
   EMAIL
 }
 
+enum SupportCaseCategory {
+  GENERAL_ENQUIRY
+  INVESTMENT_SERVICE
+  PORTFOLIO_REVIEW
+  INSURANCE
+  TAX
+  FINANCING
+  CONSULTATION
+  DOCUMENT_REQUEST
+  SERVICE_COMPLAINT
+  CALLBACK
+  OTHER
+}
+
+enum SupportCaseStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  WAITING_FOR_CUSTOMER
+  WAITING_FOR_TEAM
+  ESCALATED
+  RESOLVED
+  CLOSED
+}
+
+enum SupportCasePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
 enum KnowledgeSourceType {
   SERVICE_PAGE
   INSIGHT_ARTICLE
@@ -371,6 +405,7 @@ model ChatConversation {
 
   messages           ChatMessage[]
   lead               ChatLead?
+  supportCases       SupportCase[]
 
   @@index([anonymousSessionId, status, createdAt])
   @@index([status, updatedAt])
@@ -445,6 +480,7 @@ model ChatLead {
   conversation        ChatConversation        @relation(fields: [conversationId], references: [id], onDelete: Restrict)
   enquiry             Enquiry?                @relation(fields: [enquiryId], references: [id], onDelete: SetNull)
   events              ChatLeadEvent[]
+  supportCases        SupportCase[]
 
   @@index([status, createdAt])
   @@index([email])
@@ -527,4 +563,59 @@ model ChatRateLimitBucket {
 
   @@index([expiresAt])
   @@map("chat_rate_limit_buckets")
+}
+
+model SupportCase {
+  id               String               @id @default(cuid())
+  caseNumber       String               @unique @db.VarChar(32)
+  conversationId   String?
+  leadId           String?
+  customerName     String               @db.VarChar(120)
+  contactEmail     String?              @db.VarChar(191)
+  contactPhone     String?              @db.VarChar(32)
+  category         SupportCaseCategory  @default(GENERAL_ENQUIRY)
+  subcategory      String?              @db.VarChar(64)
+  subject          String               @db.VarChar(255)
+  description      String               @db.Text
+  priority         SupportCasePriority  @default(MEDIUM)
+  status           SupportCaseStatus    @default(OPEN)
+  assignedTo       String?              @db.VarChar(120)
+  assignedAdminId  String?
+  advisorSummary   String?              @db.Text
+  resolutionNotes  String?              @db.Text
+  resolvedAt       DateTime?
+  lastActivityAt   DateTime             @default(now())
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  conversation     ChatConversation?    @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  lead             ChatLead?            @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  assignedAdmin    AdminUser?           @relation(fields: [assignedAdminId], references: [id], onDelete: SetNull)
+  events           SupportCaseEvent[]
+
+  @@index([caseNumber])
+  @@index([status, priority, createdAt])
+  @@index([category])
+  @@index([contactEmail])
+  @@index([contactPhone])
+  @@index([assignedAdminId])
+  @@map("support_cases")
+}
+
+model SupportCaseEvent {
+  id          String       @id @default(cuid())
+  caseId      String
+  adminUserId String?
+  eventType   String       @db.VarChar(64)
+  isInternal  Boolean      @default(false)
+  note        String?      @db.Text
+  metadata    Json?        @default("{}")
+  createdAt   DateTime     @default(now())
+
+  case        SupportCase  @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  adminUser   AdminUser?   @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+
+  @@index([caseId, createdAt])
+  @@index([adminUserId])
+  @@map("support_case_events")
 }
